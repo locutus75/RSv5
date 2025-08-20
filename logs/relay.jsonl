@@ -1,0 +1,439 @@
+{"ts":"2025-08-09T00:21:22.526Z","level":"deliver.ok","msgId":"81e9e049-fd0f-4e39-8a90-e7e2959db769","tenant":"E-cowarenhuis","from":"info@e-cowarenhuis.nl","rcptCount":1,"sizeKB":169,"remoteIP":"192.168.111.16"}
+{"ts":"2025-08-09T00:23:32.405Z","level":"deliver.ok","msgId":"1f4bde74-e1b9-4b93-b458-a6b9acc962b5","tenant":"E-cowarenhuis","from":"info@e-cowarenhuis.nl","rcptCount":1,"sizeKB":169,"remoteIP":"192.168.111.16"}
+{"ts":"2025-08-09T00:23:34.121Z","level":"deliver.ok","msgId":"5768483d-c08c-4db5-8242-6d640e258edf","tenant":"E-cowarenhuis","from":"info@e-cowarenhuis.nl","rcptCount":1,"sizeKB":169,"remoteIP":"192.168.111.16"}
+{"ts":"2025-08-09T00:26:00.508Z","level":"deliver.ok","msgId":"58726756-163b-4cef-8a31-d21565d8fac0","tenant":"E-cowarenhuis","from":"info@e-cowarenhuis.nl","rcptCount":1,"sizeKB":306,"remoteIP":"192.168.111.16"}
+{"ts":"2025-08-09T09:03:06.233Z","level":"deliver.ok","msgId":"70d48d55-aca2-481f-87f7-9dee0d57baeb","tenant":"E-cowarenhuis","from":"info@e-cowarenhuis.nl","rcptCount":1,"sizeKB":306,"remoteIP":"192.168.111.16"}
+{"ts":"2025-08-09T09:03:31.267Z","level":"deliver.ok","msgId":"e6d8423e-2735-46fa-ab60-45b4562b0ebb","tenant":"E-cowarenhuis","from":"info@e-cowarenhuis.nl","rcptCount":1,"sizeKB":306,"remoteIP":"192.168.111.16"}
+{"ts":"2025-08-09T09:03:33.209Z","level":"deliver.ok","msgId":"6baeb990-6277-4d59-8b2c-3d273be1cd0c","tenant":"E-cowarenhuis","from":"info@e-cowarenhuis.nl","rcptCount":1,"sizeKB":306,"remoteIP":"192.168.111.16"}
+{"ts":"2025-08-09T09:03:34.923Z","level":"deliver.ok","msgId":"86b543ae-6f70-48b3-ba64-105b02ca4cf6","tenant":"E-cowarenhuis","from":"info@e-cowarenhuis.nl","rcptCount":1,"sizeKB":306,"remoteIP":"192.168.111.16"}
+{"ts":"2025-08-09T10:53:21.289Z","level":"deliver.ok","msgId":"bc156c1f-6e51-453b-a604-901d03eccaf4","tenant":"E-cowarenhuis","from":"info@e-cowarenhuis.nl","rcptCount":1,"sizeKB":306,"remoteIP":"192.168.111.16"}
+{"ts":"2025-08-09T10:53:23.386Z","level":"deliver.ok","msgId":"29eacf3a-1bff-4681-87b0-176c25fc83b7","tenant":"E-cowarenhuis","from":"info@e-cowarenhuis.nl","rcptCount":1,"sizeKB":306,"remoteIP":"192.168.111.16"}
+{"ts":"2025-08-09T10:53:25.095Z","level":"deliver.ok","msgId":"8c99734c-6736-47a0-8012-011dd149fb5f","tenant":"E-cowarenhuis","from":"info@e-cowarenhuis.nl","rcptCount":1,"sizeKB":306,"remoteIP":"192.168.111.16"}
+{"ts":"2025-08-09T16:05:57.753Z","level":"deliver.err","msgId":"631519b3-7c44-4205-868a-0f772321ed8d","tenant":"unknown","remoteIP":"10.2.5.4","error":"IP not allowed","reason":"ip_not_allowed"}
+{"ts":"2025-08-09T17:02:10.713Z","level":"deliver.err","msgId":"d6cf4c38-1457-46fd-b0c0-97bfecee5a9b","tenant":"unknown","remoteIP":"10.2.5.4","error":"IP not allowed","reason":"ip_not_allowed"}
+{"ts":"2025-08-09T17:04:24.747Z","level":"deliver.ok","msgId":"8af312df-2d32-40b7-a964-8a735c21e650","tenant":"E-cowarenhuis","from":"info@e-cowarenhuis.nl","rcptCount":1,"sizeKB":306,"remoteIP":"10.2.5.4"}
+{"ts":"2025-08-09T22:15:11.903Z","level":"deliver.ok","msgId":"374ec808-fa3c-4c49-9f1b-ff69a7f37008","tenant":"E-cowarenhuis","from":"info@e-cowarenhuis.nl","rcptCount":1,"sizeKB":306,"remoteIP":"192.168.111.16"}
+{"ts":"2025-08-09T22:19:41.319Z","level":"deliver.ok","msgId":"b98e3c3f-9207-4eb9-9f6c-d3b492f7f5ab","tenant":"E-cowarenhuis","from":"info@e-cowarenhuis.nl","rcptCount":1,"sizeKB":306,"remoteIP":"192.168.111.16"}
+{"ts":"2025-08-09T22:20:13.373Z","level":"deliver.ok","msgId":"d11ecaf4-fd53-4967-95f7-13082edc1068","tenant":"E-cowarenhuis","from":"info@e-cowarenhuis.nl","rcptCount":1,"sizeKB":306,"remoteIP":"192.168.111.16"}
+{"ts":"2025-08-09T22:23:09.072Z","level":"deliver.ok","msgId":"72ca7fb6-e8c8-4aa8-b0ff-86ca08afb01c","tenant":"E-cowarenhuis","from":"info@e-cowarenhuis.nl","rcptCount":1,"sizeKB":306,"remoteIP":"192.168.111.16"}
+{"ts":"2025-08-09T22:24:51.537Z","level":"deliver.ok","msgId":"453312ff-deb4-4209-a534-feb00864b6bd","tenant":"E-cowarenhuis","from":"info@e-cowarenhuis.nl","rcptCount":1,"sizeKB":306,"remoteIP":"192.168.111.16"}
+{"ts":"2025-08-09T22:27:52.606Z","level":"deliver.ok","msgId":"3900fa51-ba5e-44c6-bc0e-3fcbf3f68e03","tenant":"E-cowarenhuis","from":"info@e-cowarenhuis.nl","rcptCount":1,"sizeKB":306,"remoteIP":"192.168.111.16"}
+{"ts":"2025-08-09T22:30:11.778Z","level":"deliver.info","msgId":"db356fd6-5a34-4186-8d26-6502e0040f1b","tenant":"E-cowarenhuis","from":"info@e-cowarenhuis.nl","remoteIP":"192.168.111.16","message":"Tenant selected: exact sender match: info@e-cowarenhuis.nl"}
+{"ts":"2025-08-09T22:30:11.780Z","level":"deliver.err","msgId":"db356fd6-5a34-4186-8d26-6502e0040f1b","tenant":"E-cowarenhuis","from":"info@e-cowarenhuis.nl","rcptCount":1,"sizeKB":306,"remoteIP":"192.168.111.16","error":"Message too large (306KB > 200KB)","reason":"message_too_large"}
+{"ts":"2025-08-09T22:30:11.781Z","level":"deliver.err","msgId":"db356fd6-5a34-4186-8d26-6502e0040f1b","tenant":"E-cowarenhuis","from":"info@e-cowarenhuis.nl","rcptCount":1,"remoteIP":"192.168.111.16","error":"Error: Message too large (306KB > 200KB)"}
+{"ts":"2025-08-09T22:37:18.097Z","level":"deliver.err","msgId":"2fde1459-760c-4079-b48f-b3181b60719e","tenant":"E-cowarenhuis","from":"info@e-cowarenhuis.nl","rcptCount":1,"remoteIP":"192.168.111.16","error":"Error: Message too large (306KB > 200KB)","reason":"message_too_large"}
+{"ts":"2025-08-09T22:37:43.808Z","level":"deliver.err","msgId":"5874b3af-e048-45c7-8051-e5728a275d67","tenant":"E-cowarenhuis","from":"info@e-cowarenhuis.nl","rcptCount":1,"remoteIP":"192.168.111.16","error":"Error: Message too large (306KB > 200KB)","reason":"message_too_large"}
+{"ts":"2025-08-09T22:45:28.548Z","level":"deliver.ok","msgId":"d37d8a9c-68d3-48cf-b005-513d27278602","tenant":"E-cowarenhuis","from":"info@e-cowarenhuis.nl","rcptCount":1,"sizeKB":306,"remoteIP":"192.168.111.16"}
+{"ts":"2025-08-09T22:45:46.430Z","level":"admin.err","message":"Failed to reload tenants","error":"require is not defined"}
+{"ts":"2025-08-09T22:46:22.266Z","level":"deliver.ok","msgId":"e842c015-5728-400e-a246-87019cc4a042","tenant":"E-cowarenhuis","from":"info@e-cowarenhuis.nl","rcptCount":1,"sizeKB":306,"remoteIP":"192.168.111.16"}
+{"ts":"2025-08-09T22:50:21.347Z","level":"deliver.err","msgId":"97906d74-5d12-46ce-b28b-64e4c0159aaf","tenant":"E-cowarenhuis","from":"info@e-cowarenhuis.nl","rcptCount":1,"remoteIP":"192.168.111.16","error":"Error: Message too large (306KB > 100KB)","reason":"message_too_large"}
+{"ts":"2025-08-09T22:50:38.612Z","level":"admin.err","message":"Failed to reload tenants","error":"Cannot find module 'C:\\Users\\leutscher_e\\Apps\\RSv5\\config.js' imported from C:\\Users\\leutscher_e\\Apps\\RSv5\\lib\\server.js"}
+{"ts":"2025-08-09T22:50:46.436Z","level":"deliver.err","msgId":"63bafac6-104b-4892-a9f1-26ed7dfac1bd","tenant":"E-cowarenhuis","from":"info@e-cowarenhuis.nl","rcptCount":1,"remoteIP":"192.168.111.16","error":"Error: Message too large (306KB > 100KB)","reason":"message_too_large"}
+{"ts":"2025-08-09T22:54:12.588Z","level":"deliver.ok","msgId":"25737f93-7761-4cc8-84e4-14493e232315","tenant":"E-cowarenhuis","from":"info@e-cowarenhuis.nl","rcptCount":1,"sizeKB":306,"remoteIP":"192.168.111.16"}
+{"ts":"2025-08-09T22:54:30.811Z","level":"admin.info","message":"Tenants reloaded successfully","count":3}
+{"ts":"2025-08-09T22:54:42.176Z","level":"deliver.err","msgId":"1b67b9ea-b1ae-40cf-b4c6-c4341f943b91","tenant":"E-cowarenhuis","from":"info@e-cowarenhuis.nl","rcptCount":1,"remoteIP":"192.168.111.16","error":"Error: Message too large (306KB > 100KB)","reason":"message_too_large"}
+{"ts":"2025-08-09T22:54:58.320Z","level":"admin.info","message":"Tenants reloaded successfully","count":3}
+{"ts":"2025-08-09T22:55:09.322Z","level":"deliver.ok","msgId":"8db02daa-2842-4a8b-a41c-e518a06a42f0","tenant":"E-cowarenhuis","from":"info@e-cowarenhuis.nl","rcptCount":1,"sizeKB":306,"remoteIP":"192.168.111.16"}
+{"ts":"2025-08-09T23:58:34.875Z","level":"admin.info","message":"Tenants reloaded successfully","count":3}
+{"ts":"2025-08-11T00:03:00.911Z","level":"admin.info","message":"Tenants reloaded successfully","count":3}
+{"ts":"2025-08-11T08:43:15.417Z","level":"admin.info","message":"Tenants reloaded successfully","count":3}
+{"ts":"2025-08-11T08:46:29.297Z","level":"deliver.ok","msgId":"8a525ce6-b21e-4d9a-aa90-f3468773c8c9","tenant":"E-cowarenhuis","from":"info@e-cowarenhuis.nl","rcptCount":1,"sizeKB":306,"remoteIP":"192.168.111.16"}
+{"ts":"2025-08-11T08:46:31.160Z","level":"deliver.ok","msgId":"f889fed9-7135-4fe8-bce3-a837ea44b9a5","tenant":"E-cowarenhuis","from":"info@e-cowarenhuis.nl","rcptCount":1,"sizeKB":306,"remoteIP":"192.168.111.16"}
+{"ts":"2025-08-11T08:46:33.181Z","level":"deliver.ok","msgId":"3e4da0c6-0032-48b3-af90-222f1cd07483","tenant":"E-cowarenhuis","from":"info@e-cowarenhuis.nl","rcptCount":1,"sizeKB":306,"remoteIP":"192.168.111.16"}
+{"ts":"2025-08-11T09:44:49.019Z","level":"admin.info","message":"Tenants reloaded successfully","count":3}
+{"ts":"2025-08-11T11:29:57.605Z","level":"deliver.ok","msgId":"91217d0e-a043-4b45-9d97-657ae620bc87","tenant":"E-cowarenhuis","from":"info@e-cowarenhuis.nl","rcptCount":1,"sizeKB":306,"remoteIP":"192.168.111.16"}
+{"ts":"2025-08-11T11:30:00.140Z","level":"deliver.ok","msgId":"a5642031-1164-40fb-863d-be7ae9deb667","tenant":"E-cowarenhuis","from":"info@e-cowarenhuis.nl","rcptCount":1,"sizeKB":306,"remoteIP":"192.168.111.16"}
+{"ts":"2025-08-12T09:45:36.358Z","level":"deliver.warn","tenant":"E-cowarenhuis","from":"info@omnibuzz.nl","remoteIP":"10.100.20.47","message":"No specific tenant match found, using fallback","reason":"fallback"}
+{"ts":"2025-08-12T09:45:36.365Z","level":"deliver.err","msgId":"bcc0668f-1a5b-476b-9884-fb1ff7e7485b","tenant":"E-cowarenhuis","from":"info@omnibuzz.nl","rcptCount":1,"remoteIP":"10.100.20.47","error":"Error: Sender not allowed: info@omnibuzz.nl","reason":"sender_not_allowed"}
+{"ts":"2025-08-12T09:47:09.926Z","level":"deliver.warn","tenant":"E-cowarenhuis","from":"info@omnibuzz.nl","remoteIP":"10.100.20.47","message":"No specific tenant match found, using fallback","reason":"fallback"}
+{"ts":"2025-08-12T09:47:09.927Z","level":"deliver.err","msgId":"a36de88b-b440-4140-a205-901934b9a063","tenant":"E-cowarenhuis","from":"info@omnibuzz.nl","rcptCount":1,"remoteIP":"10.100.20.47","error":"Error: Sender not allowed: info@omnibuzz.nl","reason":"sender_not_allowed"}
+{"ts":"2025-08-12T09:53:32.060Z","level":"deliver.warn","tenant":"E-cowarenhuis","from":"info@omnibuzz.nl","remoteIP":"10.100.20.47","message":"No specific tenant match found, using fallback","reason":"fallback"}
+{"ts":"2025-08-12T09:53:32.098Z","level":"deliver.err","msgId":"fec535c0-f970-4fd7-a126-021dfccf549f","tenant":"E-cowarenhuis","from":"info@omnibuzz.nl","rcptCount":1,"remoteIP":"10.100.20.47","error":"Error: Sender not allowed: info@omnibuzz.nl","reason":"sender_not_allowed"}
+{"ts":"2025-08-12T09:54:20.819Z","level":"deliver.warn","tenant":"E-cowarenhuis","from":"info@omnibuzz.nl","remoteIP":"10.100.20.47","message":"No specific tenant match found, using fallback","reason":"fallback"}
+{"ts":"2025-08-12T09:54:20.820Z","level":"deliver.err","msgId":"9f492156-0a98-446e-96e8-022d8a51dd93","tenant":"E-cowarenhuis","from":"info@omnibuzz.nl","rcptCount":1,"remoteIP":"10.100.20.47","error":"Error: Sender not allowed: info@omnibuzz.nl","reason":"sender_not_allowed"}
+{"ts":"2025-08-12T09:57:44.001Z","level":"deliver.warn","tenant":"E-cowarenhuis","from":"info@omnibuzz.nl","remoteIP":"10.100.20.47","message":"No specific tenant match found, using fallback","reason":"fallback"}
+{"ts":"2025-08-12T09:57:44.024Z","level":"deliver.err","msgId":"f92ca5c9-a943-4287-8799-6b7bb93ee4b7","tenant":"E-cowarenhuis","from":"info@omnibuzz.nl","rcptCount":1,"remoteIP":"10.100.20.47","error":"Error: Sender not allowed: info@omnibuzz.nl","reason":"sender_not_allowed"}
+{"ts":"2025-08-12T09:59:36.973Z","level":"deliver.warn","tenant":"E-cowarenhuis","from":"info@omnibuzz.nl","remoteIP":"10.100.20.47","message":"No specific tenant match found, using fallback","reason":"fallback"}
+{"ts":"2025-08-12T09:59:36.975Z","level":"deliver.err","msgId":"a6fe07fa-adc7-4e8e-8bdc-3fab63491d92","tenant":"E-cowarenhuis","from":"info@omnibuzz.nl","rcptCount":1,"remoteIP":"10.100.20.47","error":"Error: Sender not allowed: info@omnibuzz.nl","reason":"sender_not_allowed"}
+{"ts":"2025-08-12T10:00:30.972Z","level":"deliver.warn","tenant":"E-cowarenhuis","from":"info@omnibuzz.nl","remoteIP":"10.100.20.47","message":"No specific tenant match found, using fallback","reason":"fallback"}
+{"ts":"2025-08-12T10:00:30.991Z","level":"deliver.err","msgId":"c51dd953-4a8e-43e8-8b4c-bb29bbd7420c","tenant":"E-cowarenhuis","from":"info@omnibuzz.nl","rcptCount":1,"remoteIP":"10.100.20.47","error":"Error: Sender not allowed: info@omnibuzz.nl","reason":"sender_not_allowed"}
+{"ts":"2025-08-12T11:27:16.590Z","level":"deliver.err","msgId":"db9dfad7-308b-4dc7-a7a3-79b94e4c3adf","tenant":"Omnibuzz","from":"info@omnibuzz.nl","rcptCount":1,"remoteIP":"10.100.20.47","error":"Error: Graph send failed 403 Forbidden","reason":"unknown"}
+{"ts":"2025-08-12T11:29:41.470Z","level":"deliver.err","msgId":"b7187710-ad9f-4318-b33e-0a5dfa45d055","tenant":"Omnibuzz","from":"noreply@omnibuzz.nl","rcptCount":1,"remoteIP":"10.100.20.47","error":"Error: Sender not allowed: noreply@omnibuzz.nl","reason":"sender_not_allowed"}
+{"ts":"2025-08-12T11:30:17.780Z","level":"deliver.err","msgId":"05deb20c-49b9-4800-abe9-13fb80fd6cf3","tenant":"Omnibuzz","from":"noreply@omnibuzz.nl","rcptCount":1,"remoteIP":"10.100.20.47","error":"Error: Sender not allowed: noreply@omnibuzz.nl","reason":"sender_not_allowed"}
+{"ts":"2025-08-12T11:31:40.480Z","level":"deliver.err","msgId":"45ff3c06-b881-40f3-88e8-80229114f847","tenant":"Omnibuzz","from":"noreply@omnibuzz.nl","rcptCount":1,"remoteIP":"10.100.20.47","error":"Error: Sender not allowed: noreply@omnibuzz.nl","reason":"sender_not_allowed"}
+{"ts":"2025-08-12T13:35:28.238Z","level":"deliver.ok","msgId":"29f486e0-3bd0-4dae-9fc5-384a634c4ed9","tenant":"E-cowarenhuis","from":"info@e-cowarenhuis.nl","rcptCount":1,"sizeKB":306,"remoteIP":"10.100.20.47"}
+{"ts":"2025-08-12T14:55:53.963Z","level":"deliver.err","msgId":"8c9118a9-2746-4934-ab08-64e3208c43c8","tenant":"Omnibuzz","from":"t.detron@omnibuzz.nl","rcptCount":1,"remoteIP":"10.100.20.47","error":"Error: Sender not allowed: t.detron@omnibuzz.nl","reason":"sender_not_allowed"}
+{"ts":"2025-08-12T14:56:36.009Z","level":"deliver.err","msgId":"f45d8a4b-08eb-444d-8acb-7d87a0c50805","tenant":"Omnibuzz","from":"t.detron@omnibuzz.nl","rcptCount":1,"remoteIP":"10.100.20.47","error":"Error: Sender not allowed: t.detron@omnibuzz.nl","reason":"sender_not_allowed"}
+{"ts":"2025-08-12T15:02:53.377Z","level":"deliver.err","msgId":"20210fd1-5bab-40d2-8c1b-6e8486c8c852","tenant":"Omnibuzz","from":"t.detron@omnibuzz.nl","rcptCount":1,"remoteIP":"10.100.20.47","error":"Error: Sender not allowed: t.detron@omnibuzz.nl","reason":"sender_not_allowed"}
+{"ts":"2025-08-12T15:07:02.332Z","level":"deliver.err","msgId":"88e29137-a8cd-4199-ab49-ac40cfd53cd7","tenant":"Omnibuzz","from":"t.detron@omnibuzz.nl","rcptCount":1,"rcpts":"t.detron@omnibuzz.nl","remoteIP":"10.100.20.47","error":"Error: Graph send failed 403 Forbidden","reason":"unknown"}
+{"ts":"2025-08-12T15:33:41.701Z","level":"deliver.err","msgId":"b97d1427-673c-4725-8251-f619c1ed47a9","tenant":"Omnibuzz","from":"t.detron@omnibuzz.nl","rcptCount":1,"rcpts":"t.detron@omnibuzz.nl","remoteIP":"10.100.20.47","error":"Error: Graph send failed 403 Forbidden","reason":"unknown"}
+{"ts":"2025-08-12T15:39:39.966Z","level":"deliver.err","msgId":"5f6f550b-5680-447a-86ee-8bb94cdfe6af","tenant":"Omnibuzz","from":"t.detron@omnibuzz.nl","rcptCount":1,"rcpts":"t.detron@omnibuzz.nl","remoteIP":"10.100.20.47","error":"Error: Graph send failed 403 Forbidden","reason":"unknown"}
+{"ts":"2025-08-12T15:40:07.500Z","level":"deliver.err","msgId":"b23ddf85-a9e8-4f04-ae99-9a76b72f3694","tenant":"Omnibuzz","from":"t.detron@omnibuzz.nl","rcptCount":1,"rcpts":"t.detron@omnibuzz.nl","remoteIP":"10.100.20.47","error":"Error: Graph send failed 403 Forbidden","reason":"unknown"}
+{"ts":"2025-08-12T15:40:25.371Z","level":"deliver.err","msgId":"cb76bce4-19dd-4525-8475-4b838cb8f2d0","tenant":"Omnibuzz","from":"t.detron@omnibuzz.nl","rcptCount":1,"rcpts":"t.detron@omnibuzz.nl","remoteIP":"10.100.20.47","error":"Error: Graph send failed 403 Forbidden","reason":"unknown"}
+{"ts":"2025-08-12T15:42:23.193Z","level":"deliver.err","msgId":"d748d321-807d-4c44-8516-dbf2177b9d83","tenant":"Omnibuzz","from":"t.detron@omnibuzz.nl","rcptCount":1,"rcpts":"t.detron@omnibuzz.nl","remoteIP":"10.100.20.47","error":"Error: Graph send failed 403 Forbidden","reason":"unknown"}
+{"ts":"2025-08-12T15:46:09.804Z","level":"deliver.err","msgId":"bdc89bdd-b143-4e72-818a-f91cc05f5184","tenant":"Omnibuzz","from":"t.detron@omnibuzz.nl","rcptCount":1,"rcpts":"t.detron@omnibuzz.nl","remoteIP":"10.100.20.47","error":"ReferenceError: tk is not defined","reason":"unknown"}
+{"ts":"2025-08-12T15:49:24.499Z","level":"deliver.err","msgId":"be9eab06-e692-4466-9e59-61eaef720512","tenant":"Omnibuzz","from":"t.detron@omnibuzz.nl","rcptCount":1,"rcpts":"t.detron@omnibuzz.nl","remoteIP":"10.100.20.47","error":"Error: Graph send failed 403 Forbidden - {\"error\":{\"code\":\"ErrorAccessDenied\",\"message\":\"Access is denied. Check credentials and try again.\"}}","reason":"graph_api_error"}
+{"ts":"2025-08-12T21:05:33.116Z","level":"deliver.ok","msgId":"ff63c3a9-4c76-4fc7-a7fa-4add43f637c3","tenant":"E-cowarenhuis","from":"info@e-cowarenhuis.nl","rcptCount":1,"rcpts":"info@e-cowarenhuis.nl","sizeKB":306,"remoteIP":"192.168.111.16"}
+{"ts":"2025-08-12T21:28:01.726Z","level":"deliver.ok","msgId":"21bf4dfb-82a5-45d8-a531-c79af5563a45","tenant":"E-cowarenhuis","from":"info@e-cowarenhuis.nl","rcptCount":1,"rcpts":"info@e-cowarenhuis.nl","sizeKB":306,"remoteIP":"192.168.111.16"}
+{"ts":"2025-08-12T21:29:00.192Z","level":"deliver.err","msgId":"3f8746c7-ca45-4f9f-ac69-9e96fc9da628","tenant":"Omnibuzz","from":"t.detron@omnibuzz.nl","rcptCount":1,"rcpts":"t.detron@omnibuzz.nl","remoteIP":"192.168.111.16","error":"Error: Graph send failed 403 Forbidden - {\"error\":{\"code\":\"ErrorAccessDenied\",\"message\":\"Access is denied. Check credentials and try again.\"}}","reason":"graph_api_error"}
+{"ts":"2025-08-12T21:45:17.780Z","level":"deliver.err","msgId":"ae43afc7-7b5f-4752-a21b-6b601f84deda","tenant":"Omnibuzz","from":"t.detron@omnibuzz.nl","rcptCount":1,"rcpts":"t.detron@omnibuzz.nl","remoteIP":"192.168.111.16","error":"Error: Graph send failed 403 Forbidden - {\"error\":{\"code\":\"ErrorAccessDenied\",\"message\":\"Access is denied. Check credentials and try again.\"}}","reason":"graph_api_error"}
+{"ts":"2025-08-12T21:45:50.943Z","level":"deliver.ok","msgId":"b39b3591-794d-4266-9972-e67548529219","tenant":"Omnibuzz","from":"t.detron@omnibuzz.nl","rcptCount":1,"rcpts":"t.detron@omnibuzz.nl","sizeKB":306,"remoteIP":"192.168.111.16"}
+{"ts":"2025-08-12T21:48:30.658Z","level":"deliver.ok","msgId":"9aa1aff8-d2ee-42a2-b02f-618d3fb43542","tenant":"Omnibuzz","from":"t.detron@omnibuzz.nl","rcptCount":1,"rcpts":"t.detron@omnibuzz.nl","sizeKB":306,"remoteIP":"192.168.111.16"}
+{"ts":"2025-08-13T11:21:27.779Z","level":"deliver.ok","msgId":"f9291620-3c8b-4e07-a637-a7023739879c","tenant":"Omnibuzz","from":"t.detron@omnibuzz.nl","rcptCount":1,"rcpts":"t.detron@omnibuzz.nl","sizeKB":306,"remoteIP":"192.168.111.16"}
+{"ts":"2025-08-13T11:22:42.307Z","level":"deliver.ok","msgId":"f3c3adab-402b-4622-a9e3-8190793b0a53","tenant":"Omnibuzz","from":"t.detron@omnibuzz.nl","rcptCount":1,"rcpts":"t.detron@omnibuzz.nl","sizeKB":306,"remoteIP":"192.168.111.16"}
+{"ts":"2025-08-13T11:23:02.173Z","level":"deliver.ok","msgId":"85ab1cd1-8f47-46f7-a589-c5b73cd1b1a1","tenant":"Omnibuzz","from":"t.detron@omnibuzz.nl","rcptCount":1,"rcpts":"t.detron@omnibuzz.nl","sizeKB":306,"remoteIP":"192.168.111.16"}
+{"ts":"2025-08-13T11:23:18.501Z","level":"deliver.err","msgId":"2a01370d-a167-4349-a57c-59ee8699605c","tenant":"Omnibuzz","from":"t.detron@omnibuzz.nl","rcptCount":1,"rcpts":"t.detron@omnibuzz.nl","remoteIP":"192.168.111.16","error":"Error: Message too large (306KB > 51KB)","reason":"message_too_large"}
+{"ts":"2025-08-13T17:20:18.374Z","level":"deliver.err","msgId":"dfaa1949-0dd7-4ebb-8a3f-e0f51536625e","tenant":"Omnibuzz","from":"t.detron@omnibuzz.nl","rcptCount":1,"rcpts":"t.detron@omnibuzz.nl","remoteIP":"192.168.111.16","error":"Error: Message too large (306KB > 51KB)","reason":"message_too_large"}
+{"ts":"2025-08-13T17:26:23.593Z","level":"deliver.err","msgId":"8d28ba5f-8289-43f7-aa66-b549fdd69bb8","tenant":"Omnibuzz","from":"t.detron@omnibuzz.nl","rcptCount":1,"rcpts":"t.detron@omnibuzz.nl","remoteIP":"192.168.111.16","error":"Error: Message too large (306KB > 51KB)","reason":"message_too_large"}
+{"ts":"2025-08-15T16:59:43.461Z","level":"deliver.ok","msgId":"38086147-b46e-42a4-bd36-67da0cb839c4","tenant":"E-cowarenhuis","from":"info@e-cowarenhuis.nl","rcptCount":1,"rcpts":"info@e-cowarenhuis.nl","sizeKB":306,"remoteIP":"192.168.111.16"}
+{"ts":"2025-08-18T14:55:47.047Z","level":"deliver.ok","msgId":"a5b11d03-77f6-48c9-a952-bb8e2757b6fa","tenant":"E-cowarenhuis","from":"info@e-cowarenhuis.nl","rcptCount":1,"rcpts":"info@e-cowarenhuis.nl","sizeKB":306,"remoteIP":"192.168.111.16"}
+{"ts":"2025-08-18T15:00:15.197Z","level":"deliver.err","msgId":"f82f0958-08da-48e1-992f-3f75a40c8ea7","tenant":"E-cowarenhuis","from":"info2@e-cowarenhuis.nl","rcptCount":1,"rcpts":"info2@e-cowarenhuis.nl","remoteIP":"192.168.111.16","error":"Error: Sender not allowed: info2@e-cowarenhuis.nl for tenant: E-cowarenhuis","reason":"sender_not_allowed"}
+{"ts":"2025-08-18T15:28:10.866Z","level":"deliver.ok","msgId":"0cd053ab-f4e7-43b5-a905-a99f72eae51b","tenant":"E-cowarenhuis","from":"info@e-cowarenhuis.nl","rcptCount":1,"rcpts":"info@e-cowarenhuis.nl","sizeKB":306,"remoteIP":"192.168.111.16"}
+{"ts":"2025-08-18T15:38:49.566Z","level":"deliver.err","msgId":"11b58d18-d933-4fdd-ae6f-246a46385151","tenant":"E-cowarenhuis","from":"info2@e-cowarenhuis.nl","rcptCount":1,"rcpts":"info2@e-cowarenhuis.nl","remoteIP":"192.168.111.16","error":"Error: Sender not allowed: info2@e-cowarenhuis.nl for tenant: E-cowarenhuis","reason":"sender_not_allowed"}
+{"ts":"2025-08-18T15:38:55.635Z","level":"deliver.ok","msgId":"ade26562-0ba7-4ce7-a67a-dac7d6e2eb58","tenant":"E-cowarenhuis","from":"info@e-cowarenhuis.nl","rcptCount":1,"rcpts":"info@e-cowarenhuis.nl","sizeKB":306,"remoteIP":"192.168.111.16"}
+{"ts":"2025-08-18T16:04:26.078Z","level":"admin.info","message":"✅ Tenant reload ready - triggered on save"}
+{"ts":"2025-08-18T16:04:26.450Z","level":"admin.info","message":"Admin/SMTP ready on 2525"}
+{"ts":"2025-08-18T16:04:37.757Z","level":"mail.info","message":"🔍 Tenant routing voor ontvangers: info@e-cowarenhuis.nl"}
+{"ts":"2025-08-18T16:04:37.759Z","level":"mail.info","message":"📋 Beschikbare tenants: E-cowarenhuis, Omnibuzz"}
+{"ts":"2025-08-18T16:04:37.760Z","level":"mail.info","message":"🎯 Checking tenant E-cowarenhuis voor allowedSenders (ontvangers): info@e-cowarenhuis.nl, algemeen@e-cowarenhuis.nl"}
+{"ts":"2025-08-18T16:04:37.762Z","level":"mail.info","message":"✅ Tenant E-cowarenhuis geselecteerd op basis van allowedSenders (ontvanger match)"}
+{"ts":"2025-08-18T16:04:37.763Z","level":"mail.info","message":"📧 Email routing resultaat: info@e-cowarenhuis.nl → Tenant: E-cowarenhuis"}
+{"ts":"2025-08-18T16:04:37.764Z","level":"mail.info","message":"🔐 Controleer afzender info@e-cowarenhuis.nl tegen tenant E-cowarenhuis allowedSenders: info@e-cowarenhuis.nl, algemeen@e-cowarenhuis.nl"}
+{"ts":"2025-08-18T16:04:37.765Z","level":"mail.info","message":"✅ Afzender info@e-cowarenhuis.nl toegestaan voor tenant E-cowarenhuis"}
+{"ts":"2025-08-18T16:04:37.766Z","level":"mail.info","message":"📤 Verzend email via Graph API:"}
+{"ts":"2025-08-18T16:04:37.768Z","level":"mail.info","message":"   Tenant: E-cowarenhuis"}
+{"ts":"2025-08-18T16:04:37.769Z","level":"mail.info","message":"   Mailbox: info@e-cowarenhuis.nl"}
+{"ts":"2025-08-18T16:04:37.770Z","level":"mail.info","message":"   Afzender: info@e-cowarenhuis.nl"}
+{"ts":"2025-08-18T16:04:37.771Z","level":"mail.info","message":"   Ontvangers: info@e-cowarenhuis.nl"}
+{"ts":"2025-08-18T16:04:38.166Z","level":"deliver.ok","msgId":"16b41474-2159-4546-8283-c4f67befc735","tenant":"E-cowarenhuis","from":"info@e-cowarenhuis.nl","rcptCount":1,"rcpts":"info@e-cowarenhuis.nl","sizeKB":306,"remoteIP":"192.168.111.16"}
+{"ts":"2025-08-18T16:08:12.329Z","level":"admin.info","message":"✅ Tenant reload ready - triggered on save"}
+{"ts":"2025-08-18T16:08:12.414Z","level":"admin.info","message":"Admin/SMTP ready on 2525"}
+{"ts":"2025-08-18T16:08:20.532Z","level":"mail.info","message":"🔍 Tenant routing voor ontvangers: info@e-cowarenhuis.nl"}
+{"ts":"2025-08-18T16:08:20.535Z","level":"mail.info","message":"📋 Beschikbare tenants: E-cowarenhuis, Omnibuzz"}
+{"ts":"2025-08-18T16:08:20.537Z","level":"mail.info","message":"🎯 Checking tenant E-cowarenhuis voor allowedSenders (ontvangers): info@e-cowarenhuis.nl, algemeen@e-cowarenhuis.nl"}
+{"ts":"2025-08-18T16:08:20.538Z","level":"mail.info","message":"✅ Tenant E-cowarenhuis geselecteerd op basis van allowedSenders (ontvanger match)"}
+{"ts":"2025-08-18T16:08:20.539Z","level":"mail.info","message":"📧 Email routing resultaat: info@e-cowarenhuis.nl → Tenant: E-cowarenhuis"}
+{"ts":"2025-08-18T16:08:20.542Z","level":"mail.info","message":"🔐 Controleer afzender info@e-cowarenhuis.nl tegen tenant E-cowarenhuis allowedSenders: info@e-cowarenhuis.nl, algemeen@e-cowarenhuis.nl"}
+{"ts":"2025-08-18T16:08:20.545Z","level":"mail.info","message":"✅ Afzender info@e-cowarenhuis.nl toegestaan voor tenant E-cowarenhuis"}
+{"ts":"2025-08-18T16:08:20.547Z","level":"mail.info","message":"📤 Verzend email via Graph API:"}
+{"ts":"2025-08-18T16:08:20.549Z","level":"mail.info","message":"   Tenant: E-cowarenhuis"}
+{"ts":"2025-08-18T16:08:20.552Z","level":"mail.info","message":"   Mailbox: info@e-cowarenhuis.nl"}
+{"ts":"2025-08-18T16:08:20.553Z","level":"mail.info","message":"   Afzender: info@e-cowarenhuis.nl"}
+{"ts":"2025-08-18T16:08:20.554Z","level":"mail.info","message":"   Ontvangers: info@e-cowarenhuis.nl"}
+{"ts":"2025-08-18T16:08:21.261Z","level":"deliver.ok","msgId":"fc27b87a-294f-40d1-a7b8-753480abe07f","tenant":"E-cowarenhuis","from":"info@e-cowarenhuis.nl","rcptCount":1,"rcpts":"info@e-cowarenhuis.nl","sizeKB":306,"remoteIP":"192.168.111.16"}
+{"ts":"2025-08-18T16:11:16.058Z","level":"admin.info","message":"✅ Tenant reload ready - triggered on save"}
+{"ts":"2025-08-18T16:11:16.223Z","level":"admin.info","message":"Admin/SMTP ready on 2525"}
+{"ts":"2025-08-18T16:11:29.193Z","level":"mail.info","message":"🔍 Tenant routing voor ontvangers: info@e-cowarenhuis.nl"}
+{"ts":"2025-08-18T16:11:29.195Z","level":"mail.info","message":"📋 Beschikbare tenants: E-cowarenhuis, Omnibuzz"}
+{"ts":"2025-08-18T16:11:29.196Z","level":"mail.info","message":"🎯 Checking tenant E-cowarenhuis voor allowedSenders (ontvangers): info@e-cowarenhuis.nl, algemeen@e-cowarenhuis.nl"}
+{"ts":"2025-08-18T16:11:29.197Z","level":"mail.info","message":"✅ Tenant E-cowarenhuis geselecteerd op basis van allowedSenders (ontvanger match)"}
+{"ts":"2025-08-18T16:11:29.198Z","level":"mail.info","message":"📧 Email routing resultaat: info@e-cowarenhuis.nl → Tenant: E-cowarenhuis"}
+{"ts":"2025-08-18T16:11:29.205Z","level":"mail.info","message":"🔐 Controleer afzender info@e-cowarenhuis.nl tegen tenant E-cowarenhuis allowedSenders: info@e-cowarenhuis.nl, algemeen@e-cowarenhuis.nl"}
+{"ts":"2025-08-18T16:11:29.208Z","level":"mail.info","message":"✅ Afzender info@e-cowarenhuis.nl toegestaan voor tenant E-cowarenhuis"}
+{"ts":"2025-08-18T16:11:29.210Z","level":"mail.info","message":"📤 Verzend email via Graph API:"}
+{"ts":"2025-08-18T16:11:29.211Z","level":"mail.info","message":"   Tenant: E-cowarenhuis"}
+{"ts":"2025-08-18T16:11:29.212Z","level":"mail.info","message":"   Mailbox: info@e-cowarenhuis.nl"}
+{"ts":"2025-08-18T16:11:29.213Z","level":"mail.info","message":"   Afzender: info@e-cowarenhuis.nl"}
+{"ts":"2025-08-18T16:11:29.215Z","level":"mail.info","message":"   Ontvangers: info@e-cowarenhuis.nl"}
+{"ts":"2025-08-18T16:11:29.730Z","level":"deliver.ok","msgId":"aa058193-8eff-428c-ae0d-788795275b96","tenant":"E-cowarenhuis","from":"info@e-cowarenhuis.nl","rcptCount":1,"rcpts":"info@e-cowarenhuis.nl","sizeKB":306,"remoteIP":"192.168.111.16"}
+{"ts":"2025-08-18T16:30:44.883Z","level":"admin.info","message":"🔄 Reloading tenants..."}
+{"ts":"2025-08-18T16:30:44.891Z","level":"admin.info","message":"📋 Config loaded: 2 tenants found"}
+{"ts":"2025-08-18T16:30:44.892Z","level":"admin.info","message":"Tenants reloaded successfully","count":2}
+{"ts":"2025-08-18T16:30:44.893Z","level":"admin.info","message":"✅ Tenants reloaded: 2 tenants loaded"}
+{"ts":"2025-08-18T16:30:44.894Z","level":"admin.info","message":"🏷️ Active tenants: E-cowarenhuis, Omnibuzz"}
+{"ts":"2025-08-18T16:30:53.607Z","level":"mail.info","message":"🔍 Tenant routing voor ontvangers: info2@e-cowarenhuis.nl"}
+{"ts":"2025-08-18T16:30:53.609Z","level":"mail.info","message":"📋 Beschikbare tenants: E-cowarenhuis, Omnibuzz"}
+{"ts":"2025-08-18T16:30:53.610Z","level":"mail.info","message":"🎯 Checking tenant Omnibuzz voor allowedSenders (ontvangers): t.detron@omnibuzz.nl"}
+{"ts":"2025-08-18T16:30:53.611Z","level":"mail.info","message":"🌐 Checking tenant Omnibuzz voor senderDomains (ontvanger domains): omnibuzz.nl"}
+{"ts":"2025-08-18T16:30:53.612Z","level":"mail.info","message":"🌍 Checking tenant E-cowarenhuis voor IP ranges: 192.168.111.0/24"}
+{"ts":"2025-08-18T16:30:53.613Z","level":"mail.info","message":"✅ Tenant E-cowarenhuis geselecteerd op basis van IP routing"}
+{"ts":"2025-08-18T16:30:53.614Z","level":"mail.info","message":"📧 Email routing resultaat: info2@e-cowarenhuis.nl → Tenant: E-cowarenhuis"}
+{"ts":"2025-08-18T16:30:53.614Z","level":"mail.info","message":"ℹ️ Geen afzender restricties voor tenant E-cowarenhuis"}
+{"ts":"2025-08-18T16:30:53.616Z","level":"mail.info","message":"📤 Verzend email via Graph API:"}
+{"ts":"2025-08-18T16:30:53.616Z","level":"mail.info","message":"   Tenant: E-cowarenhuis"}
+{"ts":"2025-08-18T16:30:53.617Z","level":"mail.info","message":"   Mailbox: info@e-cowarenhuis.nl"}
+{"ts":"2025-08-18T16:30:53.619Z","level":"mail.info","message":"   Afzender: info2@e-cowarenhuis.nl"}
+{"ts":"2025-08-18T16:30:53.620Z","level":"mail.info","message":"   Ontvangers: info2@e-cowarenhuis.nl"}
+{"ts":"2025-08-18T16:30:54.149Z","level":"deliver.ok","msgId":"2d30ef16-7784-4ff5-9322-9c7402398fca","tenant":"E-cowarenhuis","from":"info2@e-cowarenhuis.nl","rcptCount":1,"rcpts":"info2@e-cowarenhuis.nl","sizeKB":306,"remoteIP":"192.168.111.16"}
+{"ts":"2025-08-18T16:31:42.988Z","level":"admin.info","message":"🔄 Reloading tenants..."}
+{"ts":"2025-08-18T16:31:42.991Z","level":"admin.info","message":"📋 Config loaded: 2 tenants found"}
+{"ts":"2025-08-18T16:31:42.993Z","level":"admin.info","message":"Tenants reloaded successfully","count":2}
+{"ts":"2025-08-18T16:31:42.994Z","level":"admin.info","message":"✅ Tenants reloaded: 2 tenants loaded"}
+{"ts":"2025-08-18T16:31:42.995Z","level":"admin.info","message":"🏷️ Active tenants: E-cowarenhuis, Omnibuzz"}
+{"ts":"2025-08-18T16:32:22.453Z","level":"mail.info","message":"🔍 Tenant routing voor ontvangers: info@e-cowarenhuis.nl"}
+{"ts":"2025-08-18T16:32:22.454Z","level":"mail.info","message":"📋 Beschikbare tenants: E-cowarenhuis, Omnibuzz"}
+{"ts":"2025-08-18T16:32:22.455Z","level":"mail.info","message":"🎯 Checking tenant Omnibuzz voor allowedSenders (ontvangers): t.detron@omnibuzz.nl"}
+{"ts":"2025-08-18T16:32:22.456Z","level":"mail.info","message":"🌐 Checking tenant Omnibuzz voor senderDomains (ontvanger domains): omnibuzz.nl"}
+{"ts":"2025-08-18T16:32:22.457Z","level":"mail.info","message":"🌍 Checking tenant E-cowarenhuis voor IP ranges: 192.168.110.0/24"}
+{"ts":"2025-08-18T16:32:22.459Z","level":"mail.info","message":"🌍 Checking tenant Omnibuzz voor IP ranges: 10.100.20.0/24"}
+{"ts":"2025-08-18T16:32:22.460Z","level":"mail.info","message":"⚠️ Geen specifieke tenant match gevonden, gebruik fallback: E-cowarenhuis"}
+{"ts":"2025-08-18T16:32:22.461Z","level":"deliver.warn","tenant":"E-cowarenhuis","rcpts":"info@e-cowarenhuis.nl","remoteIP":"192.168.111.16","message":"No specific tenant match found, using fallback","reason":"fallback"}
+{"ts":"2025-08-18T16:32:22.462Z","level":"mail.info","message":"📧 Email routing resultaat: info@e-cowarenhuis.nl → Tenant: E-cowarenhuis"}
+{"ts":"2025-08-18T16:32:22.463Z","level":"mail.info","message":"ℹ️ Geen afzender restricties voor tenant E-cowarenhuis"}
+{"ts":"2025-08-18T16:32:22.465Z","level":"mail.info","message":"📤 Verzend email via Graph API:"}
+{"ts":"2025-08-18T16:32:22.466Z","level":"mail.info","message":"   Tenant: E-cowarenhuis"}
+{"ts":"2025-08-18T16:32:22.467Z","level":"mail.info","message":"   Mailbox: info@e-cowarenhuis.nl"}
+{"ts":"2025-08-18T16:32:22.468Z","level":"mail.info","message":"   Afzender: info@e-cowarenhuis.nl"}
+{"ts":"2025-08-18T16:32:22.469Z","level":"mail.info","message":"   Ontvangers: info@e-cowarenhuis.nl"}
+{"ts":"2025-08-18T16:32:22.889Z","level":"deliver.ok","msgId":"ae38a3b9-a0e1-432a-912c-b0ad6c1aeae7","tenant":"E-cowarenhuis","from":"info@e-cowarenhuis.nl","rcptCount":1,"rcpts":"info@e-cowarenhuis.nl","sizeKB":306,"remoteIP":"192.168.111.16"}
+{"ts":"2025-08-18T16:45:52.133Z","level":"admin.info","message":"🔄 Reloading tenants..."}
+{"ts":"2025-08-18T16:45:52.146Z","level":"admin.info","message":"📋 Config loaded: 2 tenants found"}
+{"ts":"2025-08-18T16:45:52.148Z","level":"admin.info","message":"Tenants reloaded successfully","count":2}
+{"ts":"2025-08-18T16:45:52.149Z","level":"admin.info","message":"✅ Tenants reloaded: 2 tenants loaded"}
+{"ts":"2025-08-18T16:45:52.150Z","level":"admin.info","message":"🏷️ Active tenants: E-cowarenhuis, Omnibuzz"}
+{"ts":"2025-08-18T17:22:32.188Z","level":"admin.info","message":"✅ Tenant reload ready - triggered on save"}
+{"ts":"2025-08-18T17:22:32.319Z","level":"admin.info","message":"Admin/SMTP ready on 2525"}
+{"ts":"2025-08-18T17:23:22.302Z","level":"mail.info","message":"🔍 Tenant routing voor ontvangers: info@e-cowarenhuis.nl"}
+{"ts":"2025-08-18T17:23:22.304Z","level":"mail.info","message":"📋 Beschikbare tenants: E-cowarenhuis, Omnibuzz"}
+{"ts":"2025-08-18T17:23:22.305Z","level":"mail.info","message":"🎯 Checking tenant Omnibuzz voor allowedSenders (ontvangers): t.detron@omnibuzz.nl"}
+{"ts":"2025-08-18T17:23:22.306Z","level":"mail.info","message":"🌐 Checking tenant Omnibuzz voor senderDomains (ontvanger domains): omnibuzz.nl"}
+{"ts":"2025-08-18T17:23:22.307Z","level":"mail.info","message":"🌍 Checking tenant E-cowarenhuis voor IP ranges (routing): 192.168.110.0/24"}
+{"ts":"2025-08-18T17:23:22.308Z","level":"mail.info","message":"🌍 Checking tenant Omnibuzz voor IP ranges (routing): 10.100.20.0/24"}
+{"ts":"2025-08-18T17:23:22.308Z","level":"mail.info","message":"⚠️ Geen specifieke tenant match gevonden, gebruik fallback: E-cowarenhuis"}
+{"ts":"2025-08-18T17:23:22.310Z","level":"deliver.warn","tenant":"E-cowarenhuis","rcpts":"info@e-cowarenhuis.nl","remoteIP":"192.168.111.16","message":"No specific tenant match found, using fallback","reason":"fallback"}
+{"ts":"2025-08-18T17:23:22.310Z","level":"mail.info","message":"📧 Email routing resultaat: info@e-cowarenhuis.nl → Tenant: E-cowarenhuis"}
+{"ts":"2025-08-18T17:23:22.311Z","level":"mail.info","message":"🌍 Controleer IP range voor tenant E-cowarenhuis: 192.168.111.16 tegen ranges: 192.168.110.0/24"}
+{"ts":"2025-08-18T17:23:22.312Z","level":"mail.info","message":"❌ IP 192.168.111.16 niet toegestaan voor tenant E-cowarenhuis"}
+{"ts":"2025-08-18T17:23:22.313Z","level":"mail.error","message":"Email verwerking gefaald","tenant":"E-cowarenhuis","afzender":"info@e-cowarenhuis.nl","ontvangers":"info@e-cowarenhuis.nl","error":"Error: IP not allowed for tenant: 192.168.111.16 not in ranges: 192.168.110.0/24","reason":"ip_not_allowed"}
+{"ts":"2025-08-18T17:23:22.314Z","level":"deliver.err","msgId":"e12f7869-dc55-4583-83ae-6a949767091d","tenant":"E-cowarenhuis","from":"info@e-cowarenhuis.nl","rcptCount":1,"rcpts":"info@e-cowarenhuis.nl","remoteIP":"192.168.111.16","error":"Error: IP not allowed for tenant: 192.168.111.16 not in ranges: 192.168.110.0/24","reason":"ip_not_allowed"}
+{"ts":"2025-08-18T17:23:55.078Z","level":"admin.info","message":"🔄 Reloading tenants..."}
+{"ts":"2025-08-18T17:23:55.081Z","level":"admin.info","message":"📋 Config loaded: 2 tenants found"}
+{"ts":"2025-08-18T17:23:55.083Z","level":"admin.info","message":"Tenants reloaded successfully","count":2}
+{"ts":"2025-08-18T17:23:55.085Z","level":"admin.info","message":"✅ Tenants reloaded: 2 tenants loaded"}
+{"ts":"2025-08-18T17:23:55.086Z","level":"admin.info","message":"🏷️ Active tenants: E-cowarenhuis, Omnibuzz"}
+{"ts":"2025-08-18T17:24:20.022Z","level":"mail.info","message":"🔍 Tenant routing voor ontvangers: info@e-cowarenhuis.nl"}
+{"ts":"2025-08-18T17:24:20.027Z","level":"mail.info","message":"📋 Beschikbare tenants: E-cowarenhuis, Omnibuzz"}
+{"ts":"2025-08-18T17:24:20.038Z","level":"mail.info","message":"🎯 Checking tenant Omnibuzz voor allowedSenders (ontvangers): t.detron@omnibuzz.nl"}
+{"ts":"2025-08-18T17:24:20.042Z","level":"mail.info","message":"🌐 Checking tenant Omnibuzz voor senderDomains (ontvanger domains): omnibuzz.nl"}
+{"ts":"2025-08-18T17:24:20.046Z","level":"mail.info","message":"🌍 Checking tenant E-cowarenhuis voor IP ranges (routing): 192.168.111.0/24"}
+{"ts":"2025-08-18T17:24:20.057Z","level":"mail.info","message":"✅ Tenant E-cowarenhuis geselecteerd op basis van IP routing"}
+{"ts":"2025-08-18T17:24:20.059Z","level":"mail.info","message":"📧 Email routing resultaat: info@e-cowarenhuis.nl → Tenant: E-cowarenhuis"}
+{"ts":"2025-08-18T17:24:20.061Z","level":"mail.info","message":"🌍 Controleer IP range voor tenant E-cowarenhuis: 192.168.111.16 tegen ranges: 192.168.111.0/24"}
+{"ts":"2025-08-18T17:24:20.066Z","level":"mail.info","message":"✅ IP 192.168.111.16 toegestaan voor tenant E-cowarenhuis"}
+{"ts":"2025-08-18T17:24:20.079Z","level":"mail.info","message":"ℹ️ Geen afzender restricties voor tenant E-cowarenhuis"}
+{"ts":"2025-08-18T17:24:20.084Z","level":"mail.info","message":"📤 Verzend email via Graph API:"}
+{"ts":"2025-08-18T17:24:20.087Z","level":"mail.info","message":"   Tenant: E-cowarenhuis"}
+{"ts":"2025-08-18T17:24:20.095Z","level":"mail.info","message":"   Mailbox: info@e-cowarenhuis.nl"}
+{"ts":"2025-08-18T17:24:20.097Z","level":"mail.info","message":"   Afzender: info@e-cowarenhuis.nl"}
+{"ts":"2025-08-18T17:24:20.101Z","level":"mail.info","message":"   Ontvangers: info@e-cowarenhuis.nl"}
+{"ts":"2025-08-18T17:24:20.808Z","level":"deliver.ok","msgId":"0f20d5b1-d708-472f-a510-1f323fc8d399","tenant":"E-cowarenhuis","from":"info@e-cowarenhuis.nl","rcptCount":1,"rcpts":"info@e-cowarenhuis.nl","sizeKB":306,"remoteIP":"192.168.111.16"}
+{"ts":"2025-08-18T17:35:12.678Z","level":"config.info","message":"Tenant reload ready - triggered on save"}
+{"ts":"2025-08-18T17:35:12.808Z","level":"config.info","message":"Admin/SMTP ready on 2525"}
+{"ts":"2025-08-18T17:36:23.518Z","level":"deliver.ok","msgId":"9cf29fe8-2b37-45e0-9d91-451624e032ab","tenant":"E-cowarenhuis","from":"info@e-cowarenhuis.nl","rcptCount":1,"rcpts":"info@e-cowarenhuis.nl","sizeKB":306,"remoteIP":"192.168.111.16"}
+{"ts":"2025-08-18T23:15:14.384Z","level":"config.info","message":"Tenant reload ready - triggered on save"}
+{"ts":"2025-08-18T23:15:14.485Z","level":"config.info","message":"Admin/SMTP ready on 2525"}
+{"ts":"2025-08-19T00:06:30.408Z","level":"config.info","message":"Tenant reload ready - triggered on save"}
+{"ts":"2025-08-19T00:06:30.508Z","level":"config.info","message":"Admin/SMTP ready on 2525"}
+{"ts":"2025-08-19T00:12:26.152Z","level":"config.info","message":"Tenant reload ready - triggered on save"}
+{"ts":"2025-08-19T00:12:26.245Z","level":"config.info","message":"Admin/SMTP ready on 2525"}
+{"ts":"2025-08-19T00:14:26.674Z","level":"config.info","message":"Tenant reload ready - triggered on save"}
+{"ts":"2025-08-19T00:14:26.750Z","level":"config.info","message":"Admin/SMTP ready on 2525"}
+{"ts":"2025-08-19T00:16:23.992Z","level":"config.info","message":"Tenant reload ready - triggered on save"}
+{"ts":"2025-08-19T00:16:24.052Z","level":"config.info","message":"Admin/SMTP ready on 2525"}
+{"ts":"2025-08-19T11:21:08.456Z","level":"config.info","message":"Tenant reload ready - triggered on save"}
+{"ts":"2025-08-19T11:21:08.564Z","level":"config.info","message":"Admin/SMTP ready on 2525"}
+{"ts":"2025-08-19T11:22:37.706Z","level":"config.info","message":"Tenant reload ready - triggered on save"}
+{"ts":"2025-08-19T11:22:37.769Z","level":"config.info","message":"Admin/SMTP ready on 2525"}
+{"ts":"2025-08-19T11:36:07.437Z","level":"config.info","message":"Tenant reload ready - triggered on save"}
+{"ts":"2025-08-19T11:36:07.501Z","level":"config.info","message":"Admin/SMTP ready on 2525"}
+{"ts":"2025-08-19T11:38:49.108Z","level":"config.info","message":"Tenant reload ready - triggered on save"}
+{"ts":"2025-08-19T11:38:49.151Z","level":"config.info","message":"Admin/SMTP ready on 2525"}
+{"ts":"2025-08-19T11:49:14.582Z","level":"config.info","message":"Tenants reloaded successfully","count":2,"tenants":["E-cowarenhuis","Omnibuzz"]}
+{"ts":"2025-08-19T11:50:11.955Z","level":"config.info","message":"Tenant reload ready - triggered on save"}
+{"ts":"2025-08-19T11:50:11.994Z","level":"config.info","message":"Admin/SMTP ready on 2525"}
+{"ts":"2025-08-19T11:51:37.170Z","level":"config.info","message":"Tenants reloaded successfully","count":2,"tenants":["E-cowarenhuis","Omnibuzz"]}
+{"ts":"2025-08-19T11:57:25.642Z","level":"config.info","message":"Tenant reload ready - triggered on save"}
+{"ts":"2025-08-19T11:57:25.682Z","level":"config.info","message":"Admin/SMTP ready on 2525"}
+{"ts":"2025-08-19T12:01:51.380Z","level":"config.info","message":"Tenant reload ready - triggered on save"}
+{"ts":"2025-08-19T12:01:51.417Z","level":"config.info","message":"Admin/SMTP ready on 2525"}
+{"ts":"2025-08-19T12:04:54.240Z","level":"deliver.err","msgId":"cc5d5ee0-4b74-446d-997a-4c842508d0f9","tenant":"unknown","remoteIP":"127.0.0.1","error":"IP not allowed","reason":"ip_not_allowed"}
+{"ts":"2025-08-19T12:05:19.088Z","level":"deliver.err","msgId":"197e1a8c-f47e-448a-bdb1-9d9db70f45ea","tenant":"unknown","remoteIP":"127.0.0.1","error":"IP not allowed","reason":"ip_not_allowed"}
+{"ts":"2025-08-19T12:08:29.245Z","level":"config.info","message":"Tenant reload ready - triggered on save"}
+{"ts":"2025-08-19T12:08:29.279Z","level":"config.info","message":"Admin/SMTP ready on 2525"}
+{"ts":"2025-08-19T12:08:34.047Z","level":"config.info","message":"Tenant reload ready - triggered on save"}
+{"ts":"2025-08-19T12:08:34.086Z","level":"config.info","message":"Admin/SMTP ready on 2525"}
+{"ts":"2025-08-19T12:08:52.583Z","level":"deliver.err","msgId":"de779a39-ae97-4e15-8691-0eaf0f4c1926","tenant":"unknown","remoteIP":"127.0.0.1","error":"IP not allowed","reason":"ip_not_allowed"}
+{"ts":"2025-08-19T12:09:20.814Z","level":"deliver.err","msgId":"6f191fc7-a726-4fc0-a11d-f27f750383b1","tenant":"unknown","remoteIP":"127.0.0.1","error":"IP not allowed","reason":"ip_not_allowed"}
+{"ts":"2025-08-19T13:33:07.251Z","level":"config.info","message":"Tenants reloaded successfully","count":2,"tenants":["E-cowarenhuis","Omnibuzz"]}
+{"ts":"2025-08-19T20:28:03.834Z","level":"config.info","message":"Tenant reload ready - triggered on save"}
+{"ts":"2025-08-19T20:28:03.870Z","level":"config.info","message":"Admin/SMTP ready on 2525"}
+{"ts":"2025-08-19T20:28:31.788Z","level":"deliver.err","msgId":"dd563ead-d176-4572-971f-a2e7c909eea2","tenant":"unknown","remoteIP":"127.0.0.1","error":"IP not allowed","reason":"ip_not_allowed"}
+{"ts":"2025-08-19T20:31:33.826Z","level":"deliver.err","msgId":"e940092e-c282-464b-bb38-674c1dc1e0a0","tenant":"unknown","remoteIP":"127.0.0.1","error":"IP not allowed","reason":"ip_not_allowed"}
+{"ts":"2025-08-19T20:32:02.447Z","level":"deliver.err","msgId":"0402432c-82c1-4ca9-8c5a-8e371a1ee8e4","tenant":"unknown","remoteIP":"127.0.0.1","error":"IP not allowed","reason":"ip_not_allowed"}
+{"ts":"2025-08-19T20:32:34.008Z","level":"config.info","message":"Tenants reloaded successfully","count":2,"tenants":["E-cowarenhuis","Omnibuzz"]}
+{"ts":"2025-08-19T20:33:40.851Z","level":"config.info","message":"Tenant reload ready - triggered on save"}
+{"ts":"2025-08-19T20:33:40.890Z","level":"config.info","message":"Admin/SMTP ready on 2525"}
+{"ts":"2025-08-19T20:33:40.891Z","level":"config.info","message":"SMTP server configured for service context"}
+{"ts":"2025-08-19T20:34:42.216Z","level":"deliver.err","msgId":"e3ef9d9c-d897-4028-a1ab-7c20dec4b6e4","tenant":"unknown","remoteIP":"127.0.0.1","error":"IP not allowed","reason":"ip_not_allowed"}
+{"ts":"2025-08-19T20:35:48.884Z","level":"config.info","message":"Tenants reloaded successfully","count":2,"tenants":["E-cowarenhuis","Omnibuzz"]}
+{"ts":"2025-08-19T20:35:56.989Z","level":"config.info","message":"Tenants reloaded successfully","count":2,"tenants":["E-cowarenhuis","Omnibuzz"]}
+{"ts":"2025-08-19T20:36:03.402Z","level":"deliver.err","msgId":"fe0b125a-4b0b-4979-86c4-64baa0872208","tenant":"unknown","remoteIP":"127.0.0.1","error":"IP not allowed","reason":"ip_not_allowed"}
+{"ts":"2025-08-19T20:37:25.731Z","level":"deliver.err","msgId":"6f3d2000-0730-42cc-9642-a7870e140e09","tenant":"unknown","remoteIP":"127.0.0.1","error":"IP not allowed","reason":"ip_not_allowed"}
+{"ts":"2025-08-19T20:38:52.862Z","level":"config.info","message":"Tenant reload ready - triggered on save"}
+{"ts":"2025-08-19T20:38:52.898Z","level":"config.info","message":"Admin/SMTP ready on 2525"}
+{"ts":"2025-08-19T20:38:52.899Z","level":"config.info","message":"SMTP server configured for service context"}
+{"ts":"2025-08-19T20:39:26.591Z","level":"debug","message":"Client verbinding","remoteIP":"192.168.111.16","allowlistIPs":["192.168.111.0/24","10.100.20.0/24"],"allowed":true}
+{"ts":"2025-08-19T20:39:27.075Z","level":"deliver.ok","msgId":"09492593-0b4d-4252-9255-c4c0d994d964","tenant":"E-cowarenhuis","from":"info@e-cowarenhuis.nl","rcptCount":1,"rcpts":"info@e-cowarenhuis.nl","sizeKB":306,"remoteIP":"192.168.111.16"}
+{"ts":"2025-08-19T20:53:06.130Z","level":"config.info","message":"Tenant reload ready - triggered on save"}
+{"ts":"2025-08-19T20:53:06.163Z","level":"config.info","message":"Admin/SMTP ready on 2525"}
+{"ts":"2025-08-19T20:53:06.164Z","level":"config.info","message":"SMTP server configured for service context"}
+{"ts":"2025-08-19T20:57:59.901Z","level":"config.info","message":"Tenant reload ready - triggered on save"}
+{"ts":"2025-08-19T20:57:59.935Z","level":"config.info","message":"Admin/SMTP ready on 2525"}
+{"ts":"2025-08-19T20:57:59.936Z","level":"config.info","message":"SMTP server configured for service context"}
+{"ts":"2025-08-19T21:13:38.820Z","level":"config.info","message":"Tenant reload ready - triggered on save"}
+{"ts":"2025-08-19T21:13:38.854Z","level":"config.info","message":"Admin/SMTP ready on 2525"}
+{"ts":"2025-08-19T21:13:38.854Z","level":"config.info","message":"SMTP server configured for service context"}
+{"ts":"2025-08-19T21:18:50.760Z","level":"config.info","message":"Tenant reload ready - triggered on save"}
+{"ts":"2025-08-19T21:18:50.796Z","level":"config.info","message":"Admin/SMTP ready on 2525"}
+{"ts":"2025-08-19T21:18:50.797Z","level":"config.info","message":"SMTP server configured for service context"}
+{"ts":"2025-08-19T21:36:06.242Z","level":"config.info","message":"Tenant reload ready - triggered on save"}
+{"ts":"2025-08-19T21:36:06.292Z","level":"config.info","message":"Admin/SMTP ready on 2525"}
+{"ts":"2025-08-19T21:36:06.292Z","level":"config.info","message":"SMTP server configured for service context"}
+{"ts":"2025-08-19T21:38:02.158Z","level":"debug","message":"Client verbinding","remoteIP":"192.168.111.16","allowlistIPs":["192.168.111.0/24","10.100.20.0/24"],"allowed":true}
+{"ts":"2025-08-19T21:38:02.797Z","level":"deliver.ok","msgId":"428df1ef-e494-4ed1-9f30-43c3d7775a8b","tenant":"E-cowarenhuis","from":"info@e-cowarenhuis.nl","rcptCount":1,"rcpts":"info@e-cowarenhuis.nl","sizeKB":306,"remoteIP":"192.168.111.16"}
+{"ts":"2025-08-19T21:40:03.776Z","level":"debug","message":"Client verbinding","remoteIP":"192.168.111.16","allowlistIPs":["192.168.111.0/24","10.100.20.0/24"],"allowed":true}
+{"ts":"2025-08-19T21:40:04.156Z","level":"deliver.ok","msgId":"b1fc5b93-595b-47ff-961b-0aa4c6e5a474","tenant":"E-cowarenhuis","from":"info@e-cowarenhuis.nl","rcptCount":1,"rcpts":"info@e-cowarenhuis.nl","sizeKB":306,"remoteIP":"192.168.111.16"}
+{"ts":"2025-08-19T21:55:49.245Z","level":"debug","message":"Client verbinding","remoteIP":"192.168.111.16","allowlistIPs":["192.168.111.0/24","10.100.20.0/24"],"allowed":true}
+{"ts":"2025-08-19T21:55:49.716Z","level":"deliver.ok","msgId":"58f897a3-7e46-4bdc-86e3-6e3cd85acccb","tenant":"E-cowarenhuis","from":"info@e-cowarenhuis.nl","rcptCount":1,"rcpts":"info@e-cowarenhuis.nl","sizeKB":306,"remoteIP":"192.168.111.16"}
+{"ts":"2025-08-19T21:56:29.520Z","level":"config.info","message":"Tenant reload ready - triggered on save"}
+{"ts":"2025-08-19T21:56:29.556Z","level":"config.info","message":"Admin/SMTP ready on 2525"}
+{"ts":"2025-08-19T21:56:29.556Z","level":"config.info","message":"SMTP server configured for service context"}
+{"ts":"2025-08-19T21:56:42.618Z","level":"debug","message":"Client verbinding","remoteIP":"192.168.111.16","allowlistIPs":["192.168.111.0/24","10.100.20.0/24"],"allowed":true}
+{"ts":"2025-08-19T21:56:43.092Z","level":"deliver.ok","msgId":"b0ca4143-a024-469e-947b-6ddc61a7af29","tenant":"E-cowarenhuis","from":"info@e-cowarenhuis.nl","rcptCount":1,"rcpts":"info@e-cowarenhuis.nl","sizeKB":306,"remoteIP":"192.168.111.16"}
+{"ts":"2025-08-19T21:59:37.251Z","level":"debug","message":"Client verbinding","remoteIP":"192.168.111.16","allowlistIPs":["192.168.111.0/24","10.100.20.0/24"],"allowed":true}
+{"ts":"2025-08-19T21:59:37.756Z","level":"deliver.ok","msgId":"b6801dd4-ab18-46a7-a334-be612f827e36","tenant":"E-cowarenhuis","from":"info@e-cowarenhuis.nl","rcptCount":1,"rcpts":"info@e-cowarenhuis.nl","sizeKB":306,"remoteIP":"192.168.111.16"}
+{"ts":"2025-08-19T22:00:07.464Z","level":"debug","message":"Client verbinding","remoteIP":"192.168.111.16","allowlistIPs":["192.168.111.0/24","10.100.20.0/24"],"allowed":true}
+{"ts":"2025-08-19T22:00:07.786Z","level":"deliver.ok","msgId":"df77715f-bfa7-47b6-a40c-697816421468","tenant":"E-cowarenhuis","from":"info@e-cowarenhuis.nl","rcptCount":1,"rcpts":"info@e-cowarenhuis.nl","sizeKB":306,"remoteIP":"192.168.111.16"}
+{"ts":"2025-08-19T22:24:49.398Z","level":"config.info","message":"Tenant reload ready - triggered on save"}
+{"ts":"2025-08-19T22:24:49.435Z","level":"config.info","message":"Admin/SMTP ready on 2525"}
+{"ts":"2025-08-19T22:24:49.435Z","level":"config.info","message":"SMTP server configured for service context"}
+{"ts":"2025-08-19T22:25:05.273Z","level":"debug","message":"Client verbinding","remoteIP":"192.168.111.16","allowlistIPs":["192.168.111.0/24","10.100.20.0/24"],"allowed":true}
+{"ts":"2025-08-19T22:25:05.748Z","level":"deliver.ok","msgId":"cd446a75-8d9f-4b7a-8292-7e54368dfcfd","tenant":"E-cowarenhuis","from":"info@e-cowarenhuis.nl","rcptCount":1,"rcpts":"info@e-cowarenhuis.nl","sizeKB":306,"remoteIP":"192.168.111.16"}
+{"ts":"2025-08-19T22:25:55.369Z","level":"debug","message":"Client verbinding","remoteIP":"192.168.111.16","allowlistIPs":["192.168.111.0/24","10.100.20.0/24"],"allowed":true}
+{"ts":"2025-08-19T22:25:55.785Z","level":"deliver.ok","msgId":"1ec22abf-f5c9-4482-857f-e4ec429d6e6e","tenant":"E-cowarenhuis","from":"info@e-cowarenhuis.nl","rcptCount":1,"rcpts":"info@e-cowarenhuis.nl","sizeKB":306,"remoteIP":"192.168.111.16"}
+{"ts":"2025-08-19T22:30:31.154Z","level":"debug","message":"Client verbinding","remoteIP":"192.168.111.16","allowlistIPs":["192.168.111.0/24","10.100.20.0/24"],"allowed":true}
+{"ts":"2025-08-19T22:30:31.824Z","level":"deliver.ok","msgId":"eed95617-d900-4f2f-9571-f7747271c5d2","tenant":"E-cowarenhuis","from":"info@e-cowarenhuis.nl","rcptCount":1,"rcpts":"info@e-cowarenhuis.nl","sizeKB":306,"remoteIP":"192.168.111.16"}
+{"ts":"2025-08-19T22:45:36.745Z","level":"config.info","message":"Tenant reload ready - triggered on save"}
+{"ts":"2025-08-19T22:45:36.780Z","level":"config.info","message":"Admin/SMTP ready on 2525"}
+{"ts":"2025-08-19T22:45:36.781Z","level":"config.info","message":"SMTP server configured for service context"}
+{"ts":"2025-08-19T22:45:51.604Z","level":"debug","message":"Client verbinding","remoteIP":"192.168.111.16","allowlistIPs":["192.168.111.0/24","10.100.20.0/24"],"allowed":true}
+{"ts":"2025-08-19T22:45:52.134Z","level":"deliver.ok","msgId":"5e6800e6-f6f2-4d63-980e-b34d0f73f710","tenant":"E-cowarenhuis","from":"info@e-cowarenhuis.nl","rcptCount":1,"rcpts":"info@e-cowarenhuis.nl","sizeKB":306,"remoteIP":"192.168.111.16"}
+{"ts":"2025-08-19T22:46:24.672Z","level":"debug","message":"Client verbinding","remoteIP":"192.168.111.16","allowlistIPs":["192.168.111.0/24","10.100.20.0/24"],"allowed":true}
+{"ts":"2025-08-19T22:46:25.058Z","level":"deliver.ok","msgId":"170b087d-29fe-4eac-8e90-9dd60c5e24be","tenant":"E-cowarenhuis","from":"info@e-cowarenhuis.nl","rcptCount":1,"rcpts":"info@e-cowarenhuis.nl","sizeKB":306,"remoteIP":"192.168.111.16"}
+{"ts":"2025-08-19T22:49:17.875Z","level":"debug","message":"Client verbinding","remoteIP":"192.168.111.16","allowlistIPs":["192.168.111.0/24","10.100.20.0/24"],"allowed":true}
+{"ts":"2025-08-19T22:49:18.300Z","level":"deliver.ok","msgId":"e383cf81-df92-4e6d-9af2-d13d50d19737","tenant":"E-cowarenhuis","from":"info@e-cowarenhuis.nl","rcptCount":1,"rcpts":"info@e-cowarenhuis.nl","sizeKB":306,"remoteIP":"192.168.111.16"}
+{"ts":"2025-08-19T23:01:52.297Z","level":"config.info","message":"Tenant reload ready - triggered on save"}
+{"ts":"2025-08-19T23:01:52.339Z","level":"config.info","message":"Admin/SMTP ready on 2525"}
+{"ts":"2025-08-19T23:01:52.340Z","level":"config.info","message":"SMTP server configured for service context"}
+{"ts":"2025-08-19T23:10:09.391Z","level":"config.info","message":"Tenant reload ready - triggered on save"}
+{"ts":"2025-08-19T23:10:09.429Z","level":"config.info","message":"Admin/SMTP ready on 2525"}
+{"ts":"2025-08-19T23:10:09.429Z","level":"config.info","message":"SMTP server configured for service context"}
+{"ts":"2025-08-19T23:11:15.411Z","level":"debug","message":"Client verbinding","remoteIP":"192.168.111.16","allowlistIPs":["192.168.111.0/24","10.100.20.0/24"],"allowed":true}
+{"ts":"2025-08-19T23:11:15.897Z","level":"deliver.ok","msgId":"c678e309-2173-47ab-a3a2-c8300826b2f6","tenant":"E-cowarenhuis","from":"info@e-cowarenhuis.nl","rcptCount":1,"rcpts":"info@e-cowarenhuis.nl","sizeKB":306,"remoteIP":"192.168.111.16"}
+{"ts":"2025-08-19T23:16:00.199Z","level":"config.info","message":"Tenant reload ready - triggered on save"}
+{"ts":"2025-08-19T23:16:00.246Z","level":"config.info","message":"Admin/SMTP ready on 2525"}
+{"ts":"2025-08-19T23:16:00.247Z","level":"config.info","message":"SMTP server configured for service context"}
+{"ts":"2025-08-19T23:17:30.205Z","level":"debug","message":"Client verbinding","remoteIP":"192.168.111.16","allowlistIPs":["192.168.111.0/24","10.100.20.0/24"],"allowed":true}
+{"ts":"2025-08-19T23:17:30.745Z","level":"deliver.ok","msgId":"3d8049f1-ee96-44b7-bbfb-ec328bb02288","tenant":"E-cowarenhuis","from":"info@e-cowarenhuis.nl","rcptCount":1,"rcpts":"info@e-cowarenhuis.nl","sizeKB":306,"remoteIP":"192.168.111.16"}
+{"ts":"2025-08-19T23:18:46.167Z","level":"config.info","message":"Tenant reload ready - triggered on save"}
+{"ts":"2025-08-19T23:18:46.208Z","level":"config.info","message":"Admin/SMTP ready on 2525"}
+{"ts":"2025-08-19T23:18:46.208Z","level":"config.info","message":"SMTP server configured for service context"}
+{"ts":"2025-08-19T23:18:59.470Z","level":"debug","message":"Client verbinding","remoteIP":"192.168.111.16","allowlistIPs":["192.168.111.0/24","10.100.20.0/24"],"allowed":true}
+{"ts":"2025-08-19T23:18:59.999Z","level":"deliver.ok","msgId":"717faa0a-b22d-4031-afa0-2677a188d242","tenant":"E-cowarenhuis","from":"info@e-cowarenhuis.nl","rcptCount":1,"rcpts":"info@e-cowarenhuis.nl","sizeKB":306,"remoteIP":"192.168.111.16"}
+{"ts":"2025-08-19T23:22:20.383Z","level":"config.info","message":"Tenant reload ready - triggered on save"}
+{"ts":"2025-08-19T23:22:20.435Z","level":"config.info","message":"Admin/SMTP ready on 2525"}
+{"ts":"2025-08-19T23:22:20.436Z","level":"config.info","message":"SMTP server configured for service context"}
+{"ts":"2025-08-19T23:26:33.200Z","level":"config.info","message":"Tenant reload ready - triggered on save"}
+{"ts":"2025-08-19T23:26:33.241Z","level":"config.info","message":"Admin/SMTP ready on 2525"}
+{"ts":"2025-08-19T23:26:33.241Z","level":"config.info","message":"SMTP server configured for service context"}
+{"ts":"2025-08-19T23:45:09.076Z","level":"config.info","message":"Tenant reload ready - triggered on save"}
+{"ts":"2025-08-19T23:45:09.121Z","level":"config.info","message":"Admin/SMTP ready on 2525"}
+{"ts":"2025-08-19T23:45:09.122Z","level":"config.info","message":"SMTP server configured for service context"}
+{"ts":"2025-08-19T23:45:26.767Z","level":"debug","message":"Client verbinding","remoteIP":"192.168.111.16","allowlistIPs":["192.168.111.0/24","10.100.20.0/24"],"allowed":true}
+{"ts":"2025-08-19T23:45:27.435Z","level":"deliver.ok","msgId":"3b4ca1e9-a211-47c0-8838-820e1a565ca1","tenant":"E-cowarenhuis","from":"info@e-cowarenhuis.nl","rcptCount":1,"rcpts":"info@e-cowarenhuis.nl","sizeKB":306,"remoteIP":"192.168.111.16"}
+{"ts":"2025-08-20T08:09:09.588Z","level":"debug","message":"Client verbinding","remoteIP":"192.168.111.16","allowlistIPs":["192.168.111.0/24","10.100.20.0/24"],"allowed":true}
+{"ts":"2025-08-20T08:09:10.247Z","level":"deliver.ok","msgId":"a62c5e91-b5d0-482a-a06e-3b1049c9125b","tenant":"E-cowarenhuis","from":"info@e-cowarenhuis.nl","rcptCount":1,"rcpts":"info@e-cowarenhuis.nl","sizeKB":306,"remoteIP":"192.168.111.16"}
+{"ts":"2025-08-20T08:17:19.465Z","level":"config.info","message":"Tenant reload ready - triggered on save"}
+{"ts":"2025-08-20T08:17:19.578Z","level":"config.info","message":"Admin/SMTP ready on 2525"}
+{"ts":"2025-08-20T08:17:19.579Z","level":"config.info","message":"SMTP server configured for service context"}
+{"ts":"2025-08-20T08:58:02.663Z","level":"config.info","message":"Tenant reload ready - triggered on save"}
+{"ts":"2025-08-20T08:58:02.703Z","level":"config.info","message":"Admin/SMTP ready on 2525"}
+{"ts":"2025-08-20T08:58:02.703Z","level":"config.info","message":"SMTP server configured for service context"}
+{"ts":"2025-08-20T09:06:47.925Z","level":"debug","message":"Client verbinding","remoteIP":"192.168.111.16","allowlistIPs":["192.168.111.0/24","10.100.20.0/24"],"allowed":true}
+{"ts":"2025-08-20T09:06:48.065Z","level":"mail.error","message":"Email verwerking gefaald","tenant":"E-cowarenhuis","afzender":"egbert@e-cowarenhuis.nl","ontvangers":"egbert@e-cowarenhuis.nl","error":"Error: Sender not allowed: egbert@e-cowarenhuis.nl for tenant: E-cowarenhuis","reason":"sender_not_allowed"}
+{"ts":"2025-08-20T09:06:48.066Z","level":"deliver.err","msgId":"3e4220eb-0d92-45f5-a20c-b8f8fe6ce2d2","tenant":"E-cowarenhuis","from":"egbert@e-cowarenhuis.nl","rcptCount":1,"rcpts":"egbert@e-cowarenhuis.nl","remoteIP":"192.168.111.16","error":"Error: Sender not allowed: egbert@e-cowarenhuis.nl for tenant: E-cowarenhuis","reason":"sender_not_allowed"}
+{"ts":"2025-08-20T09:12:16.310Z","level":"config.info","message":"Tenant reload ready - triggered on save"}
+{"ts":"2025-08-20T09:12:16.351Z","level":"config.info","message":"Admin/SMTP ready on 2525"}
+{"ts":"2025-08-20T09:12:16.352Z","level":"config.info","message":"SMTP server configured for service context"}
+{"ts":"2025-08-20T09:12:37.096Z","level":"debug","message":"Client verbinding","remoteIP":"192.168.111.16","allowlistIPs":["192.168.111.0/24","10.100.20.0/24"],"allowed":true}
+{"ts":"2025-08-20T09:12:37.161Z","level":"mail.error","message":"Email verwerking gefaald","tenant":"E-cowarenhuis","afzender":"egbert@e-cowarenhuis.nl","ontvangers":"egbert@e-cowarenhuis.nl","error":"Error: Sender not allowed: egbert@e-cowarenhuis.nl for tenant: E-cowarenhuis","reason":"sender_not_allowed"}
+{"ts":"2025-08-20T09:12:37.163Z","level":"deliver.err","msgId":"a22de1ba-65ef-44cc-b3ae-c4a4e9e5fe79","tenant":"E-cowarenhuis","from":"egbert@e-cowarenhuis.nl","rcptCount":1,"rcpts":"egbert@e-cowarenhuis.nl","remoteIP":"192.168.111.16","error":"Error: Sender not allowed: egbert@e-cowarenhuis.nl for tenant: E-cowarenhuis","reason":"sender_not_allowed"}
+{"ts":"2025-08-20T09:12:53.983Z","level":"debug","message":"Client verbinding","remoteIP":"192.168.111.16","allowlistIPs":["192.168.111.0/24","10.100.20.0/24"],"allowed":true}
+{"ts":"2025-08-20T09:12:54.020Z","level":"mail.error","message":"Email verwerking gefaald","tenant":"E-cowarenhuis","afzender":"egbert@e-cowarenhuis.nl","ontvangers":"egbert@e-cowarenhuis.nl","error":"Error: Sender not allowed: egbert@e-cowarenhuis.nl for tenant: E-cowarenhuis","reason":"sender_not_allowed"}
+{"ts":"2025-08-20T09:12:54.021Z","level":"deliver.err","msgId":"62333af2-3983-4291-a856-9bd3dd049a06","tenant":"E-cowarenhuis","from":"egbert@e-cowarenhuis.nl","rcptCount":1,"rcpts":"egbert@e-cowarenhuis.nl","remoteIP":"192.168.111.16","error":"Error: Sender not allowed: egbert@e-cowarenhuis.nl for tenant: E-cowarenhuis","reason":"sender_not_allowed"}
+{"ts":"2025-08-20T09:16:57.996Z","level":"config.info","message":"Tenant reload ready - triggered on save"}
+{"ts":"2025-08-20T09:16:58.037Z","level":"config.info","message":"Admin/SMTP ready on 2525"}
+{"ts":"2025-08-20T09:16:58.037Z","level":"config.info","message":"SMTP server configured for service context"}
+{"ts":"2025-08-20T09:17:09.692Z","level":"debug","message":"Client verbinding","remoteIP":"192.168.111.16","allowlistIPs":["192.168.111.0/24","10.100.20.0/24"],"allowed":true}
+{"ts":"2025-08-20T09:17:09.758Z","level":"mail.error","message":"Email verwerking gefaald","tenant":"E-cowarenhuis","afzender":"egbert@e-cowarenhuis.nl","ontvangers":"egbert@e-cowarenhuis.nl","error":"Error: Sender not allowed: egbert@e-cowarenhuis.nl for tenant: E-cowarenhuis","reason":"sender_not_allowed"}
+{"ts":"2025-08-20T09:17:09.759Z","level":"deliver.err","msgId":"bb52d25a-7571-4179-92c2-7993eef3949e","tenant":"E-cowarenhuis","from":"egbert@e-cowarenhuis.nl","rcptCount":1,"rcpts":"egbert@e-cowarenhuis.nl","remoteIP":"192.168.111.16","error":"Error: Sender not allowed: egbert@e-cowarenhuis.nl for tenant: E-cowarenhuis","reason":"sender_not_allowed"}
+{"ts":"2025-08-20T09:17:19.171Z","level":"debug","message":"Client verbinding","remoteIP":"192.168.111.16","allowlistIPs":["192.168.111.0/24","10.100.20.0/24"],"allowed":true}
+{"ts":"2025-08-20T09:17:19.737Z","level":"deliver.ok","msgId":"dbd146c4-60bc-4a9f-b6b8-6300db8288cc","tenant":"E-cowarenhuis","from":"info@e-cowarenhuis.nl","rcptCount":1,"rcpts":"info@e-cowarenhuis.nl","sizeKB":306,"remoteIP":"192.168.111.16"}
+{"ts":"2025-08-20T09:22:35.012Z","level":"config.info","message":"Tenant reload ready - triggered on save"}
+{"ts":"2025-08-20T09:22:35.051Z","level":"config.info","message":"Admin/SMTP ready on 2525"}
+{"ts":"2025-08-20T09:22:35.052Z","level":"config.info","message":"SMTP server configured for service context"}
+{"ts":"2025-08-20T09:25:54.092Z","level":"config.info","message":"Tenant reload ready - triggered on save"}
+{"ts":"2025-08-20T09:25:54.134Z","level":"config.info","message":"Admin/SMTP ready on 2525"}
+{"ts":"2025-08-20T09:25:54.135Z","level":"config.info","message":"SMTP server configured for service context"}
+{"ts":"2025-08-20T09:30:03.389Z","level":"config.info","message":"Tenant reload ready - triggered on save"}
+{"ts":"2025-08-20T09:30:03.423Z","level":"config.info","message":"Admin/SMTP ready on 2525"}
+{"ts":"2025-08-20T09:30:03.424Z","level":"config.info","message":"SMTP server configured for service context"}
+{"ts":"2025-08-20T09:30:22.319Z","level":"debug","message":"Client verbinding","remoteIP":"192.168.111.16","allowlistIPs":["192.168.111.0/24","10.100.20.0/24"],"allowed":true}
+{"ts":"2025-08-20T09:30:22.383Z","level":"mail.error","message":"Email verwerking gefaald","tenant":"E-cowarenhuis","afzender":"egbert@e-cowarenhuis.nl","ontvangers":"egbert@e-cowarenhuis.nl","error":"Error: Sender not allowed: egbert@e-cowarenhuis.nl for tenant: E-cowarenhuis","reason":"sender_not_allowed"}
+{"ts":"2025-08-20T09:30:22.384Z","level":"deliver.err","msgId":"3a2de700-94b0-4f9a-862d-51dfe41d7047","tenant":"E-cowarenhuis","from":"egbert@e-cowarenhuis.nl","rcptCount":1,"rcpts":"egbert@e-cowarenhuis.nl","remoteIP":"192.168.111.16","error":"Error: Sender not allowed: egbert@e-cowarenhuis.nl for tenant: E-cowarenhuis","reason":"sender_not_allowed"}
+{"ts":"2025-08-20T09:58:24.752Z","level":"debug","message":"Client verbinding","remoteIP":"192.168.111.16","allowlistIPs":["192.168.111.0/24","10.100.20.0/24"],"allowed":true}
+{"ts":"2025-08-20T09:58:24.827Z","level":"mail.error","message":"Email verwerking gefaald","tenant":"E-cowarenhuis","afzender":"egbert@e-cowarenhuis.nl","ontvangers":"egbert@e-cowarenhuis.nl","error":"Error: Sender not allowed: egbert@e-cowarenhuis.nl for tenant: E-cowarenhuis","reason":"sender_not_allowed"}
+{"ts":"2025-08-20T09:58:24.894Z","level":"deliver.err","msgId":"c9f92a5e-8d07-41e7-b791-c0a3de1bdc2c","tenant":"E-cowarenhuis","from":"egbert@e-cowarenhuis.nl","rcptCount":1,"rcpts":"egbert@e-cowarenhuis.nl","remoteIP":"192.168.111.16","error":"Error: Sender not allowed: egbert@e-cowarenhuis.nl for tenant: E-cowarenhuis","reason":"sender_not_allowed"}
+{"ts":"2025-08-20T10:07:32.171Z","level":"config.info","message":"Tenant reload ready - triggered on save"}
+{"ts":"2025-08-20T10:07:32.229Z","level":"config.info","message":"Admin/SMTP ready on 2525"}
+{"ts":"2025-08-20T10:07:32.230Z","level":"config.info","message":"SMTP server configured for service context"}
+{"ts":"2025-08-20T10:07:43.801Z","level":"debug","message":"Client verbinding","remoteIP":"192.168.111.16","allowlistIPs":["192.168.111.0/24","10.100.20.0/24"],"allowed":true}
+{"ts":"2025-08-20T10:07:43.926Z","level":"mail.error","message":"Email verwerking gefaald","tenant":"E-cowarenhuis","afzender":"egbert@e-cowarenhuis.nl","ontvangers":"egbert@e-cowarenhuis.nl","error":"Error: Sender not allowed: egbert@e-cowarenhuis.nl for tenant: E-cowarenhuis","reason":"sender_not_allowed"}
+{"ts":"2025-08-20T10:07:43.928Z","level":"deliver.err","msgId":"fffa1de0-5ac9-4e37-b8c4-31a92b6278f9","tenant":"E-cowarenhuis","from":"egbert@e-cowarenhuis.nl","rcptCount":1,"rcpts":"egbert@e-cowarenhuis.nl","remoteIP":"192.168.111.16","error":"Error: Sender not allowed: egbert@e-cowarenhuis.nl for tenant: E-cowarenhuis","reason":"sender_not_allowed"}
+{"ts":"2025-08-20T10:09:28.818Z","level":"debug","message":"Client verbinding","remoteIP":"192.168.111.16","allowlistIPs":["192.168.111.0/24","10.100.20.0/24"],"allowed":true}
+{"ts":"2025-08-20T10:09:28.872Z","level":"mail.error","message":"Email verwerking gefaald","tenant":"E-cowarenhuis","afzender":"egbert@e-cowarenhuis.nl","ontvangers":"egbert@e-cowarenhuis.nl","error":"Error: Sender not allowed: egbert@e-cowarenhuis.nl for tenant: E-cowarenhuis","reason":"sender_not_allowed"}
+{"ts":"2025-08-20T10:09:28.873Z","level":"deliver.err","msgId":"efaaf53b-d50e-47b8-803a-7ea9b1d8716a","tenant":"E-cowarenhuis","from":"egbert@e-cowarenhuis.nl","rcptCount":1,"rcpts":"egbert@e-cowarenhuis.nl","remoteIP":"192.168.111.16","error":"Error: Sender not allowed: egbert@e-cowarenhuis.nl for tenant: E-cowarenhuis","reason":"sender_not_allowed"}
+{"ts":"2025-08-20T10:12:25.788Z","level":"config.info","message":"Tenant reload ready - triggered on save"}
+{"ts":"2025-08-20T10:12:25.846Z","level":"config.info","message":"Admin/SMTP ready on 2525"}
+{"ts":"2025-08-20T10:12:25.847Z","level":"config.info","message":"SMTP server configured for service context"}
+{"ts":"2025-08-20T10:12:36.776Z","level":"debug","message":"Client verbinding","remoteIP":"192.168.111.16","allowlistIPs":["192.168.111.0/24","10.100.20.0/24"],"allowed":true}
+{"ts":"2025-08-20T10:12:36.871Z","level":"mail.error","message":"Email verwerking gefaald","tenant":"E-cowarenhuis","afzender":"egbert@e-cowarenhuis.nl","ontvangers":"egbert@e-cowarenhuis.nl","error":"Error: Sender not allowed: egbert@e-cowarenhuis.nl for tenant: E-cowarenhuis","reason":"sender_not_allowed"}
+{"ts":"2025-08-20T10:12:36.872Z","level":"deliver.err","msgId":"c38c3522-c8b5-44a5-a57a-7912808a5162","tenant":"E-cowarenhuis","from":"egbert@e-cowarenhuis.nl","rcptCount":1,"rcpts":"egbert@e-cowarenhuis.nl","remoteIP":"192.168.111.16","error":"Error: Sender not allowed: egbert@e-cowarenhuis.nl for tenant: E-cowarenhuis","reason":"sender_not_allowed"}
+{"ts":"2025-08-20T10:13:36.163Z","level":"config.info","message":"Tenants reloaded successfully","count":2,"tenants":["E-cowarenhuis","Omnibuzz"]}
+{"ts":"2025-08-20T10:13:41.352Z","level":"debug","message":"Client verbinding","remoteIP":"192.168.111.16","allowlistIPs":["192.168.111.0/24","10.100.20.0/24"],"allowed":true}
+{"ts":"2025-08-20T10:13:43.100Z","level":"deliver.ok","msgId":"626b5226-5128-420a-9389-a938a2290554","tenant":"E-cowarenhuis","from":"egbert@e-cowarenhuis.nl","rcptCount":1,"rcpts":"egbert@e-cowarenhuis.nl","sizeKB":306,"remoteIP":"192.168.111.16"}
+{"ts":"2025-08-20T10:24:57.730Z","level":"config.info","message":"Tenant reload ready - triggered on save"}
+{"ts":"2025-08-20T10:24:57.779Z","level":"config.info","message":"Admin/SMTP ready on 2525"}
+{"ts":"2025-08-20T10:24:57.780Z","level":"config.info","message":"SMTP server configured for service context"}
+{"ts":"2025-08-20T10:26:25.662Z","level":"config.info","message":"Tenant reload ready - triggered on save"}
+{"ts":"2025-08-20T10:26:25.719Z","level":"config.info","message":"Admin/SMTP ready on 2525"}
+{"ts":"2025-08-20T10:26:25.720Z","level":"config.info","message":"SMTP server configured for service context"}
+{"ts":"2025-08-20T10:35:02.442Z","level":"config.info","message":"Tenant reload ready - triggered on save"}
+{"ts":"2025-08-20T10:35:02.488Z","level":"config.info","message":"Admin/SMTP ready on 2525"}
+{"ts":"2025-08-20T10:35:02.489Z","level":"config.info","message":"SMTP server configured for service context"}
+{"ts":"2025-08-20T10:36:22.586Z","level":"debug","message":"Client verbinding","remoteIP":"192.168.111.16","allowlistIPs":["192.168.111.0/24","10.100.20.0/24"],"allowed":true}
+{"ts":"2025-08-20T10:36:23.205Z","level":"deliver.ok","msgId":"5eda65ba-78e0-4397-ae93-2459c911b655","tenant":"E-cowarenhuis","from":"egbert@e-cowarenhuis.nl","rcptCount":1,"rcpts":"egbert@e-cowarenhuis.nl","sizeKB":306,"remoteIP":"192.168.111.16"}
+{"ts":"2025-08-20T10:36:34.047Z","level":"debug","message":"Client verbinding","remoteIP":"192.168.111.16","allowlistIPs":["192.168.111.0/24","10.100.20.0/24"],"allowed":true}
+{"ts":"2025-08-20T10:36:34.082Z","level":"mail.error","message":"Email verwerking gefaald","tenant":"E-cowarenhuis","afzender":"eeeeegbert@e-cowarenhuis.nl","ontvangers":"eeeeegbert@e-cowarenhuis.nl","error":"Error: Sender not allowed: eeeeegbert@e-cowarenhuis.nl for tenant: E-cowarenhuis","reason":"sender_not_allowed"}
+{"ts":"2025-08-20T10:36:34.083Z","level":"deliver.err","msgId":"7b7c1928-740e-45f7-ab3f-e3e48d16a5d1","tenant":"E-cowarenhuis","from":"eeeeegbert@e-cowarenhuis.nl","rcptCount":1,"rcpts":"eeeeegbert@e-cowarenhuis.nl","remoteIP":"192.168.111.16","error":"Error: Sender not allowed: eeeeegbert@e-cowarenhuis.nl for tenant: E-cowarenhuis","reason":"sender_not_allowed"}
+{"ts":"2025-08-20T10:56:37.622Z","level":"config.info","message":"Tenant reload ready - triggered on save"}
+{"ts":"2025-08-20T10:56:37.664Z","level":"config.info","message":"Admin/SMTP ready on 2525"}
+{"ts":"2025-08-20T10:56:37.665Z","level":"config.info","message":"SMTP server configured for service context"}
+{"ts":"2025-08-20T11:04:38.784Z","level":"config.info","message":"Tenant reload ready - triggered on save"}
+{"ts":"2025-08-20T11:04:38.831Z","level":"config.info","message":"Admin/SMTP ready on 2525"}
+{"ts":"2025-08-20T11:04:38.832Z","level":"config.info","message":"SMTP server configured for service context"}
+{"ts":"2025-08-20T11:14:11.926Z","level":"debug","message":"Client verbinding","remoteIP":"192.168.111.16","allowlistIPs":["192.168.111.0/24","10.100.20.0/24"],"allowed":true}
+{"ts":"2025-08-20T11:14:12.096Z","level":"mail.error","message":"Email verwerking gefaald","tenant":"E-cowarenhuis","afzender":"eeeeegbert@e-cowarenhuis.nl","ontvangers":"eeeeegbert@e-cowarenhuis.nl","error":"Error: Sender not allowed: eeeeegbert@e-cowarenhuis.nl for tenant: E-cowarenhuis","reason":"sender_not_allowed"}
+{"ts":"2025-08-20T11:14:12.098Z","level":"deliver.err","msgId":"1608e057-45d0-42e4-950a-446e82523fca","tenant":"E-cowarenhuis","from":"eeeeegbert@e-cowarenhuis.nl","rcptCount":1,"rcpts":"eeeeegbert@e-cowarenhuis.nl","remoteIP":"192.168.111.16","error":"Error: Sender not allowed: eeeeegbert@e-cowarenhuis.nl for tenant: E-cowarenhuis","reason":"sender_not_allowed"}
+{"ts":"2025-08-20T11:14:31.366Z","level":"debug","message":"Client verbinding","remoteIP":"192.168.111.16","allowlistIPs":["192.168.111.0/24","10.100.20.0/24"],"allowed":true}
+{"ts":"2025-08-20T11:14:32.260Z","level":"deliver.ok","msgId":"1390b745-8797-4ce2-ad74-9fb4fcfb0da4","tenant":"E-cowarenhuis","from":"egbert@e-cowarenhuis.nl","rcptCount":1,"rcpts":"egbert@e-cowarenhuis.nl","sizeKB":306,"remoteIP":"192.168.111.16"}

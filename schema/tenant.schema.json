@@ -1,0 +1,122 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "TenantConfig",
+  "type": "object",
+  "required": [
+    "name",
+    "tenantId",
+    "clientId",
+    "auth",
+    "defaultMailbox",
+    "allowedSenders",
+    "senderOverrides"
+  ],
+  "properties": {
+    "name": {
+      "type": "string"
+    },
+    "tenantId": {
+      "type": "string"
+    },
+    "clientId": {
+      "type": "string"
+    },
+    "auth": {
+      "type": "object",
+      "required": [
+        "type",
+        "certPath",
+        "thumbprint"
+      ],
+      "properties": {
+        "type": {
+          "const": "certificate"
+        },
+        "certPath": {
+          "type": "string"
+        },
+        "thumbprint": {
+          "type": "string"
+        }
+      }
+    },
+    "defaultMailbox": {
+      "type": "string",
+      "format": "email"
+    },
+    "allowedSenders": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "format": "email"
+      }
+    },
+    "senderOverrides": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "string",
+        "format": "email"
+      }
+    },
+    "routing": {
+      "type": "object",
+      "properties": {
+        "ipRanges": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "senderDomains": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "priority": {
+          "type": "integer"
+        }
+      },
+      "additionalProperties": false
+    },
+    "policy": {
+      "type": "object",
+      "properties": {
+        "forceFrom": {
+          "type": "string",
+          "format": "email"
+        },
+        "maxMessageSizeKB": {
+          "type": "integer"
+        },
+        "rateLimit": {
+          "type": "object",
+          "properties": {
+            "perMinute": {
+              "type": "integer"
+            },
+            "perHour": {
+              "type": "integer"
+            }
+          },
+          "additionalProperties": false
+        },
+        "saveToSentItems": {
+          "type": "boolean"
+        },
+        "bccArchive": {
+          "type": "string",
+          "format": "email"
+        }
+      },
+      "additionalProperties": false
+    },
+    "tags": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    }
+  },
+  "additionalProperties": false
+}

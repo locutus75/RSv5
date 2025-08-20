@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+    <meta charset="utf-8">
+    <title>Test Login</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #0b1220;
+            color: white;
+            margin: 0;
+            padding: 20px;
+        }
+        
+        .overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.8);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+        }
+        
+        .overlay.hidden {
+            display: none;
+        }
+        
+        .overlay-card {
+            background: #0f172a;
+            border: 1px solid #21314f;
+            border-radius: 14px;
+            padding: 20px;
+            min-width: 300px;
+        }
+        
+        .overlay-card input {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 8px;
+            border: 1px solid #21314f;
+            background: #0b1a34;
+            color: white;
+            box-sizing: border-box;
+        }
+        
+        .overlay-card button {
+            background: #3b82f6;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+        
+        .content {
+            transition: filter 0.3s ease;
+        }
+        
+        .content.blurred {
+            filter: blur(8px);
+            pointer-events: none;
+        }
+        
+        .status {
+            margin: 20px 0;
+            padding: 10px;
+            background: #1e293b;
+            border-radius: 8px;
+        }
+    </style>
+</head>
+<body>
+    <div class="status">
+        <h2>Status: <span id="status">Loading...</span></h2>
+        <p>Token: <span id="tokenDisplay">Geen</span></p>
+    </div>
+    
+    <div class="content" id="mainContent">
+        <h1>Admin Console</h1>
+        <p>Deze content zou geblurred moeten zijn tot je inlogt.</p>
+        <p>Statistieken, Tenants en Events zouden hier moeten staan.</p>
+    </div>
+    
+    <div class="overlay" id="loginOverlay">
+        <div class="overlay-card">
+            <h2>Admin Login</h2>
+            <p>Voer je admin token in om de console te openen.</p>
+            <input type="password" id="tokenInput" placeholder="Admin token">
+            <button onclick="login()">Inloggen</button>
+        </div>
+    </div>
+    
+    <script>
+        // Eenvoudige test implementatie
+        function hasToken() {
+            return !!localStorage.getItem("adminToken");
+        }
+        
+        function toggleOverlay(show) {
+            const overlay = document.getElementById("loginOverlay");
+            const content = document.getElementById("mainContent");
+            
+            if (show) {
+                overlay.classList.remove("hidden");
+                content.classList.add("blurred");
+            } else {
+                overlay.classList.add("hidden");
+                content.classList.remove("blurred");
+            }
+        }
+        
+        function login() {
+            const token = document.getElementById("tokenInput").value.trim();
+            if (token) {
+                localStorage.setItem("adminToken", token);
+                document.getElementById("tokenDisplay").textContent = token.substring(0, 10) + "...";
+                document.getElementById("status").textContent = "Ingelogd";
+                toggleOverlay(false);
+            } else {
+                alert("Voer een token in");
+            }
+        }
+        
+        function init() {
+            console.log("Initialiseren...");
+            
+            if (!hasToken()) {
+                console.log("Geen token gevonden, toon overlay");
+                toggleOverlay(true);
+                document.getElementById("status").textContent = "Login vereist";
+            } else {
+                console.log("Token gevonden, verberg overlay");
+                toggleOverlay(false);
+                document.getElementById("status").textContent = "Ingelogd";
+                document.getElementById("tokenDisplay").textContent = 
+                    localStorage.getItem("adminToken").substring(0, 10) + "...";
+            }
+        }
+        
+        // Start bij DOM ready
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', init);
+        } else {
+            init();
+        }
+        
+        // Enter toets ondersteuning
+        document.getElementById("tokenInput").addEventListener("keypress", function(e) {
+            if (e.key === "Enter") {
+                login();
+            }
+        });
+    </script>
+</body>
+</html>

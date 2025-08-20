@@ -1,0 +1,28 @@
+{
+  "name": "E-cowarenhuis",
+  "tenantId": "a7310848-50ce-4808-86e7-c18e113c5d78",
+  "clientId": "515c9fc6-d3cc-48a6-b562-282657ecec8b",
+  "auth": {
+    "type": "certificate",
+    "certPath": "./certs/e-cowarenhuis.pem",
+    "thumbprint": "0B6C1AD1F9F1EA67795AB6B0FCBD7ED0C03E4950"
+  },
+  "defaultMailbox": "info@e-cowarenhuis.nl",
+  "allowedSenders": [
+    "info@e-cowarenhuis.nl",
+    "egbert@e-cowarenhuis.nl"
+  ],
+  "senderOverrides": {},
+  "routing": {
+    "ipRanges": [
+      "192.168.111.0/24"
+    ],
+    "senderDomains": [],
+    "priority": 100
+  },
+  "policy": {
+    "maxMessageSizeKB": 500,
+    "saveToSentItems": false
+  },
+  "tags": []
+}

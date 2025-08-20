@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+    <meta charset="utf-8">
+    <title>Test Auto-Refresh</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #0b1220;
+            color: white;
+            margin: 0;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        
+        .card {
+            background: #0f172a;
+            border: 1px solid #21314f;
+            border-radius: 14px;
+            padding: 20px;
+            margin: 20px 0;
+        }
+        
+        .status {
+            background: #1e293b;
+            padding: 10px;
+            border-radius: 8px;
+            margin: 10px 0;
+        }
+        
+        .controls {
+            display: flex;
+            gap: 10px;
+            margin: 20px 0;
+            align-items: center;
+        }
+        
+        button {
+            background: #3b82f6;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+        }
+        
+        button:hover {
+            background: #2563eb;
+        }
+        
+        .checkbox {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .log {
+            background: #0b1a34;
+            border: 1px solid #21314f;
+            border-radius: 8px;
+            padding: 10px;
+            height: 200px;
+            overflow-y: auto;
+            font-family: monospace;
+            font-size: 12px;
+        }
+        
+        .success { color: #22c55e; }
+        .error { color: #ef4444; }
+        .info { color: #3b82f6; }
+        .warning { color: #eab308; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🧪 Test Auto-Refresh Functionaliteit</h1>
+        
+        <div class="card">
+            <h2>Status</h2>
+            <div class="status">
+                <strong>Timer Status:</strong> <span id="timerStatus">Gestopt</span><br>
+                <strong>Laatste Update:</strong> <span id="lastUpdate">Nooit</span><br>
+                <strong>Update Count:</strong> <span id="updateCount">0</span>
+            </div>
+        </div>
+        
+        <div class="card">
+            <h2>Controls</h2>
+            <div class="controls">
+                <button onclick="startTimer()">Start Timer</button>
+                <button onclick="stopTimer()">Stop Timer</button>
+                <button onclick="manualUpdate()">Handmatige Update</button>
+                <button onclick="clearLog()">Log Wissen</button>
+                
+                <div class="checkbox">
+                    <input type="checkbox" id="autoRefresh" checked>
+                    <label for="autoRefresh">Auto-refresh</label>
+                </div>
+            </div>
+        </div>
+        
+        <div class="card">
+            <h2>Console Log</h2>
+            <div id="log" class="log"></div>
+        </div>
+    </div>
+    
+    <script>
+        // Eenvoudige test implementatie
+        let timer = null;
+        let updateCount = 0;
+        
+        function log(message, type = 'info') {
+            const logDiv = document.getElementById('log');
+            const timestamp = new Date().toLocaleTimeString();
+            const logEntry = document.createElement('div');
+            logEntry.className = type;
+            logEntry.textContent = `[${timestamp}] ${message}`;
+            logDiv.appendChild(logEntry);
+            logDiv.scrollTop = logDiv.scrollHeight;
+        }
+        
+        function updateStatus() {
+            document.getElementById('timerStatus').textContent = timer ? 'Actief' : 'Gestopt';
+            document.getElementById('lastUpdate').textContent = new Date().toLocaleTimeString();
+            document.getElementById('updateCount').textContent = updateCount;
+        }
+        
+        function startTimer() {
+            if (timer) {
+                log('⚠️ Timer is al actief', 'warning');
+                return;
+            }
+            
+            timer = setInterval(() => {
+                updateCount++;
+                log(`🔄 Auto-refresh tick #${updateCount}`, 'success');
+                updateStatus();
+            }, 3000); // 3 seconden voor snellere testing
+            
+            log('✅ Timer gestart (3s interval)', 'success');
+            updateStatus();
+        }
+        
+        function stopTimer() {
+            if (!timer) {
+                log('⚠️ Timer is niet actief', 'warning');
+                return;
+            }
+            
+            clearInterval(timer);
+            timer = null;
+            log('⏹️ Timer gestopt', 'info');
+            updateStatus();
+        }
+        
+        function manualUpdate() {
+            updateCount++;
+            log(`🔄 Handmatige update #${updateCount}`, 'info');
+            updateStatus();
+        }
+        
+        function clearLog() {
+            document.getElementById('log').innerHTML = '';
+            log('🧹 Log gewist', 'info');
+        }
+        
+        // Event listener voor checkbox
+        document.getElementById('autoRefresh').addEventListener('change', (e) => {
+            if (e.target.checked) {
+                log('✅ Auto-refresh ingeschakeld', 'success');
+                if (!timer) {
+                    startTimer();
+                }
+            } else {
+                log('❌ Auto-refresh uitgeschakeld', 'error');
+                if (timer) {
+                    stopTimer();
+                }
+            }
+        });
+        
+        // Start automatisch als checkbox is aangevinkt
+        if (document.getElementById('autoRefresh').checked) {
+            log('🚀 Auto-start timer (checkbox is aangevinkt)', 'success');
+            startTimer();
+        }
+        
+        // Initial log
+        log('🧪 Test pagina geladen', 'info');
+        log('💡 Gebruik de knoppen om auto-refresh te testen', 'info');
+        log('💡 Checkbox controleert automatische start/stop', 'info');
+    </script>
+</body>
+</html>

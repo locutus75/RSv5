@@ -1,0 +1,40 @@
+{
+  "name": "Omnibuzz",
+  "tenantId": "2c48116f-15a3-47ae-aaae-fa493a7b8800",
+  "clientId": "15749db8-b21b-4dc0-83ad-cd98a6e2fe26",
+  "auth": {
+    "type": "certificate",
+    "certPath": "./certs/Omnibuzz.pem",
+    "thumbprint": "2C642E5059BAF69C75472A2F22598691C52B7A47"
+  },
+  "defaultMailbox": "t.detron@omnibuzz.nl",
+  "allowedSenders": [
+    "t.detron@omnibuzz.nl"
+  ],
+  "senderOverrides": {},
+  "routing": {
+    "ipRanges": [
+      "10.100.20.0/24"
+    ],
+    "senderDomains": [
+      "omnibuzz.nl"
+    ],
+    "priority": 100
+  },
+  "policy": {
+    "forceFrom": "t.detron@omnibuzz.nl",
+    "maxMessageSizeKB": 55,
+    "rateLimit": {
+      "perMinute": 60,
+      "perHour": 5000
+    },
+    "saveToSentItems": false
+  },
+  "tags": [
+    "omnibuzz",
+    "productie",
+    "on-premise",
+    "printers",
+    "applicaties"
+  ]
+}

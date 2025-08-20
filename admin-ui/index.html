@@ -1,0 +1,317 @@
+<!doctype html>
+<html lang="nl">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+      <title>RileeSurfis Admin</title>
+      <link rel="icon" type="image/png" href="favicon.png">
+    <link rel="shortcut icon" type="image/png" href="favicon.png">
+    <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div id="toast" class="toast hidden"></div>
+  <header>
+    <div class="left">
+      <h1>RileeSurfis <span class="muted">Admin</span> <span class="version">v5.0.0</span></h1>
+      <div class="status">
+        <span class="dot" id="healthDot" title="Server status"></span>
+        <span id="healthText" class="muted">checking…</span>
+      </div>
+    </div>
+    <div class="center">
+      <div class="logo">
+        <img src="logo.png" alt="RileeSurfis Logo" />
+      </div>
+    </div>
+    <div class="right auth">
+      <input id="token" type="password" placeholder="Admin token (Bearer)" />
+      <button id="saveToken" class="primary">Opslaan</button>
+    </div>
+  </header>
+
+  <main class="grid">
+    <section class="card" id="statsCard">
+      <div class="card-head">
+        <h2>Statistieken</h2>
+        <div class="actions">
+          <select id="tenantFilterStats"><option value="">Alle tenants</option></select>
+          <select id="statsWindow">
+            <option value="15m">15 min</option>
+            <option value="60m" selected>60 min</option>
+            <option value="24h">24 uur</option>
+            <option value="all">Alles</option>
+          </select>
+
+          <button id="refreshStats">Vernieuw</button>
+          <button id="exportStatsCsv">Export Stats CSV</button>
+        </div>
+      </div>
+      <div class="table-wrap">
+        <table id="statsTable">
+          <thead>
+            <tr>
+              <th>Tenant</th>
+              <th>Verzonden</th>
+              <th>Errors</th>
+              <th>Trend</th>
+              <th>Acties</th>
+            </tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="card">
+      <div class="card-head">
+        <h2>Tenants</h2>
+        <div class="actions">
+          <button id="reloadBtn">🔄 Reload Tenants</button>
+          <button id="newTenantBtn" class="primary">Nieuwe tenant</button>
+        </div>
+      </div>
+      <div class="table-wrap">
+        <table id="tenantsTable">
+          <thead>
+            <tr>
+              <th data-k="name">Naam</th>
+              <th data-k="defaultMailbox">Mailbox</th>
+              <th data-k="tenantId">TenantId</th>
+              <th data-k="clientId">ClientId</th>
+              <th>Acties</th>
+            </tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+      </div>
+    </section>
+
+    
+
+    <section class="card events-card" id="eventsCard">
+      <div class="card-head">
+        <h2>Laatste events</h2>
+        <div class="actions">
+          <select id="tenantFilterEvents"><option value="">Alle tenants</option></select>
+          <select id="eventsReasonFilter">
+            <option value="all">Alle events</option>
+            <option value="success">Alleen geslaagde pogingen</option>
+            <option value="errors">Alleen errors</option>
+            <option value="config">Configuratie wijzigingen</option>
+            <option value="ip_not_allowed">IP niet toegestaan</option>
+            <option value="sender_not_allowed">Afzender niet toegestaan</option>
+            <option value="tenant_ip_not_allowed">Tenant IP niet toegestaan</option>
+            <option value="message_too_large">Bericht te groot</option>
+            <option value="tls_required">TLS vereist</option>
+            <option value="fallback">Fallback tenant</option>
+          </select>
+          <select id="eventsLimit">
+            <option>100</option>
+            <option selected>200</option>
+            <option>500</option>
+          </select>
+          <label class="check"><input type="checkbox" id="eventsAuto" checked/> Auto-refresh</label>
+          <button id="refreshEvents">Vernieuw</button>
+          <button id="exportEventsCsv">Export CSV</button>
+          <button id="eventColorConfigBtn" class="ghost" title="Event Kleur Configuratie">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="12" cy="12" r="3"></circle>
+              <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
+            </svg>
+          </button>
+        </div>
+      </div>
+      <div class="table-wrap">
+        <table id="eventsTable">
+          <thead><tr><th>Tijd</th><th>Niveau</th><th>Reden</th><th>Tenant</th><th>From</th><th>Rcpts</th><th>KB</th><th>Info</th></tr></thead>
+          <tbody></tbody>
+        </table>
+      </div>
+    </section>
+
+
+  </main>
+
+  <footer>
+    <small>Beveilig de Admin API met <code>ADMIN_TOKEN</code> en plaats desnoods achter een reverse proxy met TLS en IP-allowlist.</small>
+  </footer>
+
+  <div id="chartModal" class="modal hidden">
+    <div class="modal-content">
+      <div class="modal-head">
+        <h3 id="chartTitle">Trend</h3>
+        <div class="actions">
+          <select id="chartWindow">
+            <option value="15m">15 min</option>
+            <option value="60m" selected>60 min</option>
+            <option value="24h">24 uur</option>
+          </select>
+          <button id="closeChart" class="ghost">Sluiten</button>
+        </div>
+      </div>
+      <div id="chartBody"></div>
+    </div>
+  </div>
+
+  <!-- Tenant Form Modal -->
+  <div id="tenantModal" class="modal hidden">
+    <div class="modal-content">
+      <div class="modal-head">
+        <h3 id="tenantModalTitle">Tenant</h3>
+        <div class="actions">
+          <button id="tenantClose" class="ghost">Sluiten</button>
+        </div>
+      </div>
+      <div class="modal-body">
+        <div class="form-grid">
+          <div class="field"><label>Naam<input id="tfName" type="text" placeholder="Naam"/></label></div>
+          <div class="field"><label>Tenant ID<span class="hint"> (GUID)</span><input id="tfTenantId" type="text" placeholder="00000000-0000-0000-0000-000000000000"/></label></div>
+          <div class="field"><label>Client ID<span class="hint"> (App ID)</span><input id="tfClientId" type="text" placeholder="11111111-2222-3333-4444-555555555555"/></label></div>
+          <div class="field"><label>Default mailbox<input id="tfDefaultMailbox" type="email" placeholder="noreply@tenant.tld"/></label></div>
+  
+          <div class="field"><label>Allowed senders <span class="hint">(komma of 1 per regel)</span>
+            <textarea id="tfAllowedSenders" rows="3" placeholder="noreply@tenant.tld"></textarea>
+          </label></div>
+  
+          <div class="field"><label>Cert path<input id="tfCertPath" type="text" placeholder="./certs/tenant.pem"/></label></div>
+          <div class="field"><label>Thumbprint<input id="tfThumbprint" type="text" placeholder="CERTIFICATE THUMBPRINT"/></label></div>
+  
+          <div class="field"><label>Force From <span class="hint">(optioneel)</span><input id="tfForceFrom" type="email" placeholder="override@tenant.tld"/></label></div>
+          <div class="field"><label>Max size (KB)<input id="tfMaxSize" type="number" min="0" placeholder="5120"/></label></div>
+          <div class="field"><label>Rate per minuut<input id="tfRatePerMinute" type="number" min="0" placeholder="60"/></label></div>
+          <div class="field"><label>Rate per uur<input id="tfRatePerHour" type="number" min="0" placeholder="5000"/></label></div>
+          <div class="field"><label class="check"><input id="tfSaveToSent" type="checkbox"/> Save to Sent Items</label></div>
+          <div class="field"><label>BCC-archive<input id="tfBccArchive" type="email" placeholder="archive@tenant.tld"/></label></div>
+  
+          <div class="field"><label>Routing IP ranges <span class="hint">(1 per regel)</span>
+            <textarea id="tfIpRanges" rows="3" placeholder="203.0.113.0/24"></textarea>
+          </label></div>
+          <div class="field"><label>Routing domains <span class="hint">(komma-gescheiden)</span>
+            <input id="tfSenderDomains" type="text" placeholder="example.com, sub.example.com"/>
+          </label></div>
+          <div class="field"><label>Prioriteit<input id="tfPriority" type="number" min="0" placeholder="100"/></label></div>
+  
+          <div class="field"><label>Tags <span class="hint">(komma-gescheiden)</span>
+            <input id="tfTags" type="text" placeholder="prod, important"/>
+          </label></div>
+  
+          <p class="muted" style="grid-column: 1 / -1">Opmerking: <code>senderOverrides</code> wordt standaard leeg gezet en kan later via JSON geavanceerd worden ingevuld.</p>
+        </div>
+        <div class="button-row"><button id="tenantSave" class="primary">Opslaan</button></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Event Kleur Configuratie Modal -->
+  <div id="eventColorConfigModal" class="modal hidden">
+    <div class="modal-content modal-large">
+      <div class="modal-head">
+        <h3>⚙️ Event Kleur Configuratie</h3>
+        <div class="actions">
+          <button id="closeEventColorConfig" class="ghost">Sluiten</button>
+        </div>
+      </div>
+      <div class="modal-body">
+        <p class="muted">Configureer welke events welke kleur krijgen bij auto-refresh feedback.</p>
+        
+        <div class="color-config-grid">
+          <!-- Error Events (Rood) -->
+          <div class="color-section error-section">
+            <h3>🔴 Error Events (Rood)</h3>
+            <div class="event-rules">
+              <div class="rule-group">
+                <label>Level bevat:</label>
+                <input type="text" id="errorLevels" placeholder="error,mail.error" class="rule-input" />
+              </div>
+              <div class="rule-group">
+                <label>Reason bevat:</label>
+                <input type="text" id="errorReasons" placeholder="err,sender_not_allowed,tenant_ip_not_allowed" class="rule-input" />
+              </div>
+            </div>
+          </div>
+
+          <!-- Warning Events (Oranje) -->
+          <div class="color-section warning-section">
+            <h3>🟠 Warning Events (Oranje)</h3>
+            <div class="event-rules">
+              <div class="rule-group">
+                <label>Level bevat:</label>
+                <input type="text" id="warningLevels" placeholder="warning" class="rule-input" />
+              </div>
+              <div class="rule-group">
+                <label>Reason bevat:</label>
+                <input type="text" id="warningReasons" placeholder="warn,quota_warning,retry_required" class="rule-input" />
+              </div>
+            </div>
+          </div>
+
+          <!-- Info Events (Blauw) -->
+          <div class="color-section info-section">
+            <h3>🔵 Info Events (Blauw)</h3>
+            <div class="event-rules">
+              <div class="rule-group">
+                <label>Level bevat:</label>
+                <input type="text" id="infoLevels" placeholder="info,debug,verbose" class="rule-input" />
+              </div>
+              <div class="rule-group">
+                <label>Reason bevat:</label>
+                <input type="text" id="infoReasons" placeholder="info,debug" class="rule-input" />
+              </div>
+            </div>
+          </div>
+
+          <!-- Success Events (Groen) -->
+          <div class="color-section success-section">
+            <h3>🟢 Success Events (Groen)</h3>
+            <div class="event-rules">
+              <div class="rule-group">
+                <label>Level bevat:</label>
+                <input type="text" id="successLevels" placeholder="success,ok" class="rule-input" />
+              </div>
+              <div class="rule-group">
+                <label>Reason bevat:</label>
+                <input type="text" id="successReasons" placeholder="deliver.ok,ok" class="rule-input" />
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="config-help">
+          <h4>💡 Hoe het werkt:</h4>
+          <ul>
+            <li><strong>Level bevat:</strong> Event level moet één van deze waarden bevatten (komma-gescheiden)</li>
+            <li><strong>Reason bevat:</strong> Event reason moet één van deze waarden bevatten (komma-gescheiden)</li>
+            <li><strong>Prioriteit:</strong> Error > Warning > Info > Success (eerste match wint)</li>
+            <li><strong>Opslaan:</strong> Configuratie wordt opgeslagen in localStorage</li>
+          </ul>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button id="saveEventColors" class="primary">Opslaan</button>
+        <button id="resetEventColors" class="ghost">Reset naar Standaard</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="app.js"></script>
+
+<div id="loginOverlay" class="overlay hidden">
+  <div class="overlay-card">
+    <div class="login-header">
+      <div class="logo">
+        <img src="logo.png" alt="RileeSurfis Logo" />
+      </div>
+      <h2>RileeSurfis Admin</h2>
+      <p class="version">v5.0.0</p>
+    </div>
+    <p class="muted">Voer je admin token in om de beheerconsole te openen.</p>
+    <input id="overlayToken" type="password" placeholder="Admin token (Bearer)" />
+    <div class="actions">
+      <button id="overlaySave" class="primary">Inloggen</button>
+    </div>
+    <small class="muted">Tip: je kunt ook openen met <code>?token=...</code> in de URL.</small>
+  </div>
+</div>
+
+</body>
+</html>

@@ -1,0 +1,35 @@
+{
+  "name": "rileesurfis",
+  "version": "0.4.2",
+  "private": true,
+  "type": "module",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js",
+    "start:debug": "node index.js --debug",
+    "start:verbose": "node index.js --verbose",
+    "start:log-file": "node index.js --log-file ./logs/mail.log",
+    "start:debug-log": "node index.js --debug --log-file ./logs/mail-debug.log",
+    "start:verbose-log": "node index.js --verbose --log-file ./logs/mail-verbose.log",
+    "start:help": "node index.js --help",
+    "service:install": "node service-installer.cjs",
+    "service:uninstall": "node service-uninstaller.cjs",
+    "service:start": "node service-manager.cjs start",
+    "service:stop": "node service-manager.cjs stop",
+    "service:restart": "node service-manager.cjs restart",
+    "service:status": "node service-manager.cjs status"
+  },
+  "dependencies": {
+    "@azure/msal-node": "^2.6.5",
+    "ajv": "^8.12.0",
+    "ajv-formats": "^2.1.1",
+    "cidr-matcher": "^2.1.1",
+    "cors": "^2.8.5",
+    "express": "^4.19.2",
+    "mailparser": "^3.7.4",
+    "node-fetch": "^3.3.2",
+    "node-windows": "^1.0.0-beta.7",
+    "smtp-server": "^3.14.0",
+    "uuid": "^9.0.1"
+  }
+}

@@ -1,0 +1,71 @@
+2025-08-18T14:55:06.710Z [INFO] RSv5 Server gestart met logLevel: verbose 
+2025-08-18T14:55:06.721Z [INFO] Logging naar bestand: ./logs/app.log 
+2025-08-18T14:55:06.728Z [VERBOSE] Verbose mode ingeschakeld 
+2025-08-18T14:55:06.729Z [INFO] 📝 Loaded environment variable: ﻿ADMIN_TOKEN 
+2025-08-18T14:55:06.756Z [INFO] 📁 Configuratie laden van: C:\Users\leutscher_e\Apps\RSv5\config.json 
+2025-08-18T14:55:06.758Z [INFO] ✅ Service configuratie geladen 
+2025-08-18T14:55:06.759Z [INFO] 📋 2 tenant bestanden gevonden 
+2025-08-18T14:55:06.784Z [INFO] 🔍 Tenant laden: E_cowarenhuis.json 
+2025-08-18T14:55:06.788Z [INFO] ✅ Tenant geladen: E-cowarenhuis 
+2025-08-18T14:55:06.792Z [INFO] 🔍 Tenant laden: Omnibuzz.json 
+2025-08-18T14:55:06.794Z [INFO] ✅ Tenant geladen: Omnibuzz 
+2025-08-18T14:55:06.794Z [INFO] 🎯 Configuratie succesvol geladen - 2 tenants 
+2025-08-18T14:55:06.806Z [INFO] ✅ Tenant reload ready - triggered on save 
+2025-08-18T14:55:06.866Z [INFO] 🚀 Both servers started successfully 
+2025-08-18T14:55:06.867Z [INFO] 📧 SMTP server ready 
+2025-08-18T14:55:06.868Z [INFO] 🌐 Admin interface available at http://localhost:8080 
+2025-08-18T14:55:06.869Z [INFO] 🔐 Admin authentication enabled (ADMIN_TOKEN set) 
+2025-08-18T14:55:06.875Z [INFO] 🌐 Admin server started on port 8080 
+2025-08-18T14:55:06.881Z [INFO] Admin/SMTP ready on 2525 
+2025-08-18T14:55:46.176Z [INFO] 🔍 Tenant routing voor ontvangers: info@e-cowarenhuis.nl 
+2025-08-18T14:55:46.180Z [INFO] 📋 Beschikbare tenants: E-cowarenhuis, Omnibuzz 
+2025-08-18T14:55:46.187Z [INFO] 🎯 Checking tenant E-cowarenhuis voor allowedSenders (ontvangers): info@e-cowarenhuis.nl, algemeen@e-cowarenhuis.nl 
+2025-08-18T14:55:46.189Z [INFO] ✅ Tenant E-cowarenhuis geselecteerd op basis van allowedSenders (ontvanger match) 
+2025-08-18T14:55:46.191Z [INFO] 📧 Email routing resultaat: info@e-cowarenhuis.nl → Tenant: E-cowarenhuis 
+2025-08-18T14:55:46.193Z [INFO] 🔐 Controleer afzender info@e-cowarenhuis.nl tegen tenant E-cowarenhuis allowedSenders: info@e-cowarenhuis.nl, algemeen@e-cowarenhuis.nl 
+2025-08-18T14:55:46.208Z [INFO] ✅ Afzender info@e-cowarenhuis.nl toegestaan voor tenant E-cowarenhuis 
+2025-08-18T14:55:46.211Z [INFO] 📤 Verzend email via Graph API: 
+2025-08-18T14:55:46.223Z [INFO]    Tenant: E-cowarenhuis 
+2025-08-18T14:55:46.228Z [INFO]    Mailbox: info@e-cowarenhuis.nl 
+2025-08-18T14:55:46.231Z [INFO]    Afzender: info@e-cowarenhuis.nl 
+2025-08-18T14:55:46.233Z [INFO]    Ontvangers: info@e-cowarenhuis.nl 
+2025-08-18T14:55:46.238Z [INFO] 🔐 MSAL authenticatie voor tenant: E-cowarenhuis 
+2025-08-18T14:55:46.244Z [INFO] 🎫 Ophalen access token... 
+2025-08-18T14:55:46.542Z [INFO] ✅ Access token opgehaald (eyJ0eXAiOiJKV1QiLCJu...) 
+2025-08-18T14:55:46.551Z [INFO] 📧 Email bericht samengesteld: 
+2025-08-18T14:55:46.557Z [INFO]    Onderwerp: Logfile Report 
+2025-08-18T14:55:46.558Z [INFO]    Type: Text 
+2025-08-18T14:55:46.559Z [INFO]    To: info@e-cowarenhuis.nl 
+2025-08-18T14:55:46.560Z [INFO]    CC: geen 
+2025-08-18T14:55:46.561Z [INFO]    BCC: geen 
+2025-08-18T14:55:46.562Z [INFO] 🌐 Graph API URL: https://graph.microsoft.com/v1.0/users/info%40e-cowarenhuis.nl/sendMail 
+2025-08-18T14:55:46.563Z [INFO] 📤 Verzenden naar Graph API... 
+2025-08-18T14:55:47.031Z [INFO] 📊 Graph API Response: 
+2025-08-18T14:55:47.033Z [INFO]    Status: 202 Accepted 
+2025-08-18T14:55:47.044Z [INFO]    Headers: {"cache-control":"private","client-request-id":"2a87073b-1fed-4469-bc42-9e8cbb5d6133","content-length":"0","date":"Mon, 18 Aug 2025 14:55:45 GMT","request-id":"2a87073b-1fed-4469-bc42-9e8cbb5d6133","strict-transport-security":"max-age=31536000","x-ms-ags-diagnostic":"{\"ServerInfo\":{\"DataCenter\":\"West Europe\",\"Slice\":\"E\",\"Ring\":\"5\",\"ScaleUnit\":\"007\",\"RoleInstance\":\"AM4PEPF0002AB5D\"}}"}
+2025-08-18T14:55:47.046Z [INFO] ✅ Email succesvol verzonden via Graph API 
+2025-08-18T14:55:47.047Z [INFO] {"ts":"2025-08-18T14:55:47.047Z","level":"deliver.ok","msgId":"a5b11d03-77f6-48c9-a952-bb8e2757b6fa","tenant":"E-cowarenhuis","from":"info@e-cowarenhuis.nl","rcptCount":1,"rcpts":"info@e-cowarenhuis.nl","sizeKB":306,"remoteIP":"192.168.111.16"} 
+2025-08-18T15:00:15.179Z [ERROR] ❌ Email verwerking gefaald: 
+2025-08-18T15:00:15.181Z [ERROR]    Tenant: E-cowarenhuis 
+2025-08-18T15:00:15.183Z [ERROR]    Afzender: info2@e-cowarenhuis.nl 
+2025-08-18T15:00:15.191Z [ERROR]    Ontvangers: info2@e-cowarenhuis.nl 
+2025-08-18T15:00:15.192Z [ERROR]    Error: Error: Sender not allowed: info2@e-cowarenhuis.nl for tenant: E-cowarenhuis 
+2025-08-18T15:00:15.196Z [ERROR]    Reason: sender_not_allowed 
+2025-08-18T15:29:24.300Z [INFO] RSv5 Server gestart met logLevel: info 
+2025-08-18T15:29:24.313Z [INFO] Logging naar bestand: ./logs/app.log 
+2025-08-18T15:29:24.316Z [INFO] 📝 Loaded environment variable: ﻿ADMIN_TOKEN 
+2025-08-18T15:29:24.363Z [INFO] 📁 Configuratie laden van: C:\Users\leutscher_e\Apps\RSv5\config.json 
+2025-08-18T15:29:24.366Z [INFO] ✅ Service configuratie geladen 
+2025-08-18T15:29:24.369Z [INFO] 📋 2 tenant bestanden gevonden 
+2025-08-18T15:29:24.392Z [INFO] 🔍 Tenant laden: E_cowarenhuis.json 
+2025-08-18T15:29:24.406Z [INFO] ✅ Tenant geladen: E-cowarenhuis 
+2025-08-18T15:29:24.416Z [INFO] 🔍 Tenant laden: Omnibuzz.json 
+2025-08-18T15:29:24.441Z [INFO] ✅ Tenant geladen: Omnibuzz 
+2025-08-18T15:29:24.455Z [INFO] 🎯 Configuratie succesvol geladen - 2 tenants 
+2025-08-18T15:29:24.555Z [INFO] ✅ Tenant reload ready - triggered on save 
+2025-08-18T15:29:24.674Z [INFO] 🚀 Both servers started successfully 
+2025-08-18T15:29:24.676Z [INFO] 📧 SMTP server ready 
+2025-08-18T15:29:24.685Z [INFO] 🌐 Admin interface available at http://localhost:8080 
+2025-08-18T15:29:24.688Z [INFO] 🔐 Admin authentication enabled (ADMIN_TOKEN set) 
+2025-08-18T15:29:24.702Z [INFO] 🌐 Admin server started on port 8080 
+2025-08-18T15:29:24.737Z [INFO] Admin/SMTP ready on 2525 

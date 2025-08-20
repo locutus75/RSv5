@@ -1,0 +1,126 @@
+2025-08-18T16:04:26.450Z [INFO] [MAIL] [admin.info] {"message":"Admin/SMTP ready on 2525"} 
+2025-08-18T16:04:37.757Z [INFO] [MAIL] [mail.info] {"message":"🔍 Tenant routing voor ontvangers: info@e-cowarenhuis.nl"} 
+2025-08-18T16:04:37.759Z [INFO] [MAIL] [mail.info] {"message":"📋 Beschikbare tenants: E-cowarenhuis, Omnibuzz"} 
+2025-08-18T16:04:37.760Z [INFO] [MAIL] [mail.info] {"message":"🎯 Checking tenant E-cowarenhuis voor allowedSenders (ontvangers): info@e-cowarenhuis.nl, algemeen@e-cowarenhuis.nl"} 
+2025-08-18T16:04:37.762Z [INFO] [MAIL] [mail.info] {"message":"✅ Tenant E-cowarenhuis geselecteerd op basis van allowedSenders (ontvanger match)"} 
+2025-08-18T16:04:37.763Z [INFO] [MAIL] [mail.info] {"message":"📧 Email routing resultaat: info@e-cowarenhuis.nl → Tenant: E-cowarenhuis"} 
+2025-08-18T16:04:37.764Z [INFO] [MAIL] [mail.info] {"message":"🔐 Controleer afzender info@e-cowarenhuis.nl tegen tenant E-cowarenhuis allowedSenders: info@e-cowarenhuis.nl, algemeen@e-cowarenhuis.nl"} 
+2025-08-18T16:04:37.765Z [INFO] [MAIL] [mail.info] {"message":"✅ Afzender info@e-cowarenhuis.nl toegestaan voor tenant E-cowarenhuis"} 
+2025-08-18T16:04:37.766Z [INFO] [MAIL] [mail.info] {"message":"📤 Verzend email via Graph API:"} 
+2025-08-18T16:04:37.768Z [INFO] [MAIL] [mail.info] {"message":"   Tenant: E-cowarenhuis"} 
+2025-08-18T16:04:37.769Z [INFO] [MAIL] [mail.info] {"message":"   Mailbox: info@e-cowarenhuis.nl"} 
+2025-08-18T16:04:37.770Z [INFO] [MAIL] [mail.info] {"message":"   Afzender: info@e-cowarenhuis.nl"} 
+2025-08-18T16:04:37.772Z [INFO] [MAIL] [mail.info] {"message":"   Ontvangers: info@e-cowarenhuis.nl"} 
+2025-08-18T16:04:38.166Z [INFO] [MAIL] [deliver.ok] {"msgId":"16b41474-2159-4546-8283-c4f67befc735","tenant":"E-cowarenhuis","from":"info@e-cowarenhuis.nl","rcptCount":1,"rcpts":"info@e-cowarenhuis.nl","sizeKB":306,"remoteIP":"192.168.111.16"} 
+2025-08-18T16:08:12.414Z [INFO] [MAIL] [admin.info] {"message":"Admin/SMTP ready on 2525"} 
+2025-08-18T16:08:20.532Z [INFO] [MAIL] [mail.info] {"message":"🔍 Tenant routing voor ontvangers: info@e-cowarenhuis.nl"} 
+2025-08-18T16:08:20.535Z [INFO] [MAIL] [mail.info] {"message":"📋 Beschikbare tenants: E-cowarenhuis, Omnibuzz"} 
+2025-08-18T16:08:20.537Z [INFO] [MAIL] [mail.info] {"message":"🎯 Checking tenant E-cowarenhuis voor allowedSenders (ontvangers): info@e-cowarenhuis.nl, algemeen@e-cowarenhuis.nl"} 
+2025-08-18T16:08:20.538Z [INFO] [MAIL] [mail.info] {"message":"✅ Tenant E-cowarenhuis geselecteerd op basis van allowedSenders (ontvanger match)"} 
+2025-08-18T16:08:20.539Z [INFO] [MAIL] [mail.info] {"message":"📧 Email routing resultaat: info@e-cowarenhuis.nl → Tenant: E-cowarenhuis"} 
+2025-08-18T16:08:20.542Z [INFO] [MAIL] [mail.info] {"message":"🔐 Controleer afzender info@e-cowarenhuis.nl tegen tenant E-cowarenhuis allowedSenders: info@e-cowarenhuis.nl, algemeen@e-cowarenhuis.nl"} 
+2025-08-18T16:08:20.545Z [INFO] [MAIL] [mail.info] {"message":"✅ Afzender info@e-cowarenhuis.nl toegestaan voor tenant E-cowarenhuis"} 
+2025-08-18T16:08:20.547Z [INFO] [MAIL] [mail.info] {"message":"📤 Verzend email via Graph API:"} 
+2025-08-18T16:08:20.550Z [INFO] [MAIL] [mail.info] {"message":"   Tenant: E-cowarenhuis"} 
+2025-08-18T16:08:20.552Z [INFO] [MAIL] [mail.info] {"message":"   Mailbox: info@e-cowarenhuis.nl"} 
+2025-08-18T16:08:20.553Z [INFO] [MAIL] [mail.info] {"message":"   Afzender: info@e-cowarenhuis.nl"} 
+2025-08-18T16:08:20.554Z [INFO] [MAIL] [mail.info] {"message":"   Ontvangers: info@e-cowarenhuis.nl"} 
+2025-08-18T16:08:21.261Z [INFO] [MAIL] [deliver.ok] {"msgId":"fc27b87a-294f-40d1-a7b8-753480abe07f","tenant":"E-cowarenhuis","from":"info@e-cowarenhuis.nl","rcptCount":1,"rcpts":"info@e-cowarenhuis.nl","sizeKB":306,"remoteIP":"192.168.111.16"} 
+2025-08-18T16:11:16.224Z [INFO] [MAIL] [admin.info] {"message":"Admin/SMTP ready on 2525"} 
+2025-08-18T16:11:29.193Z [INFO] [MAIL] [mail.info] {"message":"🔍 Tenant routing voor ontvangers: info@e-cowarenhuis.nl"} 
+2025-08-18T16:11:29.195Z [INFO] [MAIL] [mail.info] {"message":"📋 Beschikbare tenants: E-cowarenhuis, Omnibuzz"} 
+2025-08-18T16:11:29.196Z [INFO] [MAIL] [mail.info] {"message":"🎯 Checking tenant E-cowarenhuis voor allowedSenders (ontvangers): info@e-cowarenhuis.nl, algemeen@e-cowarenhuis.nl"} 
+2025-08-18T16:11:29.197Z [INFO] [MAIL] [mail.info] {"message":"✅ Tenant E-cowarenhuis geselecteerd op basis van allowedSenders (ontvanger match)"} 
+2025-08-18T16:11:29.198Z [INFO] [MAIL] [mail.info] {"message":"📧 Email routing resultaat: info@e-cowarenhuis.nl → Tenant: E-cowarenhuis"} 
+2025-08-18T16:11:29.205Z [INFO] [MAIL] [mail.info] {"message":"🔐 Controleer afzender info@e-cowarenhuis.nl tegen tenant E-cowarenhuis allowedSenders: info@e-cowarenhuis.nl, algemeen@e-cowarenhuis.nl"} 
+2025-08-18T16:11:29.208Z [INFO] [MAIL] [mail.info] {"message":"✅ Afzender info@e-cowarenhuis.nl toegestaan voor tenant E-cowarenhuis"} 
+2025-08-18T16:11:29.210Z [INFO] [MAIL] [mail.info] {"message":"📤 Verzend email via Graph API:"} 
+2025-08-18T16:11:29.211Z [INFO] [MAIL] [mail.info] {"message":"   Tenant: E-cowarenhuis"} 
+2025-08-18T16:11:29.212Z [INFO] [MAIL] [mail.info] {"message":"   Mailbox: info@e-cowarenhuis.nl"} 
+2025-08-18T16:11:29.213Z [INFO] [MAIL] [mail.info] {"message":"   Afzender: info@e-cowarenhuis.nl"} 
+2025-08-18T16:11:29.215Z [INFO] [MAIL] [mail.info] {"message":"   Ontvangers: info@e-cowarenhuis.nl"} 
+2025-08-18T16:11:29.730Z [INFO] [MAIL] [deliver.ok] {"msgId":"aa058193-8eff-428c-ae0d-788795275b96","tenant":"E-cowarenhuis","from":"info@e-cowarenhuis.nl","rcptCount":1,"rcpts":"info@e-cowarenhuis.nl","sizeKB":306,"remoteIP":"192.168.111.16"} 
+2025-08-18T16:30:44.883Z [INFO] [MAIL] [admin.info] {"message":"🔄 Reloading tenants..."} 
+2025-08-18T16:30:44.891Z [INFO] [MAIL] [admin.info] {"message":"📋 Config loaded: 2 tenants found"} 
+2025-08-18T16:30:44.892Z [INFO] [MAIL] [admin.info] {"message":"Tenants reloaded successfully","count":2} 
+2025-08-18T16:30:44.893Z [INFO] [MAIL] [admin.info] {"message":"✅ Tenants reloaded: 2 tenants loaded"} 
+2025-08-18T16:30:44.894Z [INFO] [MAIL] [admin.info] {"message":"🏷️ Active tenants: E-cowarenhuis, Omnibuzz"} 
+2025-08-18T16:30:53.607Z [INFO] [MAIL] [mail.info] {"message":"🔍 Tenant routing voor ontvangers: info2@e-cowarenhuis.nl"} 
+2025-08-18T16:30:53.609Z [INFO] [MAIL] [mail.info] {"message":"📋 Beschikbare tenants: E-cowarenhuis, Omnibuzz"} 
+2025-08-18T16:30:53.610Z [INFO] [MAIL] [mail.info] {"message":"🎯 Checking tenant Omnibuzz voor allowedSenders (ontvangers): t.detron@omnibuzz.nl"} 
+2025-08-18T16:30:53.611Z [INFO] [MAIL] [mail.info] {"message":"🌐 Checking tenant Omnibuzz voor senderDomains (ontvanger domains): omnibuzz.nl"} 
+2025-08-18T16:30:53.612Z [INFO] [MAIL] [mail.info] {"message":"🌍 Checking tenant E-cowarenhuis voor IP ranges: 192.168.111.0/24"} 
+2025-08-18T16:30:53.613Z [INFO] [MAIL] [mail.info] {"message":"✅ Tenant E-cowarenhuis geselecteerd op basis van IP routing"} 
+2025-08-18T16:30:53.614Z [INFO] [MAIL] [mail.info] {"message":"📧 Email routing resultaat: info2@e-cowarenhuis.nl → Tenant: E-cowarenhuis"} 
+2025-08-18T16:30:53.614Z [INFO] [MAIL] [mail.info] {"message":"ℹ️ Geen afzender restricties voor tenant E-cowarenhuis"} 
+2025-08-18T16:30:53.616Z [INFO] [MAIL] [mail.info] {"message":"📤 Verzend email via Graph API:"} 
+2025-08-18T16:30:53.616Z [INFO] [MAIL] [mail.info] {"message":"   Tenant: E-cowarenhuis"} 
+2025-08-18T16:30:53.618Z [INFO] [MAIL] [mail.info] {"message":"   Mailbox: info@e-cowarenhuis.nl"} 
+2025-08-18T16:30:53.619Z [INFO] [MAIL] [mail.info] {"message":"   Afzender: info2@e-cowarenhuis.nl"} 
+2025-08-18T16:30:53.620Z [INFO] [MAIL] [mail.info] {"message":"   Ontvangers: info2@e-cowarenhuis.nl"} 
+2025-08-18T16:30:54.149Z [INFO] [MAIL] [deliver.ok] {"msgId":"2d30ef16-7784-4ff5-9322-9c7402398fca","tenant":"E-cowarenhuis","from":"info2@e-cowarenhuis.nl","rcptCount":1,"rcpts":"info2@e-cowarenhuis.nl","sizeKB":306,"remoteIP":"192.168.111.16"} 
+2025-08-18T16:31:42.988Z [INFO] [MAIL] [admin.info] {"message":"🔄 Reloading tenants..."} 
+2025-08-18T16:31:42.991Z [INFO] [MAIL] [admin.info] {"message":"📋 Config loaded: 2 tenants found"} 
+2025-08-18T16:31:42.993Z [INFO] [MAIL] [admin.info] {"message":"Tenants reloaded successfully","count":2} 
+2025-08-18T16:31:42.994Z [INFO] [MAIL] [admin.info] {"message":"✅ Tenants reloaded: 2 tenants loaded"} 
+2025-08-18T16:31:42.995Z [INFO] [MAIL] [admin.info] {"message":"🏷️ Active tenants: E-cowarenhuis, Omnibuzz"} 
+2025-08-18T16:32:22.453Z [INFO] [MAIL] [mail.info] {"message":"🔍 Tenant routing voor ontvangers: info@e-cowarenhuis.nl"} 
+2025-08-18T16:32:22.454Z [INFO] [MAIL] [mail.info] {"message":"📋 Beschikbare tenants: E-cowarenhuis, Omnibuzz"} 
+2025-08-18T16:32:22.455Z [INFO] [MAIL] [mail.info] {"message":"🎯 Checking tenant Omnibuzz voor allowedSenders (ontvangers): t.detron@omnibuzz.nl"} 
+2025-08-18T16:32:22.456Z [INFO] [MAIL] [mail.info] {"message":"🌐 Checking tenant Omnibuzz voor senderDomains (ontvanger domains): omnibuzz.nl"} 
+2025-08-18T16:32:22.457Z [INFO] [MAIL] [mail.info] {"message":"🌍 Checking tenant E-cowarenhuis voor IP ranges: 192.168.110.0/24"} 
+2025-08-18T16:32:22.459Z [INFO] [MAIL] [mail.info] {"message":"🌍 Checking tenant Omnibuzz voor IP ranges: 10.100.20.0/24"} 
+2025-08-18T16:32:22.460Z [INFO] [MAIL] [mail.info] {"message":"⚠️ Geen specifieke tenant match gevonden, gebruik fallback: E-cowarenhuis"} 
+2025-08-18T16:32:22.461Z [INFO] [MAIL] [deliver.warn] {"tenant":"E-cowarenhuis","rcpts":"info@e-cowarenhuis.nl","remoteIP":"192.168.111.16","message":"No specific tenant match found, using fallback","reason":"fallback"} 
+2025-08-18T16:32:22.462Z [INFO] [MAIL] [mail.info] {"message":"📧 Email routing resultaat: info@e-cowarenhuis.nl → Tenant: E-cowarenhuis"} 
+2025-08-18T16:32:22.463Z [INFO] [MAIL] [mail.info] {"message":"ℹ️ Geen afzender restricties voor tenant E-cowarenhuis"} 
+2025-08-18T16:32:22.465Z [INFO] [MAIL] [mail.info] {"message":"📤 Verzend email via Graph API:"} 
+2025-08-18T16:32:22.466Z [INFO] [MAIL] [mail.info] {"message":"   Tenant: E-cowarenhuis"} 
+2025-08-18T16:32:22.467Z [INFO] [MAIL] [mail.info] {"message":"   Mailbox: info@e-cowarenhuis.nl"} 
+2025-08-18T16:32:22.468Z [INFO] [MAIL] [mail.info] {"message":"   Afzender: info@e-cowarenhuis.nl"} 
+2025-08-18T16:32:22.469Z [INFO] [MAIL] [mail.info] {"message":"   Ontvangers: info@e-cowarenhuis.nl"} 
+2025-08-18T16:32:22.889Z [INFO] [MAIL] [deliver.ok] {"msgId":"ae38a3b9-a0e1-432a-912c-b0ad6c1aeae7","tenant":"E-cowarenhuis","from":"info@e-cowarenhuis.nl","rcptCount":1,"rcpts":"info@e-cowarenhuis.nl","sizeKB":306,"remoteIP":"192.168.111.16"} 
+2025-08-18T16:45:52.134Z [INFO] [MAIL] [admin.info] {"message":"🔄 Reloading tenants..."} 
+2025-08-18T16:45:52.146Z [INFO] [MAIL] [admin.info] {"message":"📋 Config loaded: 2 tenants found"} 
+2025-08-18T16:45:52.148Z [INFO] [MAIL] [admin.info] {"message":"Tenants reloaded successfully","count":2} 
+2025-08-18T16:45:52.149Z [INFO] [MAIL] [admin.info] {"message":"✅ Tenants reloaded: 2 tenants loaded"} 
+2025-08-18T16:45:52.150Z [INFO] [MAIL] [admin.info] {"message":"🏷️ Active tenants: E-cowarenhuis, Omnibuzz"} 
+2025-08-18T17:22:32.320Z [INFO] [MAIL] [admin.info] {"message":"Admin/SMTP ready on 2525"} 
+2025-08-18T17:23:22.302Z [INFO] [MAIL] [mail.info] {"message":"🔍 Tenant routing voor ontvangers: info@e-cowarenhuis.nl"} 
+2025-08-18T17:23:22.304Z [INFO] [MAIL] [mail.info] {"message":"📋 Beschikbare tenants: E-cowarenhuis, Omnibuzz"} 
+2025-08-18T17:23:22.305Z [INFO] [MAIL] [mail.info] {"message":"🎯 Checking tenant Omnibuzz voor allowedSenders (ontvangers): t.detron@omnibuzz.nl"} 
+2025-08-18T17:23:22.306Z [INFO] [MAIL] [mail.info] {"message":"🌐 Checking tenant Omnibuzz voor senderDomains (ontvanger domains): omnibuzz.nl"} 
+2025-08-18T17:23:22.307Z [INFO] [MAIL] [mail.info] {"message":"🌍 Checking tenant E-cowarenhuis voor IP ranges (routing): 192.168.110.0/24"} 
+2025-08-18T17:23:22.308Z [INFO] [MAIL] [mail.info] {"message":"🌍 Checking tenant Omnibuzz voor IP ranges (routing): 10.100.20.0/24"} 
+2025-08-18T17:23:22.308Z [INFO] [MAIL] [mail.info] {"message":"⚠️ Geen specifieke tenant match gevonden, gebruik fallback: E-cowarenhuis"} 
+2025-08-18T17:23:22.310Z [INFO] [MAIL] [deliver.warn] {"tenant":"E-cowarenhuis","rcpts":"info@e-cowarenhuis.nl","remoteIP":"192.168.111.16","message":"No specific tenant match found, using fallback","reason":"fallback"} 
+2025-08-18T17:23:22.310Z [INFO] [MAIL] [mail.info] {"message":"📧 Email routing resultaat: info@e-cowarenhuis.nl → Tenant: E-cowarenhuis"} 
+2025-08-18T17:23:22.311Z [INFO] [MAIL] [mail.info] {"message":"🌍 Controleer IP range voor tenant E-cowarenhuis: 192.168.111.16 tegen ranges: 192.168.110.0/24"} 
+2025-08-18T17:23:22.312Z [INFO] [MAIL] [mail.info] {"message":"❌ IP 192.168.111.16 niet toegestaan voor tenant E-cowarenhuis"} 
+2025-08-18T17:23:22.313Z [INFO] [MAIL] [mail.error] {"message":"Email verwerking gefaald","tenant":"E-cowarenhuis","afzender":"info@e-cowarenhuis.nl","ontvangers":"info@e-cowarenhuis.nl","error":"Error: IP not allowed for tenant: 192.168.111.16 not in ranges: 192.168.110.0/24","reason":"ip_not_allowed"} 
+2025-08-18T17:23:22.314Z [INFO] [MAIL] [deliver.err] {"msgId":"e12f7869-dc55-4583-83ae-6a949767091d","tenant":"E-cowarenhuis","from":"info@e-cowarenhuis.nl","rcptCount":1,"rcpts":"info@e-cowarenhuis.nl","remoteIP":"192.168.111.16","error":"Error: IP not allowed for tenant: 192.168.111.16 not in ranges: 192.168.110.0/24","reason":"ip_not_allowed"} 
+2025-08-18T17:23:55.078Z [INFO] [MAIL] [admin.info] {"message":"🔄 Reloading tenants..."} 
+2025-08-18T17:23:55.081Z [INFO] [MAIL] [admin.info] {"message":"📋 Config loaded: 2 tenants found"} 
+2025-08-18T17:23:55.083Z [INFO] [MAIL] [admin.info] {"message":"Tenants reloaded successfully","count":2} 
+2025-08-18T17:23:55.085Z [INFO] [MAIL] [admin.info] {"message":"✅ Tenants reloaded: 2 tenants loaded"} 
+2025-08-18T17:23:55.086Z [INFO] [MAIL] [admin.info] {"message":"🏷️ Active tenants: E-cowarenhuis, Omnibuzz"} 
+2025-08-18T17:24:20.022Z [INFO] [MAIL] [mail.info] {"message":"🔍 Tenant routing voor ontvangers: info@e-cowarenhuis.nl"} 
+2025-08-18T17:24:20.028Z [INFO] [MAIL] [mail.info] {"message":"📋 Beschikbare tenants: E-cowarenhuis, Omnibuzz"} 
+2025-08-18T17:24:20.038Z [INFO] [MAIL] [mail.info] {"message":"🎯 Checking tenant Omnibuzz voor allowedSenders (ontvangers): t.detron@omnibuzz.nl"} 
+2025-08-18T17:24:20.042Z [INFO] [MAIL] [mail.info] {"message":"🌐 Checking tenant Omnibuzz voor senderDomains (ontvanger domains): omnibuzz.nl"} 
+2025-08-18T17:24:20.046Z [INFO] [MAIL] [mail.info] {"message":"🌍 Checking tenant E-cowarenhuis voor IP ranges (routing): 192.168.111.0/24"} 
+2025-08-18T17:24:20.057Z [INFO] [MAIL] [mail.info] {"message":"✅ Tenant E-cowarenhuis geselecteerd op basis van IP routing"} 
+2025-08-18T17:24:20.059Z [INFO] [MAIL] [mail.info] {"message":"📧 Email routing resultaat: info@e-cowarenhuis.nl → Tenant: E-cowarenhuis"} 
+2025-08-18T17:24:20.061Z [INFO] [MAIL] [mail.info] {"message":"🌍 Controleer IP range voor tenant E-cowarenhuis: 192.168.111.16 tegen ranges: 192.168.111.0/24"} 
+2025-08-18T17:24:20.066Z [INFO] [MAIL] [mail.info] {"message":"✅ IP 192.168.111.16 toegestaan voor tenant E-cowarenhuis"} 
+2025-08-18T17:24:20.079Z [INFO] [MAIL] [mail.info] {"message":"ℹ️ Geen afzender restricties voor tenant E-cowarenhuis"} 
+2025-08-18T17:24:20.084Z [INFO] [MAIL] [mail.info] {"message":"📤 Verzend email via Graph API:"} 
+2025-08-18T17:24:20.087Z [INFO] [MAIL] [mail.info] {"message":"   Tenant: E-cowarenhuis"} 
+2025-08-18T17:24:20.095Z [INFO] [MAIL] [mail.info] {"message":"   Mailbox: info@e-cowarenhuis.nl"} 
+2025-08-18T17:24:20.097Z [INFO] [MAIL] [mail.info] {"message":"   Afzender: info@e-cowarenhuis.nl"} 
+2025-08-18T17:24:20.101Z [INFO] [MAIL] [mail.info] {"message":"   Ontvangers: info@e-cowarenhuis.nl"} 
+2025-08-18T17:24:20.808Z [INFO] [MAIL] [deliver.ok] {"msgId":"0f20d5b1-d708-472f-a510-1f323fc8d399","tenant":"E-cowarenhuis","from":"info@e-cowarenhuis.nl","rcptCount":1,"rcpts":"info@e-cowarenhuis.nl","sizeKB":306,"remoteIP":"192.168.111.16"} 
+2025-08-18T17:35:12.808Z [INFO] [MAIL] [config.info] {"message":"Admin/SMTP ready on 2525"} 
+2025-08-18T17:36:23.518Z [INFO] [MAIL] [deliver.ok] {"msgId":"9cf29fe8-2b37-45e0-9d91-451624e032ab","tenant":"E-cowarenhuis","from":"info@e-cowarenhuis.nl","rcptCount":1,"rcpts":"info@e-cowarenhuis.nl","sizeKB":306,"remoteIP":"192.168.111.16"} 
+2025-08-18T23:15:14.485Z [INFO] [MAIL] [config.info] {"message":"Admin/SMTP ready on 2525"} 
+2025-08-19T00:16:24.052Z [INFO] [MAIL] [config.info] {"message":"Admin/SMTP ready on 2525"} 

@@ -1,0 +1,18 @@
+{
+  "service": {
+    "listenPort": 2525,
+    "requireTLS": false,
+    "hostName": "relay.coolservers.org",
+    "tls": {
+      "certFile": "./certs/relay_server.crt",
+      "keyFile": "./certs/relay_server.key",
+      "mode": "starttls"
+    },
+    "allowlistIPs": [
+      "192.168.111.0/24",
+      "10.100.20.0/24"
+    ],
+    "optionalBasicAuth": true,
+    "users": []
+  }
+}
