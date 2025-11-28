@@ -1,18 +1,201 @@
 /* Simple form grid for tenant form */
 /* Tenant form grid (modal) */
-#tenantModal .form-grid{
+#tenantModal .form-grid, #settingsModal .form-grid{
   display:grid;
   grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
   gap:10px;
 }
-#tenantModal .field label{display:block;font-weight:600;font-size:13px;color:var(--muted)}
-#tenantModal .field input, #tenantModal .field textarea{
+#tenantModal .field label, #settingsModal .field label{display:block;font-weight:600;font-size:13px;color:var(--muted)}
+#tenantModal .field input, #tenantModal .field textarea, #settingsModal .field input, #settingsModal .field textarea, #settingsModal .field select{
   width:100%;margin-top:6px;
   padding:8px 10px;border-radius:10px;border:1px solid var(--border);
   background:#0b1a34;color:var(--text);font-size:14px;line-height:1.2;
 }
-#tenantModal .field input:focus, #tenantModal .field textarea:focus{
+/* Tenant naam input field zonder label styling */
+#tenantModal #tfName {
+  margin-top: 0;
+}
+#tenantModal .field input:focus, #tenantModal .field textarea:focus, #settingsModal .field input:focus, #settingsModal .field textarea:focus, #settingsModal .field select:focus{
   outline:none;border-color:#334155;box-shadow:0 0 0 2px rgba(59,130,246,.25);
+}
+
+/* SMTP Manager Styles */
+.smtp-manager {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  margin-top: 10px;
+}
+
+.smtp-list-container {
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 12px;
+  background: #0b1a34;
+}
+
+.smtp-list {
+  list-style: none;
+  padding: 0;
+  margin: 8px 0 0 0;
+}
+
+.smtp-list li {
+  padding: 8px;
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.smtp-list li:last-child {
+  border-bottom: none;
+}
+
+.smtp-list li.empty {
+  color: var(--muted);
+  font-style: italic;
+  justify-content: center;
+}
+
+.smtp-form {
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 12px;
+  background: #0b1a34;
+}
+
+.form-grid.inner {
+  grid-template-columns: 1fr;
+  gap: 8px;
+}
+
+.test-smtp-box {
+  border: 1px solid var(--border);
+  padding: 10px;
+  border-radius: 8px;
+  margin-top: 5px;
+}
+
+.test-smtp-box h5 {
+  margin: 0 0 5px 0;
+}
+
+.radio-label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  padding: 8px;
+  border-radius: 6px;
+}
+
+/* Mail Delivery Methods Grid - Twee kolommen naast elkaar */
+.delivery-methods-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  margin-top: 8px;
+}
+
+.delivery-method-panel {
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 16px;
+  background: rgba(11, 26, 52, 0.5);
+}
+
+.delivery-method-panel .form-grid-inner {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 10px;
+  margin-top: 12px;
+}
+
+.delivery-method-panel .field {
+  margin-bottom: 0;
+}
+
+.delivery-method-panel .field label {
+  font-size: 12px;
+  margin-bottom: 4px;
+}
+
+.delivery-method-panel .field input,
+.delivery-method-panel .field textarea,
+.delivery-method-panel .field select {
+  font-size: 13px;
+  padding: 6px 8px;
+}
+
+@media (max-width: 900px) {
+  .delivery-methods-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.radio-label:hover {
+  background: rgba(255,255,255,0.05);
+}
+
+.radio-label input[type="radio"] {
+  margin: 0;
+  cursor: pointer;
+}
+
+.small {
+  font-size: 12px;
+}
+
+.secondary {
+  background: var(--chip);
+  border-color: var(--border);
+  color: var(--text);
+}
+
+.auth-users-manager {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  margin-top: 10px;
+}
+
+.auth-users-list-container {
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 12px;
+  background: #0b1a34;
+}
+
+.auth-users-form {
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 12px;
+  background: #0b1a34;
+}
+
+/* Settings preview */
+.settings-preview {
+  padding: 16px;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  gap: 12px;
+}
+.settings-item {
+  padding: 8px 12px;
+  background: #0b1a34;
+  border-radius: 8px;
+  border: 1px solid var(--border);
+}
+.settings-item strong {
+  display: block;
+  font-size: 12px;
+  color: var(--muted);
+  margin-bottom: 4px;
+}
+.settings-item span {
+  font-size: 14px;
+  color: var(--text);
 }
 :root{
   --bg:#0b1220; --card:#0f172a; --muted:#93a2b8; --text:#e6edf3; --acc:#22c55e; --warn:#eab308; --err:#ef4444; --pri:#3b82f6;
@@ -50,7 +233,9 @@ tr:hover{background:#0b1a34}
 }
 /* Align headers left except last (Acties) centered for Stats and Tenants */
 #statsTable th, #tenantsTable th{ text-align:left }
-#statsTable th:last-child, #tenantsTable th:last-child{ text-align:center }
+#statsTable th:last-child{ text-align:center }
+#tenantsTable th:last-child{ text-align:right }
+#tenantsTable td:last-child{ text-align:right }
 
 /* Events table headers left aligned */
 #eventsTable th { text-align:left }
@@ -62,10 +247,16 @@ tr:hover{background:#0b1a34}
   max-width: 300px;
 }
 .actions{display:flex;gap:8px;align-items:center}
+.actions-cell{display:flex;gap:8px;justify-content:flex-end;align-items:center}
+.action-btn{display:inline-flex;align-items:center;justify-content:center;padding:6px;border:1px solid var(--border);background:transparent;color:var(--text);border-radius:6px;cursor:pointer;transition:all 0.2s}
+.action-btn:hover{background:rgba(255,255,255,0.1);border-color:#334155}
+.action-btn svg{display:block;width:16px;height:16px}
 button, select{padding:8px 12px;border:1px solid var(--border);background:#0b1a34;color:var(--text);border-radius:10px;cursor:pointer}
 button:hover{filter:brightness(1.1)}
 button.primary{background:var(--pri);border-color:transparent;color:#fff}
 button.ghost{background:transparent}
+button.ghost:hover{background:rgba(255,255,255,0.1)}
+button.ghost svg{display:block}
 .button-row{display:flex;gap:8px;justify-content:flex-end;margin-top:6px}
 .left{display:flex;flex-direction:column;align-items:flex-start;gap:4px}
 .status{display:flex;align-items:center;gap:6px}
@@ -98,6 +289,7 @@ footer{padding:12px 16px;color:var(--muted);text-align:center}
 .modal{position:fixed;inset:0;background:rgba(0,0,0,.6);display:flex;align-items:center;justify-content:center;z-index:50}
 .modal.hidden{display:none}
 .modal-content{background:#0f172a;border:1px solid var(--border);border-radius:12px;max-width:1020px;width:96%;max-height:85vh;overflow:auto;box-shadow:0 20px 60px rgba(0,0,0,.5)}
+.modal-large{max-width:1275px}
 .modal-head{display:flex;justify-content:space-between;align-items:center;padding:12px 14px;border-bottom:1px solid var(--border)}
 #chartBody{padding:12px}
 .modal-body{padding:12px}
@@ -431,11 +623,11 @@ main.blurred, header.blurred {
   color: #e5e7eb;
 }
 
-/* Grote modal voor event kleur configuratie */
+/* Grote modal voor event kleur configuratie en tenant configuratie */
 .modal-large {
   max-width: 90vw;
   max-height: 90vh;
-  width: 1200px;
+  width: 1275px; /* 25% breder dan standaard 1020px */
 }
 
 /* Tandrad icoontje styling */
@@ -464,4 +656,60 @@ main.blurred, header.blurred {
   padding: 16px 20px;
   border-top: 1px solid #374151;
   background: rgba(31, 41, 55, 0.5);
+}
+
+/* Routing Priority Sortable List */
+.routing-priority-list {
+  list-style: none;
+  padding: 0;
+  margin: 8px 0 0 0;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: #0b1a34;
+}
+
+.routing-priority-item {
+  display: flex;
+  align-items: center;
+  padding: 12px 16px;
+  border-bottom: 1px solid var(--border);
+  cursor: move;
+  user-select: none;
+  transition: background-color 0.2s;
+}
+
+.routing-priority-item:last-child {
+  border-bottom: none;
+}
+
+.routing-priority-item:hover {
+  background: rgba(59, 130, 246, 0.1);
+}
+
+.routing-priority-item.dragging {
+  opacity: 0.5;
+  background: rgba(59, 130, 246, 0.2);
+}
+
+.drag-handle {
+  margin-right: 12px;
+  color: var(--muted);
+  font-size: 18px;
+  cursor: grab;
+  user-select: none;
+}
+
+.drag-handle:active {
+  cursor: grabbing;
+}
+
+.item-label {
+  font-weight: 600;
+  color: var(--text);
+  margin-right: 8px;
+}
+
+.item-desc {
+  color: var(--muted);
+  font-size: 12px;
 }

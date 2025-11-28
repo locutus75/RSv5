@@ -10,7 +10,9 @@
     },
     "allowlistIPs": [],
     "routingPriority": [
-      "allowedSenders"
+      "allowedSenders",
+      "senderDomains",
+      "ipRanges"
     ],
     "optionalBasicAuth": true,
     "smtpServers": [

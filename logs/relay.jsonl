@@ -437,3 +437,107 @@
 {"ts":"2025-08-20T11:14:12.098Z","level":"deliver.err","msgId":"1608e057-45d0-42e4-950a-446e82523fca","tenant":"E-cowarenhuis","from":"eeeeegbert@e-cowarenhuis.nl","rcptCount":1,"rcpts":"eeeeegbert@e-cowarenhuis.nl","remoteIP":"192.168.111.16","error":"Error: Sender not allowed: eeeeegbert@e-cowarenhuis.nl for tenant: E-cowarenhuis","reason":"sender_not_allowed"}
 {"ts":"2025-08-20T11:14:31.366Z","level":"debug","message":"Client verbinding","remoteIP":"192.168.111.16","allowlistIPs":["192.168.111.0/24","10.100.20.0/24"],"allowed":true}
 {"ts":"2025-08-20T11:14:32.260Z","level":"deliver.ok","msgId":"1390b745-8797-4ce2-ad74-9fb4fcfb0da4","tenant":"E-cowarenhuis","from":"egbert@e-cowarenhuis.nl","rcptCount":1,"rcpts":"egbert@e-cowarenhuis.nl","sizeKB":306,"remoteIP":"192.168.111.16"}
+{"ts":"2025-08-21T13:33:59.095Z","level":"debug","message":"Client verbinding","remoteIP":"10.100.20.24","allowlistIPs":["192.168.111.0/24","10.100.20.0/24"],"allowed":true}
+{"ts":"2025-08-21T13:33:59.295Z","level":"mail.error","message":"Email verwerking gefaald","tenant":"Omnibuzz","afzender":"egbert@e-cowarenhis.nl","ontvangers":"egbert@e-cowarenhis.nl","error":"Error: Sender not allowed: egbert@e-cowarenhis.nl for tenant: Omnibuzz","reason":"sender_not_allowed"}
+{"ts":"2025-08-21T13:33:59.329Z","level":"deliver.err","msgId":"0d85d617-b9ab-4396-b40b-6ce2870be119","tenant":"Omnibuzz","from":"egbert@e-cowarenhis.nl","rcptCount":1,"rcpts":"egbert@e-cowarenhis.nl","remoteIP":"10.100.20.24","error":"Error: Sender not allowed: egbert@e-cowarenhis.nl for tenant: Omnibuzz","reason":"sender_not_allowed"}
+{"ts":"2025-08-21T13:34:52.555Z","level":"config.info","message":"Tenants reloaded successfully","count":2,"tenants":["E-cowarenhuis","Omnibuzz"]}
+{"ts":"2025-08-21T13:35:08.552Z","level":"debug","message":"Client verbinding","remoteIP":"10.100.20.24","allowlistIPs":["192.168.111.0/24","10.100.20.0/24"],"allowed":true}
+{"ts":"2025-08-21T13:35:08.612Z","level":"mail.error","message":"Email verwerking gefaald","tenant":"E-cowarenhuis","afzender":"egbert@e-cowarenhuis.nl","ontvangers":"egbert@e-cowarenhuis.nl","error":"Error: IP not allowed for tenant: 10.100.20.24 not in ranges: 192.168.111.0/24","reason":"ip_not_allowed"}
+{"ts":"2025-08-21T13:35:08.614Z","level":"deliver.err","msgId":"534a2190-fc0c-42d2-9530-d3e2fbe62f98","tenant":"E-cowarenhuis","from":"egbert@e-cowarenhuis.nl","rcptCount":1,"rcpts":"egbert@e-cowarenhuis.nl","remoteIP":"10.100.20.24","error":"Error: IP not allowed for tenant: 10.100.20.24 not in ranges: 192.168.111.0/24","reason":"ip_not_allowed"}
+{"ts":"2025-08-21T13:35:41.364Z","level":"config.info","message":"Tenants reloaded successfully","count":2,"tenants":["E-cowarenhuis","Omnibuzz"]}
+{"ts":"2025-08-21T13:35:45.103Z","level":"debug","message":"Client verbinding","remoteIP":"10.100.20.24","allowlistIPs":["192.168.111.0/24","10.100.20.0/24"],"allowed":true}
+{"ts":"2025-08-21T13:35:46.171Z","level":"deliver.ok","msgId":"46b173d1-31f6-489d-8860-6747c0b56218","tenant":"E-cowarenhuis","from":"egbert@e-cowarenhuis.nl","rcptCount":1,"rcpts":"egbert@e-cowarenhuis.nl","sizeKB":306,"remoteIP":"10.100.20.24"}
+{"ts":"2025-08-26T12:27:47.852Z","level":"debug","message":"Client verbinding","remoteIP":"10.100.20.47","allowlistIPs":["192.168.111.0/24","10.100.20.0/24"],"allowed":true}
+{"ts":"2025-08-26T12:27:48.831Z","level":"deliver.ok","msgId":"40b220b4-87eb-4930-93ea-0fddeae93ae2","tenant":"E-cowarenhuis","from":"egbert@e-cowarenhuis.nl","rcptCount":1,"rcpts":"egbert@e-cowarenhuis.nl","sizeKB":306,"remoteIP":"10.100.20.47"}
+{"ts":"2025-08-29T09:25:32.210Z","level":"config.info","message":"Tenant reload ready - triggered on save"}
+{"ts":"2025-08-29T09:25:32.298Z","level":"config.info","message":"Admin/SMTP ready on 2525"}
+{"ts":"2025-08-29T09:25:32.299Z","level":"config.info","message":"SMTP server configured for service context"}
+{"ts":"2025-09-15T21:00:50.901Z","level":"config.info","message":"Tenant reload ready - triggered on save"}
+{"ts":"2025-09-15T21:00:50.981Z","level":"config.info","message":"Admin/SMTP ready on 2525"}
+{"ts":"2025-09-15T21:00:50.981Z","level":"config.info","message":"SMTP server configured for service context"}
+{"ts":"2025-09-25T23:58:49.906Z","level":"config.info","message":"Tenant reload ready - triggered on save"}
+{"ts":"2025-09-25T23:58:50.022Z","level":"config.info","message":"Admin/SMTP ready on 2525"}
+{"ts":"2025-09-25T23:58:50.022Z","level":"config.info","message":"SMTP server configured for service context"}
+{"ts":"2025-10-03T15:18:45.579Z","level":"config.info","message":"Tenant reload ready - triggered on save"}
+{"ts":"2025-10-03T15:18:45.694Z","level":"config.info","message":"Admin/SMTP ready on 2525"}
+{"ts":"2025-10-03T15:18:45.696Z","level":"config.info","message":"SMTP server configured for service context"}
+{"ts":"2025-10-13T07:10:51.973Z","level":"config.info","message":"Tenant reload ready - triggered on save"}
+{"ts":"2025-10-13T07:10:52.033Z","level":"config.info","message":"Admin/SMTP ready on 2525"}
+{"ts":"2025-10-13T07:10:52.034Z","level":"config.info","message":"SMTP server configured for service context"}
+{"ts":"2025-10-21T01:16:39.453Z","level":"config.info","message":"Tenant reload ready - triggered on save"}
+{"ts":"2025-10-21T01:16:39.525Z","level":"config.info","message":"Admin/SMTP ready on 2525"}
+{"ts":"2025-10-21T01:16:39.526Z","level":"config.info","message":"SMTP server configured for service context"}
+{"ts":"2025-11-19T22:44:39.961Z","level":"config.info","message":"Tenant reload ready - triggered on save"}
+{"ts":"2025-11-19T22:44:40.035Z","level":"config.info","message":"Admin/SMTP ready on 2525"}
+{"ts":"2025-11-19T22:44:40.036Z","level":"config.info","message":"SMTP server configured for service context"}
+{"ts":"2025-11-19T22:50:08.463Z","level":"config.info","message":"Tenants reloaded successfully","count":2,"tenants":["E-cowarenhuis","Omnibuzz"]}
+{"ts":"2025-11-25T15:14:32.832Z","level":"config.info","message":"Tenants reloaded successfully","count":2,"tenants":["E-cowarenhuis","Omnibuzz"]}
+{"ts":"2025-11-25T15:52:45.178Z","level":"config.info","message":"Tenants reloaded successfully","count":2,"tenants":["E-cowarenhuis","Omnibuzz"]}
+{"ts":"2025-11-25T16:45:45.673Z","level":"config.info","message":"Tenant reload ready - triggered on save"}
+{"ts":"2025-11-25T16:45:45.740Z","level":"config.info","message":"Admin/SMTP ready on 2525"}
+{"ts":"2025-11-25T16:45:45.741Z","level":"config.info","message":"SMTP server configured for service context"}
+{"ts":"2025-11-25T16:46:06.744Z","level":"config.info","message":"Tenants reloaded successfully","count":3,"tenants":["E-cowarenhuis","Omnibuzz","test"]}
+{"ts":"2025-11-25T20:32:32.913Z","level":"config.info","message":"Tenants reloaded successfully","count":3,"tenants":["E-cowarenhuis","Omnibuzz","test"]}
+{"ts":"2025-11-25T20:37:35.720Z","level":"config.info","message":"Tenants reloaded successfully","count":3,"tenants":["E-cowarenhuis","Omnibuzz","test"]}
+{"ts":"2025-11-25T20:41:30.798Z","level":"debug","message":"Client verbinding - IP check","remoteIP":"192.168.111.16","allowlistIPs":[],"allowlistIPsConfigured":false}
+{"ts":"2025-11-25T20:41:30.805Z","level":"debug","message":"IP toegestaan","remoteIP":"192.168.111.16","allowlistIPsUsed":false}
+{"ts":"2025-11-25T20:41:30.903Z","level":"mail.error","message":"Email verwerking gefaald","tenant":"E-cowarenhuis","afzender":"test@test.com","ontvangers":"test@test.com","error":"Error: Sender not allowed: test@test.com for tenant: E-cowarenhuis","reason":"sender_not_allowed"}
+{"ts":"2025-11-25T20:41:30.904Z","level":"deliver.err","msgId":"84330af0-ba1b-4c18-b111-3955871c3ec9","tenant":"E-cowarenhuis","from":"test@test.com","rcptCount":1,"rcpts":"test@test.com","remoteIP":"192.168.111.16","error":"Error: Sender not allowed: test@test.com for tenant: E-cowarenhuis","reason":"sender_not_allowed"}
+{"ts":"2025-11-25T20:48:00.379Z","level":"config.info","message":"Tenant reload ready - triggered on save"}
+{"ts":"2025-11-25T20:48:00.467Z","level":"config.info","message":"Admin/SMTP ready on 2525"}
+{"ts":"2025-11-25T20:48:00.469Z","level":"config.info","message":"SMTP server configured for service context"}
+{"ts":"2025-11-25T20:48:33.074Z","level":"debug","message":"Client verbinding - IP check","remoteIP":"192.168.111.16","allowlistIPs":[],"allowlistIPsConfigured":false}
+{"ts":"2025-11-25T20:48:33.076Z","level":"debug","message":"IP toegestaan","remoteIP":"192.168.111.16","allowlistIPsUsed":false}
+{"ts":"2025-11-25T20:48:33.159Z","level":"mail.error","message":"Email verwerking gefaald","tenant":"unknown","afzender":"test@test.com","ontvangers":"test@test.com","error":"ReferenceError: routingPriority is not defined","reason":"unknown"}
+{"ts":"2025-11-25T20:48:33.160Z","level":"deliver.err","msgId":"cee5df2d-d097-4a7a-9892-76c73185d1a4","tenant":"unknown","from":"test@test.com","rcptCount":1,"rcpts":"test@test.com","remoteIP":"192.168.111.16","error":"ReferenceError: routingPriority is not defined","reason":"unknown"}
+{"ts":"2025-11-25T20:49:29.066Z","level":"config.info","message":"Tenants reloaded successfully","count":3,"tenants":["E-cowarenhuis","Omnibuzz","test"]}
+{"ts":"2025-11-25T20:49:33.587Z","level":"debug","message":"Client verbinding - IP check","remoteIP":"192.168.111.16","allowlistIPs":[],"allowlistIPsConfigured":false}
+{"ts":"2025-11-25T20:49:33.589Z","level":"debug","message":"IP toegestaan","remoteIP":"192.168.111.16","allowlistIPsUsed":false}
+{"ts":"2025-11-25T20:49:33.641Z","level":"mail.error","message":"Email verwerking gefaald","tenant":"unknown","afzender":"test@test.com","ontvangers":"test@test.com","error":"ReferenceError: routingPriority is not defined","reason":"unknown"}
+{"ts":"2025-11-25T20:49:33.642Z","level":"deliver.err","msgId":"bec2b2c8-10ca-453d-a8aa-bdb2805e3870","tenant":"unknown","from":"test@test.com","rcptCount":1,"rcpts":"test@test.com","remoteIP":"192.168.111.16","error":"ReferenceError: routingPriority is not defined","reason":"unknown"}
+{"ts":"2025-11-25T20:50:09.732Z","level":"config.info","message":"Tenants reloaded successfully","count":3,"tenants":["E-cowarenhuis","Omnibuzz","test"]}
+{"ts":"2025-11-25T20:58:43.318Z","level":"config.info","message":"Tenant reload ready - triggered on save"}
+{"ts":"2025-11-25T20:58:43.402Z","level":"config.info","message":"Admin/SMTP ready on 2525"}
+{"ts":"2025-11-25T20:58:43.403Z","level":"config.info","message":"SMTP server configured for service context"}
+{"ts":"2025-11-25T21:03:37.100Z","level":"config.info","message":"Tenant reload ready - triggered on save"}
+{"ts":"2025-11-25T21:03:37.148Z","level":"config.info","message":"Admin/SMTP ready on 2525"}
+{"ts":"2025-11-25T21:03:37.149Z","level":"config.info","message":"SMTP server configured for service context"}
+{"ts":"2025-11-25T21:05:04.978Z","level":"config.info","message":"Tenants reloaded successfully","count":3,"tenants":["E-cowarenhuis","Omnibuzz","test"]}
+{"ts":"2025-11-25T21:05:18.075Z","level":"debug","message":"Client verbinding - IP check","remoteIP":"192.168.111.16","allowlistIPs":[],"allowlistIPsConfigured":false}
+{"ts":"2025-11-25T21:05:18.078Z","level":"debug","message":"IP toegestaan","remoteIP":"192.168.111.16","allowlistIPsUsed":false}
+{"ts":"2025-11-25T21:05:18.161Z","level":"mail.error","message":"Email verwerking gefaald","tenant":"unknown","afzender":"test@test.com","ontvangers":"test@test.com","error":"ReferenceError: routingPriority is not defined","reason":"unknown"}
+{"ts":"2025-11-25T21:05:18.162Z","level":"deliver.err","msgId":"c41a4c9a-6c37-48b3-9dc3-ac64852f4fdb","tenant":"unknown","from":"test@test.com","rcptCount":1,"rcpts":"test@test.com","remoteIP":"192.168.111.16","error":"ReferenceError: routingPriority is not defined","reason":"unknown"}
+{"ts":"2025-11-25T21:07:42.693Z","level":"config.info","message":"Tenants reloaded successfully","count":3,"tenants":["E-cowarenhuis","Omnibuzz","test"]}
+{"ts":"2025-11-25T21:08:02.923Z","level":"debug","message":"Client verbinding - IP check","remoteIP":"192.168.111.16","allowlistIPs":[],"allowlistIPsConfigured":false}
+{"ts":"2025-11-25T21:08:02.924Z","level":"debug","message":"IP toegestaan","remoteIP":"192.168.111.16","allowlistIPsUsed":false}
+{"ts":"2025-11-25T21:08:02.985Z","level":"mail.error","message":"Email verwerking gefaald","tenant":"unknown","afzender":"test@test.com","ontvangers":"test@test.com","error":"ReferenceError: routingPriority is not defined","reason":"unknown"}
+{"ts":"2025-11-25T21:08:02.986Z","level":"deliver.err","msgId":"d849528e-fb81-4baa-ae23-69e8e6c02d95","tenant":"unknown","from":"test@test.com","rcptCount":1,"rcpts":"test@test.com","remoteIP":"192.168.111.16","error":"ReferenceError: routingPriority is not defined","reason":"unknown"}
+{"ts":"2025-11-25T21:21:25.197Z","level":"config.info","message":"Tenants reloaded successfully","count":3,"tenants":["E-cowarenhuis","Omnibuzz","test"]}
+{"ts":"2025-11-25T21:21:35.215Z","level":"debug","message":"Client verbinding - IP check","remoteIP":"192.168.111.16","allowlistIPs":[],"allowlistIPsConfigured":false}
+{"ts":"2025-11-25T21:21:35.216Z","level":"debug","message":"IP toegestaan","remoteIP":"192.168.111.16","allowlistIPsUsed":false}
+{"ts":"2025-11-25T21:21:35.255Z","level":"mail.error","message":"Email verwerking gefaald","tenant":"unknown","afzender":"test@test.com","ontvangers":"test@test.com","error":"ReferenceError: routingPriority is not defined","reason":"unknown"}
+{"ts":"2025-11-25T21:21:35.256Z","level":"deliver.err","msgId":"9f404bfc-1ead-45ca-bdb1-aced0ec6bd7a","tenant":"unknown","from":"test@test.com","rcptCount":1,"rcpts":"test@test.com","remoteIP":"192.168.111.16","error":"ReferenceError: routingPriority is not defined","reason":"unknown"}
+{"ts":"2025-11-25T21:25:22.877Z","level":"debug","message":"Client verbinding - IP check","remoteIP":"192.168.111.16","allowlistIPs":[],"allowlistIPsConfigured":false}
+{"ts":"2025-11-25T21:25:22.924Z","level":"debug","message":"IP toegestaan","remoteIP":"192.168.111.16","allowlistIPsUsed":false}
+{"ts":"2025-11-25T21:25:23.161Z","level":"mail.error","message":"Email verwerking gefaald","tenant":"unknown","afzender":"test@test.com","ontvangers":"test@test.com","error":"ReferenceError: routingPriority is not defined","reason":"unknown"}
+{"ts":"2025-11-25T21:25:23.162Z","level":"deliver.err","msgId":"c5336cad-8815-4ee6-beaf-3cb8f4295f25","tenant":"unknown","from":"test@test.com","rcptCount":1,"rcpts":"test@test.com","remoteIP":"192.168.111.16","error":"ReferenceError: routingPriority is not defined","reason":"unknown"}
+{"ts":"2025-11-25T21:27:45.627Z","level":"config.info","message":"Tenant reload ready - triggered on save"}
+{"ts":"2025-11-25T21:27:45.708Z","level":"config.info","message":"Admin/SMTP ready on 2525"}
+{"ts":"2025-11-25T21:27:45.709Z","level":"config.info","message":"SMTP server configured for service context"}
+{"ts":"2025-11-25T21:27:59.238Z","level":"debug","message":"Client verbinding - IP check","remoteIP":"192.168.111.16","allowlistIPs":[],"allowlistIPsConfigured":false}
+{"ts":"2025-11-25T21:27:59.241Z","level":"debug","message":"IP toegestaan","remoteIP":"192.168.111.16","allowlistIPsUsed":false}
+{"ts":"2025-11-25T21:28:20.496Z","level":"mail.error","message":"Email verwerking gefaald","tenant":"test","afzender":"test@test.com","ontvangers":"test@test.com","error":"Error: SMTP send failed: connect ETIMEDOUT 185.185.164.221:25","reason":"unknown"}
+{"ts":"2025-11-25T21:28:20.497Z","level":"deliver.err","msgId":"52394ce2-9795-47f4-a6e5-f66fbae8a842","tenant":"test","from":"test@test.com","rcptCount":1,"rcpts":"test@test.com","remoteIP":"192.168.111.16","error":"Error: SMTP send failed: connect ETIMEDOUT 185.185.164.221:25","reason":"unknown"}
+{"ts":"2025-11-25T23:13:06.520Z","level":"config.info","message":"Tenant reload ready - triggered on save"}
+{"ts":"2025-11-25T23:13:06.651Z","level":"config.info","message":"Admin/SMTP ready on 2525"}
+{"ts":"2025-11-25T23:13:06.653Z","level":"config.info","message":"SMTP server configured for service context"}
+{"ts":"2025-11-25T23:28:56.391Z","level":"config.info","message":"Tenant reload ready - triggered on save"}
+{"ts":"2025-11-25T23:28:56.451Z","level":"config.info","message":"Admin/SMTP ready on 2525"}
+{"ts":"2025-11-25T23:28:56.452Z","level":"config.info","message":"SMTP server configured for service context"}
+{"ts":"2025-11-25T23:31:16.110Z","level":"config.info","message":"Service configuration reloaded (including routingPriority)","routingPriority":["allowedSenders"]}
+{"ts":"2025-11-25T23:31:16.110Z","level":"config.info","message":"Tenants reloaded successfully","count":3,"tenants":["E-cowarenhuis","Omnibuzz","test"]}
+{"ts":"2025-11-25T23:31:44.701Z","level":"config.info","message":"Service configuration reloaded (including routingPriority)","routingPriority":["allowedSenders"]}
+{"ts":"2025-11-25T23:31:44.701Z","level":"config.info","message":"Tenants reloaded successfully","count":3,"tenants":["E-cowarenhuis","Omnibuzz","test"]}
+{"ts":"2025-11-26T00:02:10.963Z","level":"config.info","message":"Tenant reload ready - triggered on save"}
+{"ts":"2025-11-26T00:02:11.039Z","level":"config.info","message":"Admin/SMTP ready on 2525"}
+{"ts":"2025-11-26T00:02:11.040Z","level":"config.info","message":"SMTP server configured for service context"}

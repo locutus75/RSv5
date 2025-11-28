@@ -101,18 +101,58 @@ Bekijk `config.json` voor server instellingen en `tenants.d/` voor tenant config
 ## 🛡️ Beveiliging
 
 ### IP Range Controle
-De applicatie controleert IP ranges op twee niveaus:
 
-1. **Globale IP Allowlist** (`config.json`): Controleert of een IP überhaupt toegang heeft tot de SMTP server
-2. **Tenant-specifieke IP Ranges** (`tenants.d/*.json`): Controleert of een IP toegestaan is voor een specifieke tenant
+De applicatie gebruikt **tenant-specifieke IP ranges** als primaire controle. De globale `allowlistIPs` is optioneel en dient alleen als extra beveiligingslaag.
+
+#### Tenant-specifieke IP Ranges (`tenants.d/*.json` → `routing.ipRanges`)
+**LEIDEND - Primaire IP filtering**
+
+Alle IP filtering gebeurt op tenant niveau. Elke tenant definieert zijn eigen toegestane IP ranges.
 
 ```json
 {
   "routing": {
-    "ipRanges": ["192.168.1.0/24", "10.0.0.0/8"]
+    "ipRanges": ["192.168.111.0/24", "10.100.20.0/24"]
   }
 }
 ```
+
+**Aanbeveling:** Definieer IP ranges alleen bij de tenant, niet in `config.json`.
+
+#### Optionele Globale IP Allowlist (`config.json` → `service.allowlistIPs`)
+**Optioneel - Extra beveiligingslaag**
+
+Als je een extra beveiligingslaag wilt, kun je `allowlistIPs` instellen. Dit is **niet verplicht** en wordt alleen gebruikt als extra check.
+
+```json
+{
+  "service": {
+    "allowlistIPs": []  // Laat leeg om alleen tenant ipRanges te gebruiken
+  }
+}
+```
+
+**Aanbeveling:** Laat `allowlistIPs` leeg en gebruik alleen tenant `ipRanges` voor duidelijkheid.
+
+#### Prioriteit en Logica
+
+**Standaard (aanbevolen):**
+1. ✅ IP moet in ten minste één tenant `ipRanges` staan (globale toegang)
+2. ✅ IP moet in de geselecteerde tenant `ipRanges` staan (tenant-specifieke toegang)
+
+**Met optionele allowlistIPs:**
+1. ✅ IP moet in `allowlistIPs` staan (als ingesteld - optionele extra check)
+2. ✅ IP moet in ten minste één tenant `ipRanges` staan (globale toegang)
+3. ✅ IP moet in de geselecteerde tenant `ipRanges` staan (tenant-specifieke toegang)
+
+**Gebruik van ipRanges:**
+- Voor **routing**: bepaalt welke tenant gebruikt wordt (als er geen exacte ontvanger match is)
+- Voor **restrictie**: controleert of het IP toegestaan is voor de geselecteerde tenant
+
+**Samenvatting:**
+- `ipRanges` is **LEIDEND** - alle IP filtering gebeurt op tenant niveau
+- `allowlistIPs` is **OPTIONEEL** - alleen als extra beveiligingslaag wanneer ingesteld
+- **Aanbeveling:** Laat `allowlistIPs` leeg en gebruik alleen tenant `ipRanges`
 
 ### Afzender Controle
 Elke tenant kan een `allowedSenders` lijst hebben om te bepalen welke email adressen emails mogen verzenden.

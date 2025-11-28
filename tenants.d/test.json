@@ -1,0 +1,20 @@
+{
+  "name": "test",
+  "allowedSenders": [
+    "test@test.com"
+  ],
+  "senderOverrides": {},
+  "routing": {
+    "priority": 100
+  },
+  "policy": {
+    "maxMessageSizeKB": 5120,
+    "saveToSentItems": false
+  },
+  "delivery": {
+    "method": "smtp",
+    "smtp": {
+      "smtpServer": "Esprit"
+    }
+  }
+}

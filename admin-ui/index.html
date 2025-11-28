@@ -12,7 +12,7 @@
   <div id="toast" class="toast hidden"></div>
   <header>
     <div class="left">
-      <h1>RileeSurfis <span class="muted">Admin</span> <span class="version">v5.0.0</span></h1>
+      <h1>RileeSurfis <span class="muted">Admin</span> <span class="version" id="versionHeader">v5.0.0</span></h1>
       <div class="status">
         <span class="dot" id="healthDot" title="Server status"></span>
         <span id="healthText" class="muted">checking…</span>
@@ -24,6 +24,12 @@
       </div>
     </div>
     <div class="right auth">
+      <button id="settingsBtn" class="ghost" title="Service Instellingen">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="3"></circle>
+          <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
+        </svg>
+      </button>
       <input id="token" type="password" placeholder="Admin token (Bearer)" />
       <button id="saveToken" class="primary">Opslaan</button>
     </div>
@@ -75,10 +81,8 @@
           <thead>
             <tr>
               <th data-k="name">Naam</th>
-              <th data-k="defaultMailbox">Mailbox</th>
-              <th data-k="tenantId">TenantId</th>
-              <th data-k="clientId">ClientId</th>
-              <th>Acties</th>
+              <th data-k="delivery">Mail Delivery</th>
+              <th style="text-align: right;">Acties</th>
             </tr>
           </thead>
           <tbody></tbody>
@@ -155,7 +159,7 @@
 
   <!-- Tenant Form Modal -->
   <div id="tenantModal" class="modal hidden">
-    <div class="modal-content">
+    <div class="modal-content modal-large">
       <div class="modal-head">
         <h3 id="tenantModalTitle">Tenant</h3>
         <div class="actions">
@@ -164,18 +168,24 @@
       </div>
       <div class="modal-body">
         <div class="form-grid">
-          <div class="field"><label>Naam<input id="tfName" type="text" placeholder="Naam"/></label></div>
-          <div class="field"><label>Tenant ID<span class="hint"> (GUID)</span><input id="tfTenantId" type="text" placeholder="00000000-0000-0000-0000-000000000000"/></label></div>
-          <div class="field"><label>Client ID<span class="hint"> (App ID)</span><input id="tfClientId" type="text" placeholder="11111111-2222-3333-4444-555555555555"/></label></div>
-          <div class="field"><label>Default mailbox<input id="tfDefaultMailbox" type="email" placeholder="noreply@tenant.tld"/></label></div>
-  
-          <div class="field"><label>Allowed senders <span class="hint">(komma of 1 per regel)</span>
+          <!-- Tenant Naam Sectie -->
+          <div class="field" style="grid-column: 1 / -1; display: flex; align-items: center; gap: 12px;">
+            <h4 style="margin: 0; white-space: nowrap;">Tenant Naam</h4>
+            <input id="tfName" type="text" placeholder="Naam" style="flex: 1; margin: 0;"/>
+          </div>
+          
+          <!-- Algemene Configuratie (voor beide opties) -->
+          <div class="field" style="grid-column: 1 / -1;"><h4>Algemene Configuratie</h4></div>
+          <div class="field"><label>Allowed senders <span class="hint">(komma of 1 per regel) - gebruikt voor routing en sender validatie</span>
             <textarea id="tfAllowedSenders" rows="3" placeholder="noreply@tenant.tld"></textarea>
           </label></div>
-  
-          <div class="field"><label>Cert path<input id="tfCertPath" type="text" placeholder="./certs/tenant.pem"/></label></div>
-          <div class="field"><label>Thumbprint<input id="tfThumbprint" type="text" placeholder="CERTIFICATE THUMBPRINT"/></label></div>
-  
+          <div class="field"><label>Routing domains <span class="hint">(komma-gescheiden) - gebruikt voor tenant routing</span>
+            <input id="tfSenderDomains" type="text" placeholder="example.com, sub.example.com"/>
+          </label></div>
+          <div class="field"><label>Routing IP ranges <span class="hint">(1 per regel) - gebruikt voor tenant routing</span>
+            <textarea id="tfIpRanges" rows="3" placeholder="203.0.113.0/24"></textarea>
+          </label></div>
+          <div class="field"><label>Prioriteit<input id="tfPriority" type="number" min="0" placeholder="100"/></label></div>
           <div class="field"><label>Force From <span class="hint">(optioneel)</span><input id="tfForceFrom" type="email" placeholder="override@tenant.tld"/></label></div>
           <div class="field"><label>Max size (KB)<input id="tfMaxSize" type="number" min="0" placeholder="5120"/></label></div>
           <div class="field"><label>Rate per minuut<input id="tfRatePerMinute" type="number" min="0" placeholder="60"/></label></div>
@@ -183,21 +193,170 @@
           <div class="field"><label class="check"><input id="tfSaveToSent" type="checkbox"/> Save to Sent Items</label></div>
           <div class="field"><label>BCC-archive<input id="tfBccArchive" type="email" placeholder="archive@tenant.tld"/></label></div>
   
-          <div class="field"><label>Routing IP ranges <span class="hint">(1 per regel)</span>
-            <textarea id="tfIpRanges" rows="3" placeholder="203.0.113.0/24"></textarea>
-          </label></div>
-          <div class="field"><label>Routing domains <span class="hint">(komma-gescheiden)</span>
-            <input id="tfSenderDomains" type="text" placeholder="example.com, sub.example.com"/>
-          </label></div>
-          <div class="field"><label>Prioriteit<input id="tfPriority" type="number" min="0" placeholder="100"/></label></div>
-  
           <div class="field"><label>Tags <span class="hint">(komma-gescheiden)</span>
             <input id="tfTags" type="text" placeholder="prod, important"/>
           </label></div>
+          
+          <!-- Mail Delivery Sectie - Twee kolommen -->
+          <div class="field" style="grid-column: 1 / -1;"><h4>Mail Delivery</h4></div>
+          <div class="field" style="grid-column: 1 / -1;">
+            <div class="delivery-methods-grid">
+              <!-- Upstream SMTP Server (Links) -->
+              <div class="delivery-method-panel">
+                <label class="radio-label">
+                  <input type="radio" name="deliveryMethod" value="smtp"> 
+                  <strong>Upstream SMTP Server</strong>
+                </label>
+                <div style="margin-top: 12px;">
+                  <select id="tfSmtpServer" style="width: 100%;">
+                    <option value="">Kies een server...</option>
+                  </select>
+                  <p class="muted small" style="margin-top: 8px;">Selecteer een SMTP server die is geconfigureerd in de Global Settings.</p>
+                </div>
+              </div>
+              
+              <!-- Microsoft Graph API (Rechts) -->
+              <div class="delivery-method-panel" id="graphConfigSection">
+                <label class="radio-label">
+                  <input type="radio" name="deliveryMethod" value="graph" checked> 
+                  <strong>Microsoft Graph API</strong> (Standaard)
+                </label>
+                <p class="muted small" style="margin-left: 24px; margin-top: 4px;">Gebruikt de geconfigureerde Azure AD app credentials om mails te verzenden via de Microsoft Graph API.</p>
+                
+                <!-- Microsoft Graph API Configuratie velden (alleen zichtbaar bij Graph optie) -->
+                <div id="graphConfigFields" style="margin-top: 12px;">
+                  <div class="form-grid-inner">
+                    <div class="field"><label>Tenant ID<span class="hint"> (GUID) *</span><input id="tfTenantId" type="text" placeholder="00000000-0000-0000-0000-000000000000"/></label></div>
+                    <div class="field"><label>Client ID<span class="hint"> (App ID) *</span><input id="tfClientId" type="text" placeholder="11111111-2222-3333-4444-555555555555"/></label></div>
+                    <div class="field"><label>Default mailbox *<input id="tfDefaultMailbox" type="email" placeholder="noreply@tenant.tld"/></label></div>
+                    <div class="field"><label>Cert path *<input id="tfCertPath" type="text" placeholder="./certs/tenant.pem"/></label></div>
+                    <div class="field"><label>Thumbprint *<input id="tfThumbprint" type="text" placeholder="CERTIFICATE THUMBPRINT"/></label></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
   
           <p class="muted" style="grid-column: 1 / -1">Opmerking: <code>senderOverrides</code> wordt standaard leeg gezet en kan later via JSON geavanceerd worden ingevuld.</p>
         </div>
         <div class="button-row"><button id="tenantSave" class="primary">Opslaan</button></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Settings Modal -->
+  <div id="settingsModal" class="modal hidden">
+    <div class="modal-content modal-large">
+      <div class="modal-head">
+        <h3>⚙️ Service Instellingen</h3>
+        <div class="actions">
+          <button id="settingsClose" class="ghost">Sluiten</button>
+        </div>
+      </div>
+      <div class="modal-body">
+        <div class="form-grid">
+          <div class="field"><label>Listen Port<input id="sfListenPort" type="number" min="1" max="65535" placeholder="2525"/></label></div>
+          <div class="field"><label>Host Name<input id="sfHostName" type="text" placeholder="relay.example.com"/></label></div>
+          <div class="field"><label class="check"><input id="sfRequireTLS" type="checkbox"/> Require TLS</label></div>
+          <div class="field"><label>Optional Basic Auth<label class="check"><input id="sfOptionalBasicAuth" type="checkbox"/> Enabled</label></label></div>
+          
+          <div class="field" style="grid-column: 1 / -1;"><h4>TLS Configuratie</h4></div>
+          <div class="field"><label>Cert File<input id="sfCertFile" type="text" placeholder="./certs/relay_server.crt"/></label></div>
+          <div class="field"><label>Key File<input id="sfKeyFile" type="text" placeholder="./certs/relay_server.key"/></label></div>
+          <div class="field"><label>TLS Mode<select id="sfTLSMode">
+            <option value="starttls">STARTTLS</option>
+            <option value="implicit">Implicit TLS (port 465)</option>
+          </select></label></div>
+          
+          <div class="field" style="grid-column: 1 / -1;"><h4>IP Allowlist</h4></div>
+          <div class="field" style="grid-column: 1 / -1;"><label>Allowlist IPs <span class="hint">(1 per regel, CIDR notatie, leeg laten om alleen tenant ipRanges te gebruiken)</span>
+            <textarea id="sfAllowlistIPs" rows="4" placeholder="192.168.1.0/24&#10;10.0.0.0/8"></textarea>
+          </label></div>
+          
+          <div class="field" style="grid-column: 1 / -1;"><h4>Tenant Routing Prioriteit</h4></div>
+          <div class="field" style="grid-column: 1 / -1;">
+            <label>Routing Prioriteit <span class="hint">(sleep items om de volgorde te bepalen - bovenste heeft hoogste prioriteit)</span></label>
+            <ul id="sfRoutingPriorityList" class="routing-priority-list">
+              <li data-value="allowedSenders" class="routing-priority-item">
+                <span class="drag-handle">☰</span>
+                <span class="item-label">Allowed Senders</span>
+                <span class="item-desc">(exacte email match)</span>
+              </li>
+              <li data-value="senderDomains" class="routing-priority-item">
+                <span class="drag-handle">☰</span>
+                <span class="item-label">Routing Domains</span>
+                <span class="item-desc">(domain match)</span>
+              </li>
+              <li data-value="ipRanges" class="routing-priority-item">
+                <span class="drag-handle">☰</span>
+                <span class="item-label">IP Ranges</span>
+                <span class="item-desc">(IP adres match)</span>
+              </li>
+            </ul>
+            <p class="muted small" style="margin-top: 8px;">Sleep items omhoog of omlaag om de volgorde te wijzigen. De bovenste optie wordt als eerste gecontroleerd.</p>
+          </div>
+          
+          <div class="field" style="grid-column: 1 / -1;"><h4>SMTP Servers</h4></div>
+          <div class="field" style="grid-column: 1 / -1;">
+            <div class="smtp-manager">
+              <div class="smtp-list-container">
+                <label>Geconfigureerde Servers</label>
+                <ul id="smtpList" class="smtp-list">
+                  <li class="empty">Geen servers geconfigureerd</li>
+                </ul>
+              </div>
+              <div class="smtp-form">
+                <label>Nieuwe Server Toevoegen</label>
+                <div class="form-grid inner">
+                  <div class="field"><input id="newSmtpName" type="text" placeholder="Naam (bv. Office365 Relay)" /></div>
+                  <div class="field"><input id="newSmtpAdres" type="text" placeholder="Adres (bv. smtp.office365.com)" /></div>
+                  <div class="field"><input id="newSmtpPoort" type="number" placeholder="Poort (bv. 587)" /></div>
+                  <div class="field"><label class="check"><input id="newSmtpRequireAuth" type="checkbox" /> Authenticatie vereist</label></div>
+                  <div class="field"><select id="newSmtpAuthUser" style="display:none;">
+                    <option value="">Selecteer gebruiker...</option>
+                  </select></div>
+                  <div class="field" style="grid-column: 1/-1">
+                    <button id="addSmtpServerBtn" class="secondary small">Toevoegen</button>
+                  </div>
+                </div>
+              </div>
+              
+              <div class="field" style="grid-column: 1 / -1; margin-top: 16px;"><h4>Authenticatie Gebruikers</h4></div>
+              <div class="field" style="grid-column: 1 / -1;">
+                <div class="auth-users-manager">
+                  <div class="auth-users-list-container">
+                    <label>Geconfigureerde Gebruikers</label>
+                    <ul id="authUsersList" class="smtp-list">
+                      <li class="empty">Geen gebruikers geconfigureerd</li>
+                    </ul>
+                  </div>
+                  <div class="auth-users-form">
+                    <label>Nieuwe Gebruiker Toevoegen</label>
+                    <div class="form-grid inner">
+                      <div class="field"><input id="newAuthUsername" type="text" placeholder="Gebruikersnaam" /></div>
+                      <div class="field"><input id="newAuthPassword" type="password" placeholder="Wachtwoord" /></div>
+                      <div class="field" style="grid-column: 1/-1">
+                        <button id="addAuthUserBtn" class="secondary small">Toevoegen</button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          <div class="field" style="grid-column: 1 / -1;">
+            <div class="test-smtp-box" style="border: 1px solid var(--border); padding: 10px; border-radius: 8px; margin-top: 5px;">
+              <h5 style="margin:0 0 5px 0">Test SMTP Connectie</h5>
+              <div style="display: flex; gap: 10px;">
+                <select id="testSmtpSelect" style="flex:1"><option value="">Selecteer server uit lijst...</option></select>
+                <button id="testSmtpBtn" class="ghost" style="border: 1px solid var(--border)">Test</button>
+              </div>
+              <div id="testSmtpResult" class="muted" style="margin-top: 5px; font-size: 12px;"></div>
+            </div>
+          </div>
+        </div>
+        <div class="button-row"><button id="settingsSave" class="primary">Opslaan</button></div>
       </div>
     </div>
   </div>
@@ -302,7 +461,7 @@
         <img src="logo.png" alt="RileeSurfis Logo" />
       </div>
       <h2>RileeSurfis Admin</h2>
-      <p class="version">v5.0.0</p>
+      <p class="version" id="versionLogin">v5.0.0</p>
     </div>
     <p class="muted">Voer je admin token in om de beheerconsole te openen.</p>
     <input id="overlayToken" type="password" placeholder="Admin token (Bearer)" />

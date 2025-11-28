@@ -1,5 +1,6 @@
 import { createServer } from "./lib/server.js"; 
 import { loadConfig } from "./lib/config.js";
+import { loadVersion, incrementVersion } from "./lib/version.js";
 import express from "express";
 import fs from "fs";
 import path from "path";
@@ -204,15 +205,13 @@ const ADMIN_PORT = process.env.ADMIN_PORT || 8080;
 const ADMIN_TOKEN = process.env.ADMIN_TOKEN || "ka8jajs@9djj3lsjdklsdfulij238sdfh";
 const ROOT = process.cwd();
 const TENANTS_DIR = path.join(ROOT, "tenants.d");
+const CONFIG_FILE = path.join(ROOT, "config.json");
 const SCHEMA = JSON.parse(fs.readFileSync(path.join(ROOT, "schema", "tenant.schema.json"), "utf8"));
 
 app.use(cors());
 app.use(express.json());
 
-// 1) Serve UI without auth
-app.use("/", express.static(path.join(ROOT, "admin-ui")));
-
-// 2) Public admin endpoints (altijd toegankelijk)
+// 2) Public admin endpoints (altijd toegankelijk) - MOET VOOR static route staan
 app.get("/admin/health", (req, res) => res.json({ ok: true }));
 
 app.get("/admin/auth-status", (req, res) => {
@@ -267,9 +266,47 @@ app.use("/admin", (req, res, next) => {
   return res.status(401).json({ error: "Unauthorized" });
 });
 
+// Test SMTP connection endpoint (protected, binnen /admin routes)
+app.post("/admin/test-smtp-connection", async (req, res) => {
+  try {
+    console.log("📧 Test SMTP connection request ontvangen");
+    const smtpServer = req.body;
+    console.log("📧 SMTP server data:", JSON.stringify(smtpServer));
+    
+    if (!smtpServer || !smtpServer.adres || !smtpServer.poort) {
+      console.log("❌ Ontbrekende velden:", { adres: smtpServer?.adres, poort: smtpServer?.poort });
+      return res.status(400).json({ ok: false, error: "SMTP server adres en poort zijn verplicht" });
+    }
+    
+    // Dynamisch importeren van smtp module
+    const { testSMTPConnection } = await import("./lib/smtp.js");
+    const result = await testSMTPConnection(smtpServer);
+    
+    console.log("📧 Test resultaat:", result);
+    res.json(result);
+  } catch (error) {
+    console.error("❌ Error testing SMTP connection:", error);
+    res.status(500).json({ ok: false, error: error.message });
+  }
+});
+
 const ajv = new Ajv({ allErrors: true });
 addFormats(ajv);
 const validate = ajv.compile(SCHEMA);
+
+// Functie om een aangepast schema te maken voor SMTP (zonder Graph API velden)
+function createSchemaForDeliveryMethod(deliveryMethod) {
+  const schema = JSON.parse(JSON.stringify(SCHEMA));
+  if (deliveryMethod === "smtp") {
+    // Bij SMTP: verwijder alleen Graph API velden uit het schema
+    // allowedSenders blijft behouden - wordt gebruikt voor routing en sender validatie
+    delete schema.properties.tenantId;
+    delete schema.properties.clientId;
+    delete schema.properties.auth;
+    delete schema.properties.defaultMailbox;
+  }
+  return schema;
+}
 
 function listTenantFiles() {
   if (!fs.existsSync(TENANTS_DIR)) fs.mkdirSync(TENANTS_DIR, { recursive: true });
@@ -323,9 +360,82 @@ app.post("/admin/tenants/validate", (req, res) => {
 
 app.post("/admin/tenants", (req, res) => {
   const data = req.body;
-  const ok = validate(data);
-  if (!ok) return res.status(400).json({ ok: false, errors: validate.errors });
-  const out = writeTenant(data.name, data);
+  console.log("📝 Tenant opslaan - ontvangen data:", JSON.stringify(data, null, 2));
+  
+  // Aangepaste validatie: Graph API velden zijn alleen verplicht als delivery method "graph" is
+  const deliveryMethod = data.delivery?.method || "graph";
+  
+  // Bij SMTP: verwijder Graph API velden voordat schema validatie wordt uitgevoerd
+  let dataForValidation = JSON.parse(JSON.stringify(data)); // Deep copy
+  if (deliveryMethod === "smtp") {
+    // Verwijder Graph API velden bij SMTP - ze worden niet gebruikt
+    // allowedSenders blijft behouden - wordt gebruikt voor routing en sender validatie
+    delete dataForValidation.tenantId;
+    delete dataForValidation.clientId;
+    delete dataForValidation.auth;
+    delete dataForValidation.defaultMailbox;
+    console.log("📝 SMTP geselecteerd - Graph API velden verwijderd voor validatie");
+    console.log("📝 Data voor validatie:", JSON.stringify(dataForValidation, null, 2));
+  }
+  
+  // Validatie: Ten minste één routing criterium is verplicht (routing.senderDomains of allowedSenders)
+  const hasRoutingDomains = data.routing?.senderDomains && data.routing.senderDomains.length > 0;
+  const hasAllowedSenders = data.allowedSenders && data.allowedSenders.length > 0;
+  
+  if (!hasRoutingDomains && !hasAllowedSenders) {
+    return res.status(400).json({ 
+      ok: false, 
+      error: "Ten minste één van de volgende velden is verplicht: Routing domains of Allowed senders (gebruikt voor tenant routing)",
+      errors: [
+        { instancePath: "", message: "Routing configuratie ontbreekt: routing.senderDomains of allowedSenders is verplicht" }
+      ]
+    });
+  }
+  
+  if (deliveryMethod === "graph") {
+    // Voor Graph API zijn deze velden verplicht - controleer nieuwe structuur (delivery.graph) of legacy (top-level)
+    const graphConfig = data.delivery?.graph || {};
+    const hasGraphConfig = (graphConfig.tenantId && graphConfig.clientId && graphConfig.auth && graphConfig.defaultMailbox) ||
+                          (data.tenantId && data.clientId && data.auth && data.defaultMailbox);
+    if (!hasGraphConfig) {
+      return res.status(400).json({ 
+        ok: false, 
+        error: "Voor Graph API zijn Tenant ID, Client ID, Auth en Default Mailbox verplicht",
+        errors: [
+          { instancePath: "", message: "Graph API configuratie ontbreekt" }
+        ]
+      });
+    }
+    // Bij Graph API mogen Graph API velden NIET ontbreken
+  } else if (deliveryMethod === "smtp") {
+    // Voor SMTP is alleen de SMTP server verplicht (nieuwe structuur: delivery.smtp.smtpServer of legacy: delivery.smtpServer)
+    const smtpServer = data.delivery?.smtp?.smtpServer || data.delivery?.smtpServer;
+    if (!smtpServer) {
+      return res.status(400).json({ 
+        ok: false, 
+        error: "Voor SMTP delivery is een SMTP server verplicht",
+        errors: [
+          { instancePath: "/delivery/smtp/smtpServer", message: "SMTP server is verplicht" }
+        ]
+      });
+    }
+    // Bij SMTP mogen Graph API velden (tenantId, clientId, auth, etc.) ontbreken - ze worden niet gebruikt
+  }
+  
+  // Schema validatie op data zonder Graph API velden bij SMTP
+  // Maak een aangepast schema voor validatie dat geen Graph API velden vereist
+  const validationSchema = createSchemaForDeliveryMethod(deliveryMethod);
+  const validateForMethod = ajv.compile(validationSchema);
+  const ok = validateForMethod(dataForValidation);
+  if (!ok) {
+    console.error("❌ Validatie gefaald:", JSON.stringify(validateForMethod.errors, null, 2));
+    console.error("❌ Data die werd gevalideerd:", JSON.stringify(dataForValidation, null, 2));
+    console.error("❌ Delivery method:", deliveryMethod);
+    return res.status(400).json({ ok: false, errors: validateForMethod.errors });
+  }
+  
+  // Gebruik de data zonder Graph API velden bij SMTP voor opslaan
+  const out = writeTenant(dataForValidation.name, dataForValidation);
   
   // Trigger automatic reload na nieuwe tenant
   if (global.serverEvents) {
@@ -346,9 +456,82 @@ app.post("/admin/tenants", (req, res) => {
 
 app.put("/admin/tenants/:name", (req, res) => {
   const data = req.body;
-  const ok = validate(data);
-  if (!ok) return res.status(400).json({ ok: false, errors: validate.errors });
-  const out = writeTenant(req.params.name, data);
+  console.log("📝 Tenant bijwerken - ontvangen data:", JSON.stringify(data, null, 2));
+  
+  // Aangepaste validatie: Graph API velden zijn alleen verplicht als delivery method "graph" is
+  const deliveryMethod = data.delivery?.method || "graph";
+  
+  // Bij SMTP: verwijder Graph API velden voordat schema validatie wordt uitgevoerd
+  let dataForValidation = JSON.parse(JSON.stringify(data)); // Deep copy
+  if (deliveryMethod === "smtp") {
+    // Verwijder Graph API velden bij SMTP - ze worden niet gebruikt
+    // allowedSenders blijft behouden - wordt gebruikt voor routing en sender validatie
+    delete dataForValidation.tenantId;
+    delete dataForValidation.clientId;
+    delete dataForValidation.auth;
+    delete dataForValidation.defaultMailbox;
+    console.log("📝 SMTP geselecteerd - Graph API velden verwijderd voor validatie");
+    console.log("📝 Data voor validatie:", JSON.stringify(dataForValidation, null, 2));
+  }
+  
+  // Validatie: Ten minste één routing criterium is verplicht (routing.senderDomains of allowedSenders)
+  const hasRoutingDomains = data.routing?.senderDomains && data.routing.senderDomains.length > 0;
+  const hasAllowedSenders = data.allowedSenders && data.allowedSenders.length > 0;
+  
+  if (!hasRoutingDomains && !hasAllowedSenders) {
+    return res.status(400).json({ 
+      ok: false, 
+      error: "Ten minste één van de volgende velden is verplicht: Routing domains of Allowed senders (gebruikt voor tenant routing)",
+      errors: [
+        { instancePath: "", message: "Routing configuratie ontbreekt: routing.senderDomains of allowedSenders is verplicht" }
+      ]
+    });
+  }
+  
+  if (deliveryMethod === "graph") {
+    // Voor Graph API zijn deze velden verplicht - controleer nieuwe structuur (delivery.graph) of legacy (top-level)
+    const graphConfig = data.delivery?.graph || {};
+    const hasGraphConfig = (graphConfig.tenantId && graphConfig.clientId && graphConfig.auth && graphConfig.defaultMailbox) ||
+                          (data.tenantId && data.clientId && data.auth && data.defaultMailbox);
+    if (!hasGraphConfig) {
+      return res.status(400).json({ 
+        ok: false, 
+        error: "Voor Graph API zijn Tenant ID, Client ID, Auth en Default Mailbox verplicht",
+        errors: [
+          { instancePath: "", message: "Graph API configuratie ontbreekt" }
+        ]
+      });
+    }
+    // Bij Graph API mogen Graph API velden NIET ontbreken
+  } else if (deliveryMethod === "smtp") {
+    // Voor SMTP is alleen de SMTP server verplicht (nieuwe structuur: delivery.smtp.smtpServer of legacy: delivery.smtpServer)
+    const smtpServer = data.delivery?.smtp?.smtpServer || data.delivery?.smtpServer;
+    if (!smtpServer) {
+      return res.status(400).json({ 
+        ok: false, 
+        error: "Voor SMTP delivery is een SMTP server verplicht",
+        errors: [
+          { instancePath: "/delivery/smtp/smtpServer", message: "SMTP server is verplicht" }
+        ]
+      });
+    }
+    // Bij SMTP mogen Graph API velden (tenantId, clientId, auth, etc.) ontbreken - ze worden niet gebruikt
+  }
+  
+  // Schema validatie op data zonder Graph API velden bij SMTP
+  // Maak een aangepast schema voor validatie dat geen Graph API velden vereist
+  const validationSchema = createSchemaForDeliveryMethod(deliveryMethod);
+  const validateForMethod = ajv.compile(validationSchema);
+  const ok = validateForMethod(dataForValidation);
+  if (!ok) {
+    console.error("❌ Validatie gefaald:", JSON.stringify(validateForMethod.errors, null, 2));
+    console.error("❌ Data die werd gevalideerd:", JSON.stringify(dataForValidation, null, 2));
+    console.error("❌ Delivery method:", deliveryMethod);
+    return res.status(400).json({ ok: false, errors: validateForMethod.errors });
+  }
+  
+  // Gebruik de data zonder Graph API velden bij SMTP voor opslaan
+  const out = writeTenant(req.params.name, dataForValidation);
   
   // Trigger automatic reload na tenant wijziging
   if (global.serverEvents) {
@@ -516,6 +699,97 @@ app.get("/admin/events", (req, res) => {
   res.json({ events });
 });
 
+// Version endpoints
+app.get("/admin/version", (req, res) => {
+  try {
+    const versionData = loadVersion();
+    res.json(versionData);
+  } catch (error) {
+    console.error("❌ Error reading version:", error);
+    res.status(500).json({ error: "Failed to read version", message: error.message });
+  }
+});
+
+app.post("/admin/version/bump", (req, res) => {
+  try {
+    const { type = "patch" } = req.body; // "patch", "minor", of "major"
+    
+    if (!["patch", "minor", "major"].includes(type)) {
+      return res.status(400).json({ 
+        error: "Invalid version type", 
+        message: "Type must be 'patch', 'minor', or 'major'" 
+      });
+    }
+    
+    const oldVersion = loadVersion();
+    const newVersion = incrementVersion(type);
+    
+    res.json({ 
+      ok: true, 
+      oldVersion: oldVersion.version,
+      newVersion: newVersion.version,
+      lastUpdated: newVersion.lastUpdated
+    });
+  } catch (error) {
+    console.error("❌ Error bumping version:", error);
+    res.status(500).json({ error: "Failed to bump version", message: error.message });
+  }
+});
+
+// Config/Settings CRUD
+app.get("/admin/config", (req, res) => {
+  try {
+    if (!fs.existsSync(CONFIG_FILE)) {
+      return res.status(404).json({ error: "Config file not found" });
+    }
+    const config = JSON.parse(fs.readFileSync(CONFIG_FILE, "utf8"));
+    res.json(config);
+  } catch (error) {
+    console.error("❌ Error reading config:", error);
+    res.status(500).json({ error: "Failed to read config", message: error.message });
+  }
+});
+
+app.put("/admin/config", (req, res) => {
+  try {
+    const config = req.body;
+    
+    // Valideer basis structuur
+    if (!config.service) {
+      return res.status(400).json({ error: "Config must have 'service' property" });
+    }
+    
+    // Backup maken van huidige config
+    if (fs.existsSync(CONFIG_FILE)) {
+      const backupFile = CONFIG_FILE + ".backup." + Date.now();
+      fs.copyFileSync(CONFIG_FILE, backupFile);
+      console.log(`📋 Config backup gemaakt: ${backupFile}`);
+    }
+    
+    // Schrijf nieuwe config
+    fs.writeFileSync(CONFIG_FILE, JSON.stringify(config, null, 2));
+    console.log(`✅ Config opgeslagen`);
+    
+    // Trigger reload event
+    if (global.serverEvents) {
+      global.serverEvents.emit("reload");
+      console.log(`🔄 Auto-reload triggered after config update`);
+      
+      // Log configuratie wijziging
+      global.serverEvents.emit("configChange", {
+        type: "config_updated",
+        message: "Service configuration updated",
+        timestamp: new Date().toISOString()
+      });
+    }
+    
+    res.json({ ok: true, message: "Config updated successfully" });
+  } catch (error) {
+    console.error("❌ Error writing config:", error);
+    res.status(500).json({ error: "Failed to write config", message: error.message });
+  }
+});
+
 // Functie om configuratie te herladen
 async function reloadConfig() {
   try {
@@ -530,6 +804,9 @@ async function reloadConfig() {
 
 // Start beide servers
 loadConfig().then(async (config) => {
+  // Serve UI (na alle routes zodat specifieke routes eerst worden gematcht)
+  app.use("/", express.static(path.join(ROOT, "admin-ui")));
+  
   // Start admin server
   app.listen(ADMIN_PORT, () => {
     console.log(`🌐 Admin server started on port ${ADMIN_PORT}`);

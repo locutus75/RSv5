@@ -4,11 +4,6 @@
   "type": "object",
   "required": [
     "name",
-    "tenantId",
-    "clientId",
-    "auth",
-    "defaultMailbox",
-    "allowedSenders",
     "senderOverrides"
   ],
   "properties": {
@@ -116,6 +111,63 @@
       "items": {
         "type": "string"
       }
+    },
+    "delivery": {
+      "type": "object",
+      "properties": {
+        "method": {
+          "type": "string",
+          "enum": ["graph", "smtp"]
+        },
+        "graph": {
+          "type": "object",
+          "properties": {
+            "tenantId": {
+              "type": "string"
+            },
+            "clientId": {
+              "type": "string"
+            },
+            "auth": {
+              "type": "object",
+              "required": [
+                "type",
+                "certPath",
+                "thumbprint"
+              ],
+              "properties": {
+                "type": {
+                  "const": "certificate"
+                },
+                "certPath": {
+                  "type": "string"
+                },
+                "thumbprint": {
+                  "type": "string"
+                }
+              }
+            },
+            "defaultMailbox": {
+              "type": "string",
+              "format": "email"
+            }
+          },
+          "additionalProperties": false
+        },
+        "smtp": {
+          "type": "object",
+          "properties": {
+            "smtpServer": {
+              "type": "string"
+            }
+          },
+          "additionalProperties": false
+        },
+        "smtpServer": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": false
     }
   },
   "additionalProperties": false

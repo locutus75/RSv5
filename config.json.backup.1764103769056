@@ -9,9 +9,6 @@
       "mode": "starttls"
     },
     "allowlistIPs": [],
-    "routingPriority": [
-      "allowedSenders"
-    ],
     "optionalBasicAuth": true,
     "smtpServers": [
       {

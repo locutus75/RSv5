@@ -12,6 +12,10 @@
     "start:debug-log": "node index.js --debug --log-file ./logs/mail-debug.log",
     "start:verbose-log": "node index.js --verbose --log-file ./logs/mail-verbose.log",
     "start:help": "node index.js --help",
+    "version:bump": "node scripts/bump-version.js",
+    "version:patch": "node scripts/bump-version.js --patch",
+    "version:minor": "node scripts/bump-version.js --minor",
+    "version:major": "node scripts/bump-version.js --major",
     "service:install": "node service-installer.cjs",
     "service:uninstall": "node service-uninstaller.cjs",
     "service:start": "node service-manager.cjs start",
@@ -29,6 +33,7 @@
     "mailparser": "^3.7.4",
     "node-fetch": "^3.3.2",
     "node-windows": "^1.0.0-beta.7",
+    "nodemailer": "^6.9.8",
     "smtp-server": "^3.14.0",
     "uuid": "^9.0.1"
   }

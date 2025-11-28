@@ -9,17 +9,7 @@
       "mode": "starttls"
     },
     "allowlistIPs": [],
-    "routingPriority": [
-      "allowedSenders"
-    ],
     "optionalBasicAuth": true,
-    "smtpServers": [
-      {
-        "naam": "Esprit",
-        "adres": "smtp02.esprit-ict.nl",
-        "poort": 25
-      }
-    ],
-    "authUsers": []
+    "users": []
   }
 }
