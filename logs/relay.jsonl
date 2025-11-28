@@ -541,3 +541,20 @@
 {"ts":"2025-11-26T00:02:10.963Z","level":"config.info","message":"Tenant reload ready - triggered on save"}
 {"ts":"2025-11-26T00:02:11.039Z","level":"config.info","message":"Admin/SMTP ready on 2525"}
 {"ts":"2025-11-26T00:02:11.040Z","level":"config.info","message":"SMTP server configured for service context"}
+{"ts":"2025-11-27T23:35:05.234Z","level":"config.info","message":"Tenant reload ready - triggered on save"}
+{"ts":"2025-11-27T23:35:05.324Z","level":"config.info","message":"Admin/SMTP ready on 2525"}
+{"ts":"2025-11-27T23:35:05.326Z","level":"config.info","message":"SMTP server configured for service context"}
+{"ts":"2025-11-27T23:41:54.454Z","level":"debug","message":"Client verbinding - IP check","remoteIP":"192.168.111.16","allowlistIPs":[],"allowlistIPsConfigured":false}
+{"ts":"2025-11-27T23:41:54.457Z","level":"debug","message":"IP toegestaan","remoteIP":"192.168.111.16","allowlistIPsUsed":false}
+{"ts":"2025-11-27T23:41:54.629Z","level":"deliver.warn","tenant":"E-cowarenhuis","rcpts":"testaccount@coolservers.org","remoteIP":"192.168.111.16","message":"No specific tenant match found, using fallback","reason":"fallback"}
+{"ts":"2025-11-27T23:41:55.152Z","level":"deliver.ok","msgId":"b6b02afa-dcf1-4e29-8abc-a6bccc4242b1","tenant":"E-cowarenhuis","from":"egbert@e-cowarenhuis.nl","rcptCount":1,"rcpts":"testaccount@coolservers.org","sizeKB":306,"remoteIP":"192.168.111.16","deliveryMethod":"graph"}
+{"ts":"2025-11-27T23:49:33.210Z","level":"debug","message":"Client verbinding - IP check","remoteIP":"192.168.111.16","allowlistIPs":[],"allowlistIPsConfigured":false}
+{"ts":"2025-11-27T23:49:33.212Z","level":"debug","message":"IP toegestaan","remoteIP":"192.168.111.16","allowlistIPsUsed":false}
+{"ts":"2025-11-27T23:49:33.291Z","level":"deliver.warn","tenant":"E-cowarenhuis","rcpts":"testaccount@coolservers.org","remoteIP":"192.168.111.16","message":"No specific tenant match found, using fallback","reason":"fallback"}
+{"ts":"2025-11-27T23:49:33.584Z","level":"deliver.ok","msgId":"2ccb9fe4-adc7-4a1d-89e6-fe8d969cdfa3","tenant":"E-cowarenhuis","from":"egbert@e-cowarenhuis.nl","rcptCount":1,"rcpts":"testaccount@coolservers.org","sizeKB":306,"remoteIP":"192.168.111.16","deliveryMethod":"graph"}
+{"ts":"2025-11-28T00:10:43.287Z","level":"config.info","message":"Tenant reload ready - triggered on save"}
+{"ts":"2025-11-28T00:10:43.401Z","level":"config.info","message":"Admin/SMTP ready on 2525"}
+{"ts":"2025-11-28T00:10:43.403Z","level":"config.info","message":"SMTP server configured for service context"}
+{"ts":"2025-11-28T00:13:51.057Z","level":"config.info","message":"Tenant reload ready - triggered on save"}
+{"ts":"2025-11-28T00:13:51.132Z","level":"config.info","message":"Admin/SMTP ready on 2525"}
+{"ts":"2025-11-28T00:13:51.134Z","level":"config.info","message":"SMTP server configured for service context"}

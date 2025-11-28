@@ -724,7 +724,7 @@
         },
         tags: $("#tfTags").value.split(",").map(s=>s.trim()).filter(Boolean)
       };
-      
+
       // Voeg priority alleen toe als het is ingevuld
       const priorityValue = $("#tfPriority").value.trim();
       if (priorityValue) {
