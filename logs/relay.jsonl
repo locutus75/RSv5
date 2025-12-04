@@ -558,3 +558,6 @@
 {"ts":"2025-11-28T00:13:51.057Z","level":"config.info","message":"Tenant reload ready - triggered on save"}
 {"ts":"2025-11-28T00:13:51.132Z","level":"config.info","message":"Admin/SMTP ready on 2525"}
 {"ts":"2025-11-28T00:13:51.134Z","level":"config.info","message":"SMTP server configured for service context"}
+{"ts":"2025-12-02T10:47:43.394Z","level":"config.info","message":"Tenant reload ready - triggered on save"}
+{"ts":"2025-12-02T10:47:43.453Z","level":"config.info","message":"Admin/SMTP ready on 2525"}
+{"ts":"2025-12-02T10:47:43.454Z","level":"config.info","message":"SMTP server configured for service context"}
