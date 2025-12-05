@@ -561,3 +561,34 @@
 {"ts":"2025-12-02T10:47:43.394Z","level":"config.info","message":"Tenant reload ready - triggered on save"}
 {"ts":"2025-12-02T10:47:43.453Z","level":"config.info","message":"Admin/SMTP ready on 2525"}
 {"ts":"2025-12-02T10:47:43.454Z","level":"config.info","message":"SMTP server configured for service context"}
+{"ts":"2025-12-04T19:31:37.819Z","level":"config.info","message":"Service configuration reloaded (including routingPriority and smtpServers)","routingPriority":["allowedSenders","senderDomains","ipRanges"],"smtpServersCount":1}
+{"ts":"2025-12-04T19:31:37.827Z","level":"config.info","message":"Tenants reloaded successfully","count":3,"tenants":["E-cowarenhuis","Omnibuzz","test"]}
+{"ts":"2025-12-04T19:31:59.521Z","level":"debug","message":"Client verbinding - IP check","remoteIP":"192.168.150.3","allowlistIPs":[],"allowlistIPsConfigured":false}
+{"ts":"2025-12-04T19:32:00.618Z","level":"deliver.err","msgId":"810acad7-65b6-4546-95cc-fdd39dcd5b46","tenant":"unknown","remoteIP":"192.168.150.3","error":"IP not allowed (geen match in tenant ipRanges)","reason":"ip_not_allowed"}
+{"ts":"2025-12-04T19:32:20.322Z","level":"config.info","message":"Tenant reload ready - triggered on save"}
+{"ts":"2025-12-04T19:32:20.428Z","level":"config.info","message":"Starting SMTP server on port 2525","host":"0.0.0.0"}
+{"ts":"2025-12-04T19:32:20.438Z","level":"config.info","message":"SMTP server ready on 0.0.0.0:2525","port":2525,"host":"0.0.0.0"}
+{"ts":"2025-12-04T19:32:20.439Z","level":"config.info","message":"SMTP server configured for service context","maxConnections":100}
+{"ts":"2025-12-04T19:32:39.507Z","level":"debug","msgId":"b418e61d-5e15-4621-8a50-44f882965f0a","message":"Nieuwe SMTP client verbinding","remoteIP":"192.168.150.3","remotePort":50152,"allowlistIPs":[],"allowlistIPsConfigured":false}
+{"ts":"2025-12-04T19:32:39.512Z","level":"deliver.err","msgId":"d943c80f-8f05-4d90-9df0-f20667b1ebec","tenant":"unknown","remoteIP":"192.168.150.3","error":"IP not allowed (geen match in tenant ipRanges)","reason":"ip_not_allowed"}
+{"ts":"2025-12-04T19:32:58.754Z","level":"config.info","message":"Service configuration reloaded (including routingPriority and smtpServers)","routingPriority":["allowedSenders","senderDomains","ipRanges"],"smtpServersCount":1}
+{"ts":"2025-12-04T19:32:58.758Z","level":"config.info","message":"Tenants reloaded successfully","count":3,"tenants":["E-cowarenhuis","Omnibuzz","test"]}
+{"ts":"2025-12-04T19:33:22.003Z","level":"debug","msgId":"b2704a42-2978-437f-89c9-30a490c20f22","message":"Nieuwe SMTP client verbinding","remoteIP":"192.168.150.3","remotePort":50183,"allowlistIPs":[],"allowlistIPsConfigured":false}
+{"ts":"2025-12-04T19:33:22.006Z","level":"debug","message":"IP toegestaan","remoteIP":"192.168.150.3","allowlistIPsUsed":false}
+{"ts":"2025-12-04T19:33:59.169Z","level":"debug","msgId":"bf8e7dad-51c2-4cc7-a048-e017f7856c7e","message":"MAIL FROM command ontvangen","mailFrom":"test@testing123.com","remoteIP":"192.168.150.3","authenticated":"anonymous"}
+{"ts":"2025-12-04T19:34:25.813Z","level":"debug","msgId":"6c649715-0bc3-422a-ab51-3731887397fd","message":"RCPT TO command ontvangen","rcptTo":"test@coolservers.org","remoteIP":"192.168.150.3"}
+{"ts":"2025-12-04T19:34:27.377Z","level":"debug","msgId":"8c37300d-d069-4679-99b3-b785335c102f","message":"onData gestart - email ontvangen","remoteIP":"192.168.150.3","envelopeFrom":"test@testing123.com","envelopeTo":"test@coolservers.org"}
+{"ts":"2025-12-04T19:34:31.356Z","level":"debug","msgId":"8c37300d-d069-4679-99b3-b785335c102f","message":"Email data compleet - start verwerking","remoteIP":"192.168.150.3","sizeBytes":16}
+{"ts":"2025-12-04T19:34:31.364Z","level":"debug","msgId":"8c37300d-d069-4679-99b3-b785335c102f","message":"Email geparsed","envelopeFrom":"test@testing123.com","parsedFrom":"none"}
+{"ts":"2025-12-04T19:34:31.366Z","level":"mail.error","message":"Email verwerking gefaald","tenant":"test","afzender":"test@testing123.com","ontvangers":"test@coolservers.org","error":"Error: Sender not allowed: test@testing123.com for tenant: test","reason":"sender_not_allowed"}
+{"ts":"2025-12-04T19:34:31.367Z","level":"deliver.err","msgId":"8c37300d-d069-4679-99b3-b785335c102f","tenant":"test","from":"test@testing123.com","rcptCount":1,"rcpts":"test@coolservers.org","remoteIP":"192.168.150.3","error":"Error: Sender not allowed: test@testing123.com for tenant: test","reason":"sender_not_allowed"}
+{"ts":"2025-12-05T01:52:07.580Z","level":"debug","msgId":"062affc1-f584-4586-b3ed-c0c6d4687e2d","message":"Nieuwe SMTP client verbinding","remoteIP":"192.168.150.3","remotePort":55994,"allowlistIPs":[],"allowlistIPsConfigured":false}
+{"ts":"2025-12-05T01:52:07.601Z","level":"debug","message":"IP toegestaan","remoteIP":"192.168.150.3","allowlistIPsUsed":false}
+{"ts":"2025-12-05T02:17:37.258Z","level":"config.info","message":"Tenant reload ready - triggered on save"}
+{"ts":"2025-12-05T02:17:37.346Z","level":"config.info","message":"Starting SMTP server on port 2525","host":"0.0.0.0"}
+{"ts":"2025-12-05T02:17:37.356Z","level":"config.info","message":"SMTP server ready on 0.0.0.0:2525","port":2525,"host":"0.0.0.0"}
+{"ts":"2025-12-05T02:17:37.356Z","level":"config.info","message":"SMTP server configured for service context","maxConnections":100}
+{"ts":"2025-12-05T22:10:59.698Z","level":"config.info","message":"Tenant reload ready - triggered on save"}
+{"ts":"2025-12-05T22:10:59.762Z","level":"config.info","message":"Starting SMTP server on port 2525","host":"0.0.0.0"}
+{"ts":"2025-12-05T22:10:59.771Z","level":"config.info","message":"SMTP server ready on 0.0.0.0:2525","port":2525,"host":"0.0.0.0"}
+{"ts":"2025-12-05T22:10:59.772Z","level":"config.info","message":"SMTP server configured for service context","maxConnections":100}

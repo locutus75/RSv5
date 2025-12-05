@@ -2,7 +2,7 @@
   "service": {
     "listenPort": 2525,
     "requireTLS": false,
-    "hostName": "192.168.150.3",
+    "hostName": "relay.coolservers.org",
     "tls": {
       "certFile": "./certs/relay_server.crt",
       "keyFile": "./certs/relay_server.key",
@@ -10,9 +10,7 @@
     },
     "allowlistIPs": [],
     "routingPriority": [
-      "allowedSenders",
-      "senderDomains",
-      "ipRanges"
+      "allowedSenders"
     ],
     "optionalBasicAuth": true,
     "smtpServers": [

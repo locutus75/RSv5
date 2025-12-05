@@ -8,6 +8,7 @@ import cors from "cors";
 import Ajv from "ajv";
 import addFormats from "ajv-formats";
 import { EventEmitter } from "events";
+import os from "os";
 
 // Command-line argument parser
 function parseArguments() {
@@ -208,16 +209,45 @@ const TENANTS_DIR = path.join(ROOT, "tenants.d");
 const CONFIG_FILE = path.join(ROOT, "config.json");
 const SCHEMA = JSON.parse(fs.readFileSync(path.join(ROOT, "schema", "tenant.schema.json"), "utf8"));
 
+// Stel trust proxy in voor correcte IP detectie achter proxies
+app.set('trust proxy', true);
+
 app.use(cors());
 app.use(express.json());
+
+// Helper functie om remote IP te krijgen (rekening houdend met proxies)
+function getRemoteIP(req) {
+  // Controleer x-forwarded-for header (wanneer achter een proxy)
+  const forwarded = req.headers['x-forwarded-for'];
+  if (forwarded) {
+    // x-forwarded-for kan meerdere IP's bevatten, neem de eerste
+    return forwarded.split(',')[0].trim();
+  }
+  // Gebruik req.ip als beschikbaar (Express trust proxy moet ingesteld zijn)
+  if (req.ip) {
+    return req.ip;
+  }
+  // Fallback naar connection remoteAddress
+  return req.connection?.remoteAddress || req.socket?.remoteAddress || 'unknown';
+}
+
+// Request logging middleware - log alle requests met remote IP
+app.use((req, res, next) => {
+  const remoteIP = getRemoteIP(req);
+  const timestamp = new Date().toISOString();
+  logger.info(`[${req.method}] ${req.path} - Remote IP: ${remoteIP}`);
+  next();
+});
 
 // 2) Public admin endpoints (altijd toegankelijk) - MOET VOOR static route staan
 app.get("/admin/health", (req, res) => res.json({ ok: true }));
 
 app.get("/admin/auth-status", (req, res) => {
+  const remoteIP = getRemoteIP(req);
+  
   // Als er geen ADMIN_TOKEN is ingesteld, is authenticatie niet vereist
   if (!ADMIN_TOKEN) {
-    console.log("🔐 /admin/auth-status: Geen ADMIN_TOKEN ingesteld, authenticatie niet vereist");
+    console.log(`🔐 /admin/auth-status: Geen ADMIN_TOKEN ingesteld, authenticatie niet vereist - Remote IP: ${remoteIP}`);
     return res.json({ 
       requiresAuth: false,
       hasToken: false 
@@ -228,10 +258,10 @@ app.get("/admin/auth-status", (req, res) => {
   const h = req.headers["authorization"] || "";
   const token = h.startsWith("Bearer ") ? h.substring(7) : (req.query.token || "");
   
-  console.log(`🔐 /admin/auth-status: Token check - Ontvangen: "${token}", Verwacht: "${ADMIN_TOKEN}", Match: ${token === ADMIN_TOKEN}`);
+  console.log(`🔐 /admin/auth-status: Token check - Ontvangen: "${token}", Verwacht: "${ADMIN_TOKEN}", Match: ${token === ADMIN_TOKEN} - Remote IP: ${remoteIP}`);
   
   if (token === ADMIN_TOKEN) {
-    console.log("🔐 /admin/auth-status: Token geldig");
+    console.log(`🔐 /admin/auth-status: Token geldig - Remote IP: ${remoteIP}`);
     return res.json({ 
       requiresAuth: true,
       hasToken: true,
@@ -240,7 +270,7 @@ app.get("/admin/auth-status", (req, res) => {
   }
   
   // Token is ongeldig of ontbreekt
-  console.log("🔐 /admin/auth-status: Token ongeldig of ontbreekt");
+  console.log(`🔐 /admin/auth-status: Token ongeldig of ontbreekt - Remote IP: ${remoteIP}`);
   return res.json({ 
     requiresAuth: true,
     hasToken: false,
@@ -262,16 +292,18 @@ app.use("/admin", (req, res, next) => {
     return next();
   }
   
-  console.log(`❌ Unauthorized access attempt: ${req.method} ${req.path}`);
+  const remoteIP = getRemoteIP(req);
+  console.log(`❌ Unauthorized access attempt: ${req.method} ${req.path} - Remote IP: ${remoteIP}`);
   return res.status(401).json({ error: "Unauthorized" });
 });
 
 // Test SMTP connection endpoint (protected, binnen /admin routes)
 app.post("/admin/test-smtp-connection", async (req, res) => {
   try {
-    console.log("📧 Test SMTP connection request ontvangen");
+    const remoteIP = getRemoteIP(req);
+    console.log(`📧 Test SMTP connection request ontvangen - Remote IP: ${remoteIP}`);
     const smtpServer = req.body;
-    console.log("📧 SMTP server data:", JSON.stringify(smtpServer));
+    console.log(`📧 SMTP server data: ${JSON.stringify(smtpServer)} - Remote IP: ${remoteIP}`);
     
     if (!smtpServer || !smtpServer.adres || !smtpServer.poort) {
       console.log("❌ Ontbrekende velden:", { adres: smtpServer?.adres, poort: smtpServer?.poort });
@@ -360,7 +392,8 @@ app.post("/admin/tenants/validate", (req, res) => {
 
 app.post("/admin/tenants", (req, res) => {
   const data = req.body;
-  console.log("📝 Tenant opslaan - ontvangen data:", JSON.stringify(data, null, 2));
+  const remoteIP = getRemoteIP(req);
+  console.log(`📝 Tenant opslaan - ontvangen data: ${JSON.stringify(data, null, 2)} - Remote IP: ${remoteIP}`);
   
   // Aangepaste validatie: Graph API velden zijn alleen verplicht als delivery method "graph" is
   const deliveryMethod = data.delivery?.method || "graph";
@@ -456,7 +489,8 @@ app.post("/admin/tenants", (req, res) => {
 
 app.put("/admin/tenants/:name", (req, res) => {
   const data = req.body;
-  console.log("📝 Tenant bijwerken - ontvangen data:", JSON.stringify(data, null, 2));
+  const remoteIP = getRemoteIP(req);
+  console.log(`📝 Tenant bijwerken - ontvangen data: ${JSON.stringify(data, null, 2)} - Remote IP: ${remoteIP}`);
   
   // Aangepaste validatie: Graph API velden zijn alleen verplicht als delivery method "graph" is
   const deliveryMethod = data.delivery?.method || "graph";
@@ -640,6 +674,36 @@ function readLogLines(maxBytes = 2 * 1024 * 1024) {
   }
 }
 
+// Stats reset tijd opslag bestand
+const STATS_RESET_FILE = path.join(ROOT, "logs", "stats-reset.json");
+
+function getStatsResetTime() {
+  try {
+    if (fs.existsSync(STATS_RESET_FILE)) {
+      const data = JSON.parse(fs.readFileSync(STATS_RESET_FILE, "utf8"));
+      return data.lastReset || null;
+    }
+  } catch (error) {
+    console.error("❌ Error reading stats reset time:", error);
+  }
+  return null;
+}
+
+function setStatsResetTime() {
+  try {
+    const logDir = path.dirname(STATS_RESET_FILE);
+    if (!fs.existsSync(logDir)) {
+      fs.mkdirSync(logDir, { recursive: true });
+    }
+    const data = {
+      lastReset: new Date().toISOString()
+    };
+    fs.writeFileSync(STATS_RESET_FILE, JSON.stringify(data, null, 2));
+  } catch (error) {
+    console.error("❌ Error saving stats reset time:", error);
+  }
+}
+
 app.get("/admin/stats", (req, res) => {
   const windowMs = parseWindow(req.query.window);
   const since = (windowMs == null) ? 0 : (Date.now() - windowMs);
@@ -647,10 +711,18 @@ app.get("/admin/stats", (req, res) => {
   const lines = readLogLines(windowMs == null ? Infinity : undefined);
   const tenants = {};
   
+  // Haal reset tijd op
+  const resetTime = getStatsResetTime();
+  
+  // Als er een reset tijd is, filter alleen events na die tijd
+  const effectiveSince = resetTime && (!since || new Date(resetTime).getTime() > since) 
+    ? new Date(resetTime).getTime() 
+    : since;
+  
   for (const line of lines) {
     try {
       const ev = JSON.parse(line);
-      if (ev.ts && since > 0 && ev.ts < since) continue;
+      if (ev.ts && effectiveSince > 0 && ev.ts < effectiveSince) continue;
       
       // Filter op tenant als deze is opgegeven
       if (tenant && ev.tenant !== tenant) continue;
@@ -667,7 +739,140 @@ app.get("/admin/stats", (req, res) => {
     } catch {}
   }
   
-  res.json({ tenants });
+  res.json({ tenants, lastReset: resetTime });
+});
+
+app.post("/admin/stats/reset", (req, res) => {
+  try {
+    const remoteIP = getRemoteIP(req);
+    console.log(`📊 Statistieken reset aangevraagd - Remote IP: ${remoteIP}`);
+    
+    // Sla alleen reset tijd op (geen log bestand legen)
+    setStatsResetTime();
+    
+    const resetTime = getStatsResetTime();
+    console.log(`✅ Statistieken gereset - Reset tijd: ${resetTime}`);
+    
+    res.json({ 
+      ok: true, 
+      message: "Statistieken succesvol gereset",
+      lastReset: resetTime
+    });
+  } catch (error) {
+    console.error("❌ Error resetting stats:", error);
+    res.status(500).json({ 
+      ok: false, 
+      error: "Failed to reset statistics", 
+      message: error.message 
+    });
+  }
+});
+
+// Log reset tijd opslag bestand
+const LOG_RESET_FILE = path.join(ROOT, "logs", "log-reset.json");
+
+function getLogResetTime() {
+  try {
+    if (fs.existsSync(LOG_RESET_FILE)) {
+      const data = JSON.parse(fs.readFileSync(LOG_RESET_FILE, "utf8"));
+      return data.lastReset || null;
+    }
+  } catch (error) {
+    console.error("❌ Error reading log reset time:", error);
+  }
+  return null;
+}
+
+function setLogResetTime() {
+  try {
+    const logDir = path.dirname(LOG_RESET_FILE);
+    if (!fs.existsSync(logDir)) {
+      fs.mkdirSync(logDir, { recursive: true });
+    }
+    const data = {
+      lastReset: new Date().toISOString()
+    };
+    fs.writeFileSync(LOG_RESET_FILE, JSON.stringify(data, null, 2));
+  } catch (error) {
+    console.error("❌ Error saving log reset time:", error);
+  }
+}
+
+app.post("/admin/logs/reset", (req, res) => {
+  try {
+    const remoteIP = getRemoteIP(req);
+    console.log(`📋 Logs reset aangevraagd - Remote IP: ${remoteIP}`);
+    
+    // Maak backup van huidige log bestand als het bestaat en niet leeg is
+    if (fs.existsSync(LOG_FILE)) {
+      const stats = fs.statSync(LOG_FILE);
+      if (stats.size > 0) {
+        const logDir = path.dirname(LOG_FILE);
+        const timestamp = new Date().toISOString().replace(/[:.]/g, '-');
+        const backupFile = path.join(logDir, `relay-backup-${timestamp}.jsonl`);
+        
+        try {
+          fs.copyFileSync(LOG_FILE, backupFile);
+          console.log(`📋 Log backup gemaakt: ${backupFile}`);
+        } catch (backupError) {
+          console.error("⚠️ Kon backup niet maken:", backupError.message);
+          // Ga door met resetten ook als backup faalt
+        }
+      }
+    }
+    
+    // Leeg het log bestand
+    try {
+      if (fs.existsSync(LOG_FILE)) {
+        fs.writeFileSync(LOG_FILE, '');
+        console.log(`🗑️ Log bestand geleegd: ${LOG_FILE}`);
+      } else {
+        // Maak leeg bestand aan als het niet bestaat
+        const logDir = path.dirname(LOG_FILE);
+        if (!fs.existsSync(logDir)) {
+          fs.mkdirSync(logDir, { recursive: true });
+        }
+        fs.writeFileSync(LOG_FILE, '');
+        console.log(`📝 Nieuw leeg log bestand aangemaakt: ${LOG_FILE}`);
+      }
+    } catch (fileError) {
+      console.error("❌ Kon log bestand niet legen:", fileError.message);
+      throw new Error(`Kon log bestand niet legen: ${fileError.message}`);
+    }
+    
+    // Sla reset tijd op
+    setLogResetTime();
+    
+    const resetTime = getLogResetTime();
+    console.log(`✅ Logs gereset - Reset tijd: ${resetTime}`);
+    
+    res.json({ 
+      ok: true, 
+      message: "Logs succesvol gereset",
+      lastReset: resetTime
+    });
+  } catch (error) {
+    console.error("❌ Error resetting logs:", error);
+    res.status(500).json({ 
+      ok: false, 
+      error: "Failed to reset logs", 
+      message: error.message 
+    });
+  }
+});
+
+app.get("/admin/logs/reset-time", (req, res) => {
+  try {
+    const resetTime = getLogResetTime();
+    res.json({ lastReset: resetTime });
+  } catch (error) {
+    console.error("❌ Error getting log reset time:", error);
+    res.status(500).json({ 
+      ok: false, 
+      error: "Failed to get log reset time", 
+      message: error.message 
+    });
+  }
 });
 
 app.get("/admin/events", (req, res) => {
@@ -697,6 +902,43 @@ app.get("/admin/events", (req, res) => {
   }
   
   res.json({ events });
+});
+
+// Server IP addresses endpoint
+app.get("/admin/server-ips", (req, res) => {
+  try {
+    const interfaces = os.networkInterfaces();
+    const ips = [];
+    
+    // Loop door alle netwerk interfaces
+    for (const name of Object.keys(interfaces)) {
+      const addrs = interfaces[name];
+      if (!addrs) continue;
+      
+      for (const addr of addrs) {
+        // Skip interne (loopback) en niet-IPv4 adressen
+        if (addr.family === 'IPv4' && !addr.internal) {
+          ips.push({
+            address: addr.address,
+            netmask: addr.netmask,
+            interface: name
+          });
+        }
+      }
+    }
+    
+    // Voeg ook localhost toe voor lokale ontwikkeling
+    ips.push({
+      address: '127.0.0.1',
+      netmask: '255.0.0.0',
+      interface: 'loopback'
+    });
+    
+    res.json({ ips });
+  } catch (error) {
+    console.error("❌ Error getting server IPs:", error);
+    res.status(500).json({ error: "Failed to get server IPs", message: error.message });
+  }
 });
 
 // Version endpoints

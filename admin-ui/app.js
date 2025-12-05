@@ -14,6 +14,48 @@
     setTimeout(()=>el.classList.add("hidden"),2500);
   }
 
+  // Custom confirm modal functie
+  function showConfirm(title, message) {
+    return new Promise((resolve) => {
+      const modal = $("#confirmModal");
+      const titleEl = $("#confirmTitle");
+      const messageEl = $("#confirmMessage");
+      const okBtn = $("#confirmOk");
+      const cancelBtn = $("#confirmCancel");
+      
+      titleEl.textContent = title;
+      messageEl.textContent = message;
+      
+      // Verwijder oude event listeners
+      const newOkBtn = okBtn.cloneNode(true);
+      const newCancelBtn = cancelBtn.cloneNode(true);
+      okBtn.parentNode.replaceChild(newOkBtn, okBtn);
+      cancelBtn.parentNode.replaceChild(newCancelBtn, cancelBtn);
+      
+      newOkBtn.addEventListener("click", () => {
+        modal.classList.add("hidden");
+        resolve(true);
+      });
+      
+      newCancelBtn.addEventListener("click", () => {
+        modal.classList.add("hidden");
+        resolve(false);
+      });
+      
+      // Sluit modal bij klik buiten content
+      const handleModalClick = (e) => {
+        if (e.target === modal) {
+          modal.classList.add("hidden");
+          modal.removeEventListener("click", handleModalClick);
+          resolve(false);
+        }
+      };
+      modal.addEventListener("click", handleModalClick);
+      
+      modal.classList.remove("hidden");
+    });
+  }
+
   function headers(){
     const t = localStorage.getItem("adminToken") || "";
     if (t) {
@@ -196,8 +238,12 @@
 
   // Event handlers
   tbody.addEventListener("click",async e=>{
-    const E=e.target.getAttribute("data-e");
-    const D=e.target.getAttribute("data-d");
+    // Zoek naar de button element (kan direct zijn of via SVG child)
+    const button = e.target.closest("button.action-btn");
+    if (!button) return;
+    
+    const E=button.getAttribute("data-e");
+    const D=button.getAttribute("data-d");
     if(E){
       try{
         const d=await api(`/admin/tenants/${encodeURIComponent(E)}`);
@@ -275,7 +321,12 @@
         toast("Fout bij laden tenant: " + e.message);
       }
     }else if(D){
-      if(confirm("Weet je zeker dat je deze tenant wilt verwijderen?")){
+      const tenantName = data.find(t => t.file === D)?.name || D;
+      const confirmed = await showConfirm(
+        "Tenant verwijderen",
+        `Weet je zeker dat je de tenant "${tenantName}" wilt verwijderen? Deze actie kan niet ongedaan worden gemaakt.`
+      );
+      if(confirmed){
         try{
           await api(`/admin/tenants/${encodeURIComponent(D)}`,{method:"DELETE"});
           toast("Tenant verwijderd");
@@ -619,6 +670,49 @@
     }
   });
 
+  // Event listeners voor event kolom zichtbaarheid configuratie
+  document.addEventListener("DOMContentLoaded", () => {
+    // Laad configuratie
+    loadEventColumnConfig();
+    applyEventColumnVisibility();
+    
+    // Event listeners voor knoppen
+    const saveBtn = document.getElementById("saveEventColumns");
+    const resetBtn = document.getElementById("resetEventColumns");
+    const configBtn = document.getElementById("eventColumnConfigBtn");
+    const closeBtn = document.getElementById("closeEventColumnConfig");
+    const modal = document.getElementById("eventColumnConfigModal");
+    
+    if (saveBtn) {
+      saveBtn.addEventListener("click", saveEventColumnConfig);
+    }
+    
+    if (resetBtn) {
+      resetBtn.addEventListener("click", resetEventColumnConfig);
+    }
+    
+    if (configBtn) {
+      configBtn.addEventListener("click", () => {
+        if (modal) modal.classList.remove("hidden");
+      });
+    }
+    
+    if (closeBtn) {
+      closeBtn.addEventListener("click", () => {
+        if (modal) modal.classList.add("hidden");
+      });
+    }
+    
+    // Sluit modal bij klik buiten de content
+    if (modal) {
+      modal.addEventListener("click", (e) => {
+        if (e.target === modal) {
+          modal.classList.add("hidden");
+        }
+      });
+    }
+  });
+
   // Exposeer functies voor globale gebruik
   window.hasToken = hasToken;
   window.toggleLoginOverlay = toggleLoginOverlay;
@@ -694,6 +788,65 @@
   if (smtpSelect) {
     smtpSelect.addEventListener("change", handleSmtpServerChange);
   }
+
+  // Event listener voor knop om server IP-adressen toe te voegen
+  $("#addServerIPsBtn")?.addEventListener("click", async () => {
+    try {
+      const ipRangesField = $("#tfIpRanges");
+      if (!ipRangesField) return;
+      
+      // Haal server IP-adressen op
+      const response = await api("/admin/server-ips");
+      const serverIPs = response.ips || [];
+      
+      if (serverIPs.length === 0) {
+        toast("⚠️ Geen server IP-adressen gevonden");
+        return;
+      }
+      
+      // Haal huidige IP ranges op
+      const currentRanges = ipRangesField.value.split("\n").map(s => s.trim()).filter(Boolean);
+      const existingIPs = new Set(currentRanges);
+      
+      // Voeg server IP-adressen toe (alleen als ze nog niet bestaan)
+      const newIPs = [];
+      serverIPs.forEach(ipInfo => {
+        // Converteer IP + netmask naar CIDR notatie
+        const ip = ipInfo.address;
+        const netmask = ipInfo.netmask;
+        
+        // Converteer netmask naar CIDR prefix
+        let cidrPrefix = 32;
+        if (netmask) {
+          const parts = netmask.split('.').map(Number);
+          const binary = parts.map(p => p.toString(2).padStart(8, '0')).join('');
+          cidrPrefix = binary.split('1').length - 1;
+        }
+        
+        const cidr = `${ip}/${cidrPrefix}`;
+        
+        // Voeg alleen toe als het nog niet bestaat
+        if (!existingIPs.has(cidr) && !existingIPs.has(ip)) {
+          newIPs.push(cidr);
+          existingIPs.add(cidr);
+        }
+      });
+      
+      if (newIPs.length === 0) {
+        toast("ℹ️ Alle server IP-adressen zijn al toegevoegd");
+        return;
+      }
+      
+      // Voeg nieuwe IP's toe aan het veld
+      const updatedRanges = [...currentRanges, ...newIPs];
+      ipRangesField.value = updatedRanges.join("\n");
+      
+      toast(`✅ ${newIPs.length} server IP-adres(sen) toegevoegd`);
+    } catch (error) {
+      console.error("❌ Fout bij ophalen server IP-adressen:", error);
+      toast(`❌ Fout: ${error.message}`);
+    }
+  });
 
   $("#tenantSave").addEventListener("click",async()=>{
     try{
@@ -1024,6 +1177,7 @@
   // SMTP Server Management State
   let configuredSmtpServers = [];
   let configuredAuthUsers = [];
+  let editingSmtpIndex = null; // null = nieuwe server, number = index van te bewerken server
 
   function renderSmtpList() {
     const list = $("#smtpList");
@@ -1039,24 +1193,49 @@
     configuredSmtpServers.forEach((server, index) => {
       const li = document.createElement("li");
       const authInfo = server.auth ? ` [Auth: ${server.authUser || server.auth.user}]` : "";
+      const tlsInfo = server.requireTLS ? ` [STARTTLS vereist]` : "";
+      const isEditing = editingSmtpIndex === index;
       li.innerHTML = `
         <div>
           <strong>${server.naam}</strong> 
-          <span class="muted">(${server.adres}:${server.poort}${authInfo})</span>
+          <span class="muted">(${server.adres}:${server.poort}${authInfo}${tlsInfo})</span>
+          ${isEditing ? '<span class="muted" style="margin-left: 8px;">[Wordt bewerkt]</span>' : ''}
         </div>
         <div class="actions">
+          <button class="secondary small edit-smtp" data-index="${index}">Bewerken</button>
           <button class="secondary small delete-smtp" data-index="${index}">Verwijder</button>
         </div>
       `;
       list.appendChild(li);
     });
 
-    // Add delete handlers
-    list.querySelectorAll(".delete-smtp").forEach(btn => {
+    // Add edit handlers
+    list.querySelectorAll(".edit-smtp").forEach(btn => {
       btn.addEventListener("click", (e) => {
         const idx = parseInt(e.target.dataset.index);
-        configuredSmtpServers.splice(idx, 1);
-        renderSmtpList();
+        editSmtpServer(idx);
+      });
+    });
+
+    // Add delete handlers
+    list.querySelectorAll(".delete-smtp").forEach(btn => {
+      btn.addEventListener("click", async (e) => {
+        const idx = parseInt(e.target.closest("button").dataset.index);
+        const server = configuredSmtpServers[idx];
+        if (!server) return;
+        
+        const confirmed = await showConfirm(
+          "SMTP Server verwijderen",
+          `Weet je zeker dat je de SMTP server "${server.naam}" wilt verwijderen? Deze actie kan niet ongedaan worden gemaakt.`
+        );
+        
+        if (confirmed) {
+          configuredSmtpServers.splice(idx, 1);
+          editingSmtpIndex = null; // Reset editing state als server wordt verwijderd
+          resetSmtpForm();
+          renderSmtpList();
+          toast("SMTP server verwijderd");
+        }
       });
     });
     
@@ -1144,6 +1323,8 @@
     
     // Load SMTP servers into memory and render list
     configuredSmtpServers = svc.smtpServers || [];
+    editingSmtpIndex = null; // Reset editing state bij laden
+    resetSmtpForm();
     renderSmtpList();
     
     // Load auth users
@@ -1179,19 +1360,29 @@
 
     // Add delete handlers
     list.querySelectorAll(".delete-auth-user").forEach(btn => {
-      btn.addEventListener("click", (e) => {
-        const idx = parseInt(e.target.dataset.index);
+      btn.addEventListener("click", async (e) => {
+        const idx = parseInt(e.target.closest("button").dataset.index);
         const deletedUser = configuredAuthUsers[idx];
-        configuredAuthUsers.splice(idx, 1);
-        renderAuthUsersList();
-        // Update SMTP servers die deze gebruiker gebruiken
-        configuredSmtpServers.forEach(s => {
-          if (s.authUser === deletedUser?.username) {
-            delete s.auth;
-            delete s.authUser;
-          }
-        });
-        renderSmtpList();
+        if (!deletedUser) return;
+        
+        const confirmed = await showConfirm(
+          "Authenticatie Gebruiker verwijderen",
+          `Weet je zeker dat je de gebruiker "${deletedUser.username}" wilt verwijderen? SMTP servers die deze gebruiker gebruiken zullen hun authenticatie verliezen.`
+        );
+        
+        if (confirmed) {
+          configuredAuthUsers.splice(idx, 1);
+          renderAuthUsersList();
+          // Update SMTP servers die deze gebruiker gebruiken
+          configuredSmtpServers.forEach(s => {
+            if (s.authUser === deletedUser?.username) {
+              delete s.auth;
+              delete s.authUser;
+            }
+          });
+          renderSmtpList();
+          toast("Authenticatie gebruiker verwijderd");
+        }
       });
     });
     
@@ -1213,8 +1404,11 @@
     // Show/hide select based on checkbox
     const requireAuth = $("#newSmtpRequireAuth");
     if (requireAuth) {
-      requireAuth.addEventListener("change", () => {
-        sel.style.display = requireAuth.checked ? "block" : "none";
+      // Verwijder oude listeners om duplicates te voorkomen
+      const newRequireAuth = requireAuth.cloneNode(true);
+      requireAuth.parentNode.replaceChild(newRequireAuth, requireAuth);
+      newRequireAuth.addEventListener("change", () => {
+        sel.style.display = newRequireAuth.checked ? "block" : "none";
       });
     }
   }
@@ -1248,6 +1442,7 @@
         await loadSettings();
       }
       populateSettingsForm(settingsData);
+      resetSmtpForm(); // Reset editing state bij openen modal
       document.getElementById("settingsModal").classList.remove("hidden");
     }catch(e){
       toast("Fout bij laden settings: " + e.message);
@@ -1255,6 +1450,7 @@
   });
 
   $("#settingsClose").addEventListener("click",()=>{
+    resetSmtpForm();
     document.getElementById("settingsModal").classList.add("hidden");
   });
 
@@ -1286,6 +1482,7 @@
 
       await api("/admin/config", {method: "PUT", body: JSON.stringify(config)});
       toast("Settings opgeslagen");
+      resetSmtpForm();
       document.getElementById("settingsModal").classList.add("hidden");
       await loadSettings();
     }catch(e){
@@ -1293,13 +1490,85 @@
     }
   });
 
-  // Add SMTP Server Button Handler
+  function editSmtpServer(index) {
+    const server = configuredSmtpServers[index];
+    if (!server) return;
+    
+    editingSmtpIndex = index;
+    
+    // Vul formuliervelden met bestaande waarden
+    $("#newSmtpName").value = server.naam || "";
+    $("#newSmtpAdres").value = server.adres || "";
+    $("#newSmtpPoort").value = server.poort || "";
+    $("#newSmtpRequireAuth").checked = !!server.auth;
+    $("#newSmtpAuthUser").value = server.authUser || server.auth?.user || "";
+    $("#newSmtpAuthUser").style.display = server.auth ? "block" : "none";
+    $("#newSmtpRequireTLS").checked = server.requireTLS === true;
+    
+    // Update knop tekst en voeg annuleer knop toe
+    updateSmtpFormButtons();
+    renderSmtpList();
+  }
+  
+  function resetSmtpForm() {
+    editingSmtpIndex = null;
+    $("#newSmtpName").value = "";
+    $("#newSmtpAdres").value = "";
+    $("#newSmtpPoort").value = "";
+    $("#newSmtpRequireAuth").checked = false;
+    $("#newSmtpAuthUser").value = "";
+    $("#newSmtpAuthUser").style.display = "none";
+    $("#newSmtpRequireTLS").checked = false;
+    updateSmtpFormButtons();
+  }
+  
+  function updateSmtpFormButtons() {
+    const btn = $("#addSmtpServerBtn");
+    const formLabel = document.querySelector('.smtp-form label');
+    
+    if (editingSmtpIndex !== null) {
+      btn.textContent = "Bijwerken";
+      if (formLabel) {
+        formLabel.textContent = "Server Bewerken";
+      }
+      
+      // Voeg annuleer knop toe als deze nog niet bestaat
+      let cancelBtn = document.getElementById("cancelSmtpEditBtn");
+      if (!cancelBtn) {
+        cancelBtn = document.createElement("button");
+        cancelBtn.id = "cancelSmtpEditBtn";
+        cancelBtn.className = "ghost small";
+        cancelBtn.textContent = "Annuleren";
+        cancelBtn.addEventListener("click", () => {
+          resetSmtpForm();
+          renderSmtpList();
+        });
+        const btnContainer = btn.parentElement;
+        btnContainer.insertBefore(cancelBtn, btn);
+      }
+      cancelBtn.style.display = "inline-block";
+    } else {
+      btn.textContent = "Toevoegen";
+      if (formLabel) {
+        formLabel.textContent = "Nieuwe Server Toevoegen";
+      }
+      
+      // Verberg annuleer knop
+      const cancelBtn = document.getElementById("cancelSmtpEditBtn");
+      if (cancelBtn) {
+        cancelBtn.style.display = "none";
+      }
+    }
+  }
+
+  // Add SMTP Server Button Handler (ook voor bijwerken)
   $("#addSmtpServerBtn").addEventListener("click", () => {
     const naam = $("#newSmtpName").value.trim();
     const adres = $("#newSmtpAdres").value.trim();
     const poort = parseInt($("#newSmtpPoort").value);
     const requireAuth = $("#newSmtpRequireAuth").checked;
     const authUser = $("#newSmtpAuthUser").value;
+    const requireTLS = $("#newSmtpRequireTLS").checked;
     
     if (!naam || !adres || !poort) {
       toast("Naam, Adres en Poort zijn verplicht");
@@ -1311,33 +1580,40 @@
       return;
     }
 
-    const newServer = {
+    const serverData = {
       naam,
       adres,
       poort
     };
     
+    // Voeg requireTLS toe als het is aangevinkt
+    if (requireTLS) {
+      serverData.requireTLS = true;
+    }
+    
     if (requireAuth && authUser) {
       const user = configuredAuthUsers.find(u => u.username === authUser);
       if (user) {
-        newServer.auth = {
+        serverData.auth = {
           user: user.username,
           pass: user.password
         };
-        newServer.authUser = user.username; // Voor referentie in UI
+        serverData.authUser = user.username; // Voor referentie in UI
       }
     }
 
-    configuredSmtpServers.push(newServer);
-    renderSmtpList();
+    if (editingSmtpIndex !== null) {
+      // Bijwerken van bestaande server
+      configuredSmtpServers[editingSmtpIndex] = serverData;
+      toast("SMTP server bijgewerkt");
+    } else {
+      // Nieuwe server toevoegen
+      configuredSmtpServers.push(serverData);
+      toast("SMTP server toegevoegd");
+    }
     
-    // Reset form fields
-    $("#newSmtpName").value = "";
-    $("#newSmtpAdres").value = "";
-    $("#newSmtpPoort").value = "";
-    $("#newSmtpRequireAuth").checked = false;
-    $("#newSmtpAuthUser").value = "";
-    $("#newSmtpAuthUser").style.display = "none";
+    resetSmtpForm();
+    renderSmtpList();
   });
 
   // Test SMTP Connection Button Handler
@@ -1410,10 +1686,89 @@
     try{loadStats();}catch{}
   });
 
+  // Reset stats
+  $("#resetStats")?.addEventListener("click", async () => {
+    try {
+      const confirmed = await showConfirm(
+        "Statistieken Resetten",
+        "Weet je zeker dat je de statistieken wilt resetten? Alle statistieken vanaf nu worden opnieuw geteld vanaf dit moment."
+      );
+      
+      if (!confirmed) {
+        return;
+      }
+      
+      const result = await api("/admin/stats/reset", { method: "POST" });
+      
+      if (result.ok) {
+        toast("✅ Statistieken succesvol gereset");
+        // Herlaad statistieken om de reset tijd te tonen
+        await loadStats();
+      } else {
+        toast(`❌ Fout bij resetten: ${result.error || result.message}`);
+      }
+    } catch (error) {
+      console.error("❌ Fout bij resetten statistieken:", error);
+      toast(`❌ Fout bij resetten: ${error.message}`);
+    }
+  });
+
   // Refresh events
   $("#refreshEvents").addEventListener("click",()=>{
     try{loadEvents();}catch{}
   });
+
+  // Reset logs
+  $("#resetLogs")?.addEventListener("click", async () => {
+    try {
+      const confirmed = await showConfirm(
+        "Logs Resetten",
+        "Weet je zeker dat je de logs wilt resetten? Het log bestand wordt geleegd en er wordt een backup gemaakt. Alle events worden verwijderd."
+      );
+      
+      if (!confirmed) {
+        return;
+      }
+      
+      const result = await api("/admin/logs/reset", { method: "POST" });
+      
+      if (result.ok) {
+        toast("✅ Logs succesvol gereset");
+        // Update reset tijd weergave
+        await updateLogResetTime();
+        // Herlaad events (zou nu leeg moeten zijn)
+        await loadEvents();
+      } else {
+        toast(`❌ Fout bij resetten: ${result.error || result.message}`);
+      }
+    } catch (error) {
+      console.error("❌ Fout bij resetten logs:", error);
+      toast(`❌ Fout bij resetten: ${error.message}`);
+    }
+  });
+
+  // Functie om log reset tijd op te halen en weer te geven
+  async function updateLogResetTime() {
+    try {
+      const r = await api("/admin/logs/reset-time");
+      const resetTimeEl = document.getElementById("logsResetTime");
+      if (resetTimeEl && r.lastReset) {
+        const resetDate = new Date(r.lastReset);
+        const formattedDate = resetDate.toLocaleString('nl-NL', {
+          day: '2-digit',
+          month: '2-digit',
+          year: 'numeric',
+          hour: '2-digit',
+          minute: '2-digit'
+        });
+        resetTimeEl.textContent = `(gereset: ${formattedDate})`;
+      } else if (resetTimeEl) {
+        resetTimeEl.textContent = '';
+      }
+    } catch (error) {
+      console.error("❌ Fout bij ophalen log reset tijd:", error);
+    }
+  }
 
   // Export events naar CSV
   $("#exportEventsCsv").addEventListener("click", async () => {
@@ -1435,7 +1790,7 @@
       });
       
       // CSV headers
-      const headers = ["Timestamp", "Level", "Reason", "Tenant", "From", "Recipient Count", "Size (KB)", "Message/Error"];
+      const headers = ["Timestamp", "Level", "Reason", "Tenant", "From", "Recipient Count", "Size (KB)", "Remote IP", "Message/Error"];
       
       // CSV data rijen
       const csvRows = [headers.join(",")];
@@ -1448,6 +1803,7 @@
         const from = ev.from || "";
         const rcptCount = ev.rcptCount || "";
         const sizeKB = ev.sizeKB || "";
+        const remoteIP = ev.remoteIP || "";
         const info = (ev.message || ev.error || "").replace(/"/g, '""'); // Escape quotes
         
         const row = [
@@ -1458,6 +1814,7 @@
           `"${from}"`,
           `"${rcptCount}"`,
           `"${sizeKB}"`,
+          `"${remoteIP}"`,
           `"${info}"`
         ].join(",");
         
@@ -1540,6 +1897,22 @@
       
       const r = await api(apiUrl);
       
+      // Update reset tijd weergave
+      const resetTimeEl = document.getElementById("statsResetTime");
+      if (resetTimeEl && r.lastReset) {
+        const resetDate = new Date(r.lastReset);
+        const formattedDate = resetDate.toLocaleString('nl-NL', {
+          day: '2-digit',
+          month: '2-digit',
+          year: 'numeric',
+          hour: '2-digit',
+          minute: '2-digit'
+        });
+        resetTimeEl.textContent = `(gereset: ${formattedDate})`;
+      } else if (resetTimeEl) {
+        resetTimeEl.textContent = '';
+      }
+      
       const tbody = document.querySelector("#statsTable tbody");
       if (!tbody) return;
       
@@ -1586,6 +1959,9 @@
 
   async function loadEvents(){
     try{
+      // Update log reset tijd weergave
+      await updateLogResetTime();
+      
       const authStatus = await api("/admin/auth-status");
       
       if (authStatus.requiresAuth) {
@@ -1594,7 +1970,7 @@
         if (!frontendToken) {
           const tbody = document.querySelector("#eventsTable tbody");
           if (tbody) {
-            tbody.innerHTML = "<tr><td colspan='8' class='muted'>🔐 Authenticatie vereist</td></tr>";
+            tbody.innerHTML = "<tr><td colspan='9' class='muted'>🔐 Authenticatie vereist</td></tr>";
           }
           return;
         }
@@ -1625,7 +2001,7 @@
       });
       
       if(events.length===0){ 
-        tbody.innerHTML = "<tr><td colspan='8' class='muted'>Geen events</td></tr>"; 
+        tbody.innerHTML = "<tr><td colspan='9' class='muted'>Geen events</td></tr>"; 
         return; 
       }
       
@@ -1645,7 +2021,8 @@
           const ts = ev.ts ? new Date(ev.ts).toLocaleString() : "";
           const badge = ev.reason ? `<span class="badge ${ev.reason === 'fallback' ? 'warn' : ev.reason === 'tenant_ip_not_allowed' ? 'err' : 'err'}">${ev.reason}</span>` : "";
           const info = ev.message || ev.error || "";
-          tr.innerHTML = `<td>${ts}</td><td>${ev.level}</td><td>${badge}</td><td>${ev.tenant||""}</td><td>${ev.from||""}</td><td>${ev.rcptCount||""}</td><td>${ev.sizeKB||""}</td><td>${info.toString().slice(0,200)}</td>`;
+          const remoteIP = ev.remoteIP || "";
+          tr.innerHTML = `<td>${ts}</td><td>${ev.level}</td><td>${badge}</td><td>${ev.tenant||""}</td><td>${ev.from||""}</td><td>${ev.rcptCount||""}</td><td>${ev.sizeKB||""}</td><td>${remoteIP}</td><td>${info.toString().slice(0,200)}</td>`;
           tbody.appendChild(tr);
         }
         // Bij eerste keer laden zijn alle events "nieuw"
@@ -1669,7 +2046,8 @@
             const ts = ev.ts ? new Date(ev.ts).toLocaleString() : "";
             const badge = ev.reason ? `<span class="badge ${ev.reason === 'fallback' ? 'warn' : ev.reason === 'tenant_ip_not_allowed' ? 'err' : 'err'}">${ev.reason}</span>` : "";
             const info = ev.message || ev.error || "";
-            tr.innerHTML = `<td>${ts}</td><td>${ev.level}</td><td>${badge}</td><td>${ev.tenant||""}</td><td>${ev.from||""}</td><td>${ev.rcptCount||""}</td><td>${ev.sizeKB||""}</td><td>${info.toString().slice(0,200)}</td>`;
+            const remoteIP = ev.remoteIP || "";
+            tr.innerHTML = `<td>${ts}</td><td>${ev.level}</td><td>${badge}</td><td>${ev.tenant||""}</td><td>${ev.from||""}</td><td>${ev.rcptCount||""}</td><td>${ev.sizeKB||""}</td><td>${remoteIP}</td><td>${info.toString().slice(0,200)}</td>`;
             
             // Voeg toe bovenaan
             tbody.insertBefore(tr, tbody.firstChild);
@@ -1730,10 +2108,13 @@
         showEventFeedback(newEventType);
       }
       
+      // Pas kolom zichtbaarheid toe
+      applyEventColumnVisibility();
+      
       // GEEN load() aanroep - alleen events bijwerken
     }catch(e){
       const tbody = document.querySelector("#eventsTable tbody");
-      if (tbody) tbody.innerHTML = `<tr><td colspan='8'>Fout: ${e.message}</td></tr>`;
+      if (tbody) tbody.innerHTML = `<tr><td colspan='9'>Fout: ${e.message}</td></tr>`;
     }
   }
 
@@ -2116,4 +2497,153 @@
     }, { offset: Number.NEGATIVE_INFINITY }).element;
   }
 
+  // Event kolom zichtbaarheid configuratie
+  const defaultEventColumns = {
+    time: true,
+    level: true,
+    reason: true,
+    tenant: true,
+    from: true,
+    rcpts: true,
+    kb: true,
+    remoteip: true,
+    info: true
+  };
+
+  // Laad event kolom zichtbaarheid configuratie
+  function loadEventColumnConfig() {
+    const config = localStorage.getItem("eventColumnConfig");
+    const columnIdMap = {
+      time: 'colTime',
+      level: 'colLevel',
+      reason: 'colReason',
+      tenant: 'colTenant',
+      from: 'colFrom',
+      rcpts: 'colRcpts',
+      kb: 'colKb',
+      remoteip: 'colRemoteIP',
+      info: 'colInfo'
+    };
+    
+    if (config) {
+      try {
+        const parsed = JSON.parse(config);
+        Object.keys(defaultEventColumns).forEach(col => {
+          const checkbox = document.getElementById(columnIdMap[col]);
+          if (checkbox) {
+            checkbox.checked = parsed[col] !== false; // Default true als niet ingesteld
+          }
+        });
+      } catch (e) {
+        console.error("❌ Fout bij laden event kolom config:", e);
+      }
+    } else {
+      // Gebruik standaard waarden
+      Object.keys(defaultEventColumns).forEach(col => {
+        const checkbox = document.getElementById(columnIdMap[col]);
+        if (checkbox) {
+          checkbox.checked = defaultEventColumns[col];
+        }
+      });
+    }
+  }
+
+  // Sla event kolom zichtbaarheid configuratie op
+  function saveEventColumnConfig() {
+    const config = {};
+    const columnIdMap = {
+      time: 'colTime',
+      level: 'colLevel',
+      reason: 'colReason',
+      tenant: 'colTenant',
+      from: 'colFrom',
+      rcpts: 'colRcpts',
+      kb: 'colKb',
+      remoteip: 'colRemoteIP',
+      info: 'colInfo'
+    };
+    
+    Object.keys(defaultEventColumns).forEach(col => {
+      const checkbox = document.getElementById(columnIdMap[col]);
+      if (checkbox) {
+        config[col] = checkbox.checked;
+      } else {
+        config[col] = defaultEventColumns[col];
+      }
+    });
+    
+    localStorage.setItem("eventColumnConfig", JSON.stringify(config));
+    applyEventColumnVisibility();
+    toast("✅ Event kolom zichtbaarheid opgeslagen!");
+    
+    // Sluit modal
+    const modal = document.getElementById("eventColumnConfigModal");
+    if (modal) modal.classList.add("hidden");
+  }
+
+  // Reset naar standaard waarden
+  function resetEventColumnConfig() {
+    const columnIdMap = {
+      time: 'colTime',
+      level: 'colLevel',
+      reason: 'colReason',
+      tenant: 'colTenant',
+      from: 'colFrom',
+      rcpts: 'colRcpts',
+      kb: 'colKb',
+      remoteip: 'colRemoteIP',
+      info: 'colInfo'
+    };
+    
+    Object.keys(defaultEventColumns).forEach(col => {
+      const checkbox = document.getElementById(columnIdMap[col]);
+      if (checkbox) {
+        checkbox.checked = defaultEventColumns[col];
+      }
+    });
+    
+    localStorage.removeItem("eventColumnConfig");
+    applyEventColumnVisibility();
+    toast("🔄 Event kolom zichtbaarheid gereset naar standaard!");
+  }
+
+  // Pas kolom zichtbaarheid toe op de tabel
+  function applyEventColumnVisibility() {
+    const config = localStorage.getItem("eventColumnConfig");
+    let columnVisibility;
+    
+    if (config) {
+      try {
+        columnVisibility = JSON.parse(config);
+      } catch (e) {
+        columnVisibility = defaultEventColumns;
+      }
+    } else {
+      columnVisibility = defaultEventColumns;
+    }
+    
+    // Pas toe op header kolommen en body cellen
+    const table = document.getElementById("eventsTable");
+    if (!table) return;
+    
+    const headers = Array.from(table.querySelectorAll("thead th"));
+    headers.forEach((header, index) => {
+      const column = header.getAttribute("data-column");
+      if (column && columnVisibility.hasOwnProperty(column)) {
+        const isVisible = columnVisibility[column];
+        header.style.display = isVisible ? "" : "none";
+        
+        // Pas ook toe op alle cellen in deze kolom
+        const rows = table.querySelectorAll("tbody tr");
+        rows.forEach(row => {
+          const cells = row.querySelectorAll("td");
+          if (cells[index]) {
+            cells[index].style.display = isVisible ? "" : "none";
+          }
+        });
+      }
+    });
+  }
+
 })();
+

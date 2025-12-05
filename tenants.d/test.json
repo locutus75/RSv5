@@ -5,6 +5,9 @@
   ],
   "senderOverrides": {},
   "routing": {
+    "ipRanges": [
+      "192.168.150.0/24"
+    ],
     "priority": 100
   },
   "policy": {
