@@ -12,7 +12,23 @@
   <div id="toast" class="toast hidden"></div>
   <header>
     <div class="left">
-      <h1>RileeSurfis <span class="muted">Admin</span> <span class="version" id="versionHeader">v5.0.0</span></h1>
+      <h1>RileeSurfis <span class="muted">Admin</span> <span class="version clickable" id="versionHeader">...</span>
+        <div id="versionMenu" class="version-menu hidden">
+          <div class="version-menu-item" id="checkUpdateBtn">
+            <span>🔄</span> Controleren op updates
+          </div>
+          <div class="version-menu-item hidden" id="downloadUpdateBtn">
+            <span>⬇️</span> Download update
+          </div>
+          <div class="version-menu-item hidden" id="installUpdateBtn">
+            <span>⚡</span> Installeer en activeer
+          </div>
+          <div class="version-menu-separator"></div>
+          <div class="version-menu-item" id="versionInfoBtn">
+            <span>ℹ️</span> Versie informatie
+          </div>
+        </div>
+      </h1>
       <div class="status">
         <span class="dot" id="healthDot" title="Server status"></span>
         <span id="healthText" class="muted">checking…</span>
@@ -43,8 +59,11 @@
           <select id="tenantFilterStats"><option value="">Alle tenants</option></select>
           <select id="statsWindow">
             <option value="15m">15 min</option>
-            <option value="60m" selected>60 min</option>
-            <option value="24h">24 uur</option>
+            <option value="60m">60 min</option>
+            <option value="24h" selected>24 uur</option>
+            <option value="3d">3 dagen</option>
+            <option value="7d">7 dagen</option>
+            <option value="14d">14 dagen</option>
             <option value="all">Alles</option>
           </select>
 
@@ -98,6 +117,66 @@
         <h2>Laatste events<span id="logsResetTime" class="muted" style="font-size: 0.7em; font-weight: normal; margin-left: 8px;"></span></h2>
         <div class="actions">
           <select id="tenantFilterEvents"><option value="">Alle tenants</option></select>
+          <div class="multiselect-wrapper">
+            <button type="button" class="multiselect-trigger" id="eventsLevelFilterTrigger">
+              <span id="eventsLevelFilterText">Alle niveaus</span>
+              <svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M3 4.5L6 7.5L9 4.5"/>
+              </svg>
+            </button>
+            <div class="multiselect-dropdown hidden" id="eventsLevelFilterDropdown">
+              <div class="multiselect-options">
+                <label class="multiselect-option">
+                  <input type="checkbox" value="deliver.ok" class="level-checkbox">
+                  <span>deliver.ok</span>
+                </label>
+                <label class="multiselect-option">
+                  <input type="checkbox" value="deliver.err" class="level-checkbox">
+                  <span>deliver.err</span>
+                </label>
+                <label class="multiselect-option">
+                  <input type="checkbox" value="deliver.info" class="level-checkbox">
+                  <span>deliver.info</span>
+                </label>
+                <label class="multiselect-option">
+                  <input type="checkbox" value="deliver.warn" class="level-checkbox">
+                  <span>deliver.warn</span>
+                </label>
+                <label class="multiselect-option">
+                  <input type="checkbox" value="config.info" class="level-checkbox">
+                  <span>config.info</span>
+                </label>
+                <label class="multiselect-option">
+                  <input type="checkbox" value="config.warn" class="level-checkbox">
+                  <span>config.warn</span>
+                </label>
+                <label class="multiselect-option">
+                  <input type="checkbox" value="config.error" class="level-checkbox">
+                  <span>config.error</span>
+                </label>
+                <label class="multiselect-option">
+                  <input type="checkbox" value="mail.error" class="level-checkbox">
+                  <span>mail.error</span>
+                </label>
+                <label class="multiselect-option">
+                  <input type="checkbox" value="debug" class="level-checkbox">
+                  <span>debug</span>
+                </label>
+                <label class="multiselect-option">
+                  <input type="checkbox" value="info" class="level-checkbox">
+                  <span>info</span>
+                </label>
+                <label class="multiselect-option">
+                  <input type="checkbox" value="warn" class="level-checkbox">
+                  <span>warn</span>
+                </label>
+                <label class="multiselect-option">
+                  <input type="checkbox" value="error" class="level-checkbox">
+                  <span>error</span>
+                </label>
+              </div>
+            </div>
+          </div>
           <select id="eventsReasonFilter">
             <option value="all">Alle events</option>
             <option value="success">Alleen geslaagde pogingen</option>
@@ -136,6 +215,10 @@
         </div>
       </div>
       <div class="table-wrap">
+        <div id="eventsLoadingOverlay" class="loading-overlay hidden">
+          <div class="loading-spinner"></div>
+          <div class="loading-text">Logbestand wordt geladen...</div>
+        </div>
         <table id="eventsTable">
           <thead><tr>
             <th data-column="time">Tijd</th>
@@ -167,13 +250,20 @@
         <div class="actions">
           <select id="chartWindow">
             <option value="15m">15 min</option>
-            <option value="60m" selected>60 min</option>
-            <option value="24h">24 uur</option>
+            <option value="60m">60 min</option>
+            <option value="24h" selected>24 uur</option>
+            <option value="3d">3 dagen</option>
+            <option value="7d">7 dagen</option>
+            <option value="14d">14 dagen</option>
+            <option value="all">Alles</option>
           </select>
-          <button id="closeChart" class="ghost">Sluiten</button>
+          <button id="closeChartTop" class="ghost">Sluiten</button>
         </div>
       </div>
       <div id="chartBody"></div>
+      <div class="modal-footer" style="padding: 12px 14px; border-top: 1px solid var(--border); display: flex; justify-content: flex-end; gap: 8px;">
+        <button id="closeChartBottom" class="ghost">Sluiten</button>
+      </div>
     </div>
   </div>
 
@@ -183,6 +273,8 @@
       <div class="modal-head">
         <h3 id="tenantModalTitle">Tenant</h3>
         <div class="actions">
+          <button id="tenantTestTop" class="ghost" style="color: var(--pri);">Testen</button>
+          <button id="tenantSaveTop" class="primary">Opslaan</button>
           <button id="tenantClose" class="ghost">Sluiten</button>
         </div>
       </div>
@@ -196,24 +288,21 @@
           
           <!-- Algemene Configuratie (voor beide opties) -->
           <div class="field" style="grid-column: 1 / -1;"><h4>Algemene Configuratie</h4></div>
-          <div class="field"><label>Allowed senders <span class="hint">(komma of 1 per regel) - gebruikt voor routing en sender validatie</span>
+          <div class="field"><label>Allowed senders <span class="hint">(1 per regel) - gebruikt voor routing en sender validatie</span>
             <textarea id="tfAllowedSenders" rows="3" placeholder="noreply@tenant.tld"></textarea>
           </label></div>
-          <div class="field"><label>Routing domains <span class="hint">(komma-gescheiden) - gebruikt voor tenant routing</span>
-            <input id="tfSenderDomains" type="text" placeholder="example.com, sub.example.com"/>
+          <div class="field"><label>Routing domains <span class="hint">(1 per regel) - gebruikt voor tenant routing</span>
+            <textarea id="tfSenderDomains" rows="3" placeholder="example.com"></textarea>
           </label></div>
           <div class="field"><label>Routing IP ranges <span class="hint">(1 per regel) - gebruikt voor tenant routing</span>
-            <div style="display: flex; gap: 8px; align-items: flex-start;">
-              <textarea id="tfIpRanges" rows="3" placeholder="203.0.113.0/24" style="flex: 1;"></textarea>
-              <button type="button" id="addServerIPsBtn" class="ghost" style="white-space: nowrap; padding: 8px 12px;" title="Voeg server IP-adressen toe">+ Server IP's</button>
-            </div>
+            <textarea id="tfIpRanges" rows="3" placeholder="203.0.113.0/24"></textarea>
+            <button type="button" id="addServerIPsBtn" class="ghost" style="margin-top: 6px; white-space: nowrap; padding: 8px 12px;" title="Voeg server IP-adressen toe">+ Server IP's</button>
           </label></div>
-          <div class="field"><label>Prioriteit<input id="tfPriority" type="number" min="0" placeholder="100"/></label></div>
+          <div class="field" style="width: 30%;"><label>Prioriteit<input id="tfPriority" type="number" min="0" placeholder="100"/></label></div>
           <div class="field"><label>Force From <span class="hint">(optioneel)</span><input id="tfForceFrom" type="email" placeholder="override@tenant.tld"/></label></div>
           <div class="field"><label>Max size (KB)<input id="tfMaxSize" type="number" min="0" placeholder="5120"/></label></div>
           <div class="field"><label>Rate per minuut<input id="tfRatePerMinute" type="number" min="0" placeholder="60"/></label></div>
           <div class="field"><label>Rate per uur<input id="tfRatePerHour" type="number" min="0" placeholder="5000"/></label></div>
-          <div class="field"><label class="check"><input id="tfSaveToSent" type="checkbox"/> Save to Sent Items</label></div>
           <div class="field"><label>BCC-archive<input id="tfBccArchive" type="email" placeholder="archive@tenant.tld"/></label></div>
   
           <div class="field"><label>Tags <span class="hint">(komma-gescheiden)</span>
@@ -262,7 +351,53 @@
   
           <p class="muted" style="grid-column: 1 / -1">Opmerking: <code>senderOverrides</code> wordt standaard leeg gezet en kan later via JSON geavanceerd worden ingevuld.</p>
         </div>
-        <div class="button-row"><button id="tenantSave" class="primary">Opslaan</button></div>
+        <div class="button-row"><button id="tenantTestBottom" class="ghost" style="color: var(--pri);">Testen</button><button id="tenantSave" class="primary">Opslaan</button><button id="tenantCloseBottom" class="ghost">Sluiten</button></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Test Result Modal -->
+  <div id="testResultModal" class="modal hidden">
+    <div class="modal-content" style="max-width: 600px;">
+      <div class="modal-head">
+        <h3 id="testResultTitle">Test Resultaten</h3>
+        <div class="actions">
+          <button id="testResultClose" class="ghost">Sluiten</button>
+        </div>
+      </div>
+      <div class="modal-body">
+        <div id="testResultContent"></div>
+        <div id="testEmailSection" style="margin-top: 20px; padding-top: 20px; border-top: 1px solid var(--border);">
+          <h4 style="margin: 0 0 12px 0; font-size: 14px; font-weight: 600;">Test Email Versturen</h4>
+          <div style="display: flex; flex-direction: column; gap: 12px;">
+            <div>
+              <label style="display: block; font-size: 12px; color: var(--muted); margin-bottom: 4px;">Van (From)</label>
+              <input type="email" id="testEmailFrom" placeholder="test@example.com" style="width: 100%; padding: 8px; border-radius: 6px; border: 1px solid var(--border); background: #0b1a34; color: var(--text); font-size: 13px;"/>
+            </div>
+            <div>
+              <label style="display: block; font-size: 12px; color: var(--muted); margin-bottom: 4px;">Naar (To) *</label>
+              <input type="email" id="testEmailTo" placeholder="ontvanger@example.com" style="width: 100%; padding: 8px; border-radius: 6px; border: 1px solid var(--border); background: #0b1a34; color: var(--text); font-size: 13px;"/>
+            </div>
+            <div>
+              <label style="display: block; font-size: 12px; color: var(--muted); margin-bottom: 4px;">Onderwerp</label>
+              <input type="text" id="testEmailSubject" placeholder="Test Email" style="width: 100%; padding: 8px; border-radius: 6px; border: 1px solid var(--border); background: #0b1a34; color: var(--text); font-size: 13px;"/>
+            </div>
+            <div>
+              <label style="display: block; font-size: 12px; color: var(--muted); margin-bottom: 4px;">Bericht</label>
+              <textarea id="testEmailBody" rows="4" placeholder="Dit is een test email..." style="width: 100%; padding: 8px; border-radius: 6px; border: 1px solid var(--border); background: #0b1a34; color: var(--text); font-size: 13px; resize: vertical;"></textarea>
+            </div>
+            <div>
+              <label style="display: block; font-size: 12px; color: var(--muted); margin-bottom: 4px;">Bijlage (optioneel)</label>
+              <input type="file" id="testEmailAttachment" multiple style="width: 100%; padding: 8px; border-radius: 6px; border: 1px solid var(--border); background: #0b1a34; color: var(--text); font-size: 13px; cursor: pointer;"/>
+              <div id="testEmailAttachmentList" style="margin-top: 6px; font-size: 12px; color: var(--muted);"></div>
+            </div>
+            <button id="testEmailSendBtn" class="primary" style="align-self: flex-start;">📧 Verstuur Test Email</button>
+            <div id="testEmailResult" style="display: none; margin-top: 8px; padding: 10px; border-radius: 6px; font-size: 13px;"></div>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer" style="padding: 12px 14px; border-top: 1px solid var(--border); display: flex; justify-content: flex-end; gap: 8px;">
+        <button id="testResultCloseBottom" class="ghost">Sluiten</button>
       </div>
     </div>
   </div>
@@ -273,15 +408,21 @@
       <div class="modal-head">
         <h3>⚙️ Service Instellingen</h3>
         <div class="actions">
+          <button id="settingsSaveTop" class="primary">Opslaan</button>
           <button id="settingsClose" class="ghost">Sluiten</button>
         </div>
       </div>
       <div class="modal-body">
         <div class="form-grid">
-          <div class="field"><label>Listen Port<input id="sfListenPort" type="number" min="1" max="65535" placeholder="2525"/></label></div>
-          <div class="field"><label>Host Name<input id="sfHostName" type="text" placeholder="relay.example.com"/></label></div>
-          <div class="field"><label class="check"><input id="sfRequireTLS" type="checkbox"/> Require TLS</label></div>
-          <div class="field"><label>Optional Basic Auth<label class="check"><input id="sfOptionalBasicAuth" type="checkbox"/> Enabled</label></label></div>
+          <div class="field" style="display: flex; align-items: flex-start; gap: 12px; flex-wrap: nowrap; grid-column: 1 / -1;">
+            <div style="flex: 0 0 auto; width: 150px;"><label>Host Name<input id="sfHostName" type="text" placeholder="relay.example.com"/></label></div>
+            <div style="flex: 0 0 auto; width: 100px;"><label>Listen Port<input id="sfListenPort" type="number" min="1" max="65535" placeholder="2525"/></label></div>
+            <div style="display: flex; flex-direction: column; gap: 8px; flex: 1; margin-left: 16px; padding-top: 24px;">
+              <label class="check"><input id="sfRequireTLS" type="checkbox"/><span>Require TLS</span></label>
+              <label class="check"><input id="sfOptionalBasicAuth" type="checkbox"/><span>Optional Basic Auth</span></label>
+              <label class="check"><input id="sfEnableDebug" type="checkbox"/><span>Debug meldingen weergeven</span></label>
+            </div>
+          </div>
           
           <div class="field" style="grid-column: 1 / -1;"><h4>TLS Configuratie</h4></div>
           <div class="field"><label>Cert File<input id="sfCertFile" type="text" placeholder="./certs/relay_server.crt"/></label></div>
@@ -338,7 +479,7 @@
                   <div class="field"><select id="newSmtpAuthUser" style="display:none;">
                     <option value="">Selecteer gebruiker...</option>
                   </select></div>
-                  <div class="field"><label class="check"><input id="newSmtpRequireTLS" type="checkbox" /> STARTTLS vereist <span class="hint">(niet nodig voor poort 465)</span></label></div>
+                  <div class="field"><label class="check"><input id="newSmtpRequireTLS" type="checkbox" /> STARTTLS vereist</label></div>
                   <div class="field" style="grid-column: 1/-1; display: flex; gap: 8px;">
                     <button id="addSmtpServerBtn" class="secondary small">Toevoegen</button>
                   </div>
@@ -379,8 +520,9 @@
               <div id="testSmtpResult" class="muted" style="margin-top: 5px; font-size: 12px;"></div>
             </div>
           </div>
+
         </div>
-        <div class="button-row"><button id="settingsSave" class="primary">Opslaan</button></div>
+        <div class="button-row"><button id="settingsSave" class="primary">Opslaan</button><button id="settingsCloseBottom" class="ghost">Sluiten</button></div>
       </div>
     </div>
   </div>
@@ -391,6 +533,7 @@
       <div class="modal-head">
         <h3>⚙️ Event Kleur Configuratie</h3>
         <div class="actions">
+          <button id="saveEventColorsTop" class="primary">Opslaan</button>
           <button id="closeEventColorConfig" class="ghost">Sluiten</button>
         </div>
       </div>
@@ -472,6 +615,7 @@
       <div class="modal-footer">
         <button id="saveEventColors" class="primary">Opslaan</button>
         <button id="resetEventColors" class="ghost">Reset naar Standaard</button>
+        <button id="closeEventColorConfigBottom" class="ghost">Sluiten</button>
       </div>
     </div>
   </div>
@@ -482,6 +626,7 @@
       <div class="modal-head">
         <h3>📊 Event Kolom Zichtbaarheid</h3>
         <div class="actions">
+          <button id="saveEventColumnsTop" class="primary">Opslaan</button>
           <button id="closeEventColumnConfig" class="ghost">Sluiten</button>
         </div>
       </div>
@@ -530,6 +675,7 @@
       <div class="modal-footer">
         <button id="saveEventColumns" class="primary">Opslaan</button>
         <button id="resetEventColumns" class="ghost">Reset naar Standaard</button>
+        <button id="closeEventColumnConfigBottom" class="ghost">Sluiten</button>
       </div>
     </div>
   </div>
@@ -559,7 +705,7 @@
         <img src="logo.png" alt="RileeSurfis Logo" />
       </div>
       <h2>RileeSurfis Admin</h2>
-      <p class="version" id="versionLogin">v5.0.0</p>
+      <p class="version" id="versionLogin">...</p>
     </div>
     <p class="muted">Voer je admin token in om de beheerconsole te openen.</p>
     <input id="overlayToken" type="password" placeholder="Admin token (Bearer)" />
@@ -572,3 +718,4 @@
 
 </body>
 </html>
+

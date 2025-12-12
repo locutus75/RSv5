@@ -1,0 +1,55 @@
+# Node modules
+node_modules/
+
+# Logs
+logs/
+*.log
+
+# Configuratie bestanden (per installatie verschillend)
+config.json
+config.json.backup.*
+
+# Certificaten (bevatten gevoelige data)
+certs/
+
+# Tenant configuraties (gebruikersdata)
+tenants.d/
+
+# Service executables
+daemon/
+nssm.exe
+
+# Dynamisch gegenereerde bestanden
+update-manifest.json
+version.json
+
+# Package lock (wordt automatisch gegenereerd)
+package-lock.json
+
+# Temporary files
+delete
+qc
+query
+
+# OS bestanden
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# IDE bestanden
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Environment variabelen
+.env
+.env.local
+.env.*.local
+
+# Backup bestanden
+*.backup
+*.bak
+*.tmp
+

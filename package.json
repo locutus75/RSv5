@@ -1,6 +1,6 @@
 {
   "name": "rileesurfis",
-  "version": "0.4.2",
+  "version": "5.0.9",
   "private": true,
   "type": "module",
   "main": "index.js",
@@ -16,6 +16,7 @@
     "version:patch": "node scripts/bump-version.js --patch",
     "version:minor": "node scripts/bump-version.js --minor",
     "version:major": "node scripts/bump-version.js --major",
+    "update:generate-manifest": "node scripts/generate-update-manifest.js",
     "service:install": "node service-installer.cjs",
     "service:uninstall": "node service-uninstaller.cjs",
     "service:start": "node service-manager.cjs start",

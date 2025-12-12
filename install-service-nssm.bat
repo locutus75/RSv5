@@ -44,7 +44,7 @@ echo 🔧 Service installeren met NSSM...
 echo.
 
 REM Installeer de service
-nssm install "RileeSurfis SMTP Server" "C:\Program Files\nodejs\node.exe" "C:\Users\leutscher_e\Apps\RSv5\index.js"
+nssm install "RileeSurfis SMTP Server" "C:\Program Files\nodejs\node.exe" "C:\Apps\RileeSurfis\index.js"
 if %errorlevel% neq 0 (
     echo ❌ Fout bij installeren van service
     pause
@@ -56,14 +56,14 @@ echo.
 
 REM Configureer de service
 echo 🔧 Service configureren...
-nssm set "RileeSurfis SMTP Server" AppDirectory "C:\Users\leutscher_e\Apps\RSv5"
+nssm set "RileeSurfis SMTP Server" AppDirectory "C:\Apps\RileeSurfis"
 nssm set "RileeSurfis SMTP Server" Description "RileeSurfis SMTP relay server met Graph API integratie"
 nssm set "RileeSurfis SMTP Server" Start SERVICE_AUTO_START
 
 REM Environment variables
 nssm set "RileeSurfis SMTP Server" AppEnvironmentExtra "NODE_ENV=production"
 nssm set "RileeSurfis SMTP Server" AppEnvironmentExtra "ADMIN_TOKEN=ka8jajs@9djj3lsjdklsdfulij238sdfh"
-nssm set "RileeSurfis SMTP Server" AppEnvironmentExtra "PWD=C:\Users\leutscher_e\Apps\RSv5"
+nssm set "RileeSurfis SMTP Server" AppEnvironmentExtra "PWD=C:\Apps\RileeSurfis"
 
 echo ✅ Service geconfigureerd
 echo.

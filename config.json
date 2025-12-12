@@ -2,7 +2,7 @@
   "service": {
     "listenPort": 2525,
     "requireTLS": false,
-    "hostName": "192.168.150.3",
+    "hostName": "127.0.0.1",
     "tls": {
       "certFile": "./certs/relay_server.crt",
       "keyFile": "./certs/relay_server.key",
@@ -15,6 +15,7 @@
       "ipRanges"
     ],
     "optionalBasicAuth": true,
+    "enableDebug": true,
     "smtpServers": [
       {
         "naam": "Esprit",

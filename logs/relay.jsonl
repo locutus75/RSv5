@@ -592,3 +592,99 @@
 {"ts":"2025-12-05T22:10:59.762Z","level":"config.info","message":"Starting SMTP server on port 2525","host":"0.0.0.0"}
 {"ts":"2025-12-05T22:10:59.771Z","level":"config.info","message":"SMTP server ready on 0.0.0.0:2525","port":2525,"host":"0.0.0.0"}
 {"ts":"2025-12-05T22:10:59.772Z","level":"config.info","message":"SMTP server configured for service context","maxConnections":100}
+{"ts":"2025-12-08T21:28:34.660Z","level":"config.info","message":"Service configuration reloaded (including routingPriority and smtpServers)","routingPriority":["allowedSenders","senderDomains","ipRanges"],"smtpServersCount":1}
+{"ts":"2025-12-08T21:28:34.662Z","level":"config.info","message":"Tenants reloaded successfully","count":3,"tenants":["E-cowarenhuis","Omnibuzz","test"]}
+{"ts":"2025-12-09T01:46:42.085Z","level":"config.info","message":"Service configuration reloaded (including routingPriority and smtpServers)","routingPriority":["allowedSenders","senderDomains","ipRanges"],"smtpServersCount":1}
+{"ts":"2025-12-09T01:46:42.087Z","level":"config.info","message":"Tenants reloaded successfully","count":3,"tenants":["E-cowarenhuis","Omnibuzz","test"]}
+{"ts":"2025-12-09T01:58:41.908Z","level":"config.info","message":"Tenant reload ready - triggered on save"}
+{"ts":"2025-12-09T01:58:41.978Z","level":"config.info","message":"Starting SMTP server on port 2525","host":"0.0.0.0"}
+{"ts":"2025-12-09T01:58:41.987Z","level":"config.info","message":"SMTP server ready on 0.0.0.0:2525","port":2525,"host":"0.0.0.0"}
+{"ts":"2025-12-09T01:58:41.988Z","level":"config.info","message":"SMTP server configured for service context","maxConnections":100}
+{"ts":"2025-12-09T02:02:03.964Z","level":"config.info","message":"Tenant reload ready - triggered on save"}
+{"ts":"2025-12-09T02:02:04.031Z","level":"config.info","message":"Starting SMTP server on port 2525","host":"0.0.0.0"}
+{"ts":"2025-12-09T08:44:29.117Z","level":"config.info","message":"Tenant reload ready - triggered on save"}
+{"ts":"2025-12-09T08:44:29.167Z","level":"config.info","message":"Starting SMTP server on port 2525","host":"0.0.0.0"}
+{"ts":"2025-12-09T08:44:29.172Z","level":"config.info","message":"SMTP server ready on 0.0.0.0:2525","port":2525,"host":"0.0.0.0"}
+{"ts":"2025-12-09T08:44:29.173Z","level":"config.info","message":"SMTP server configured for service context","maxConnections":100}
+{"ts":"2025-12-09T08:47:08.319Z","level":"config.info","message":"Tenant reload ready - triggered on save"}
+{"ts":"2025-12-09T08:47:08.394Z","level":"config.info","message":"Starting SMTP server on port 2525","host":"0.0.0.0"}
+{"ts":"2025-12-09T08:47:08.410Z","level":"config.info","message":"SMTP server ready on 0.0.0.0:2525","port":2525,"host":"0.0.0.0"}
+{"ts":"2025-12-09T08:47:08.411Z","level":"config.info","message":"SMTP server configured for service context","maxConnections":100}
+{"ts":"2025-12-09T16:11:40.742Z","level":"config.info","message":"Service configuration reloaded (including routingPriority and smtpServers)","routingPriority":["allowedSenders","senderDomains","ipRanges"],"smtpServersCount":1}
+{"ts":"2025-12-09T16:11:40.742Z","level":"config.info","message":"Tenants reloaded successfully","count":3,"tenants":["E-cowarenhuis","Omnibuzz","test"]}
+{"ts":"2025-12-09T23:20:59.661Z","level":"config.info","message":"Service configuration reloaded (including routingPriority and smtpServers)","routingPriority":["allowedSenders","senderDomains","ipRanges"],"smtpServersCount":1}
+{"ts":"2025-12-09T23:20:59.663Z","level":"config.info","message":"Tenants reloaded successfully","count":3,"tenants":["E-cowarenhuis","Omnibuzz","test"]}
+{"ts":"2025-12-09T23:55:38.638Z","level":"config.info","message":"Tenant reload ready - triggered on save"}
+{"ts":"2025-12-09T23:55:38.687Z","level":"config.info","message":"Starting SMTP server on port 2525","host":"0.0.0.0"}
+{"ts":"2025-12-09T23:55:38.693Z","level":"config.info","message":"SMTP server ready on 0.0.0.0:2525","port":2525,"host":"0.0.0.0"}
+{"ts":"2025-12-09T23:55:38.693Z","level":"config.info","message":"SMTP server configured for service context","maxConnections":100}
+{"ts":"2025-12-09T23:55:45.674Z","level":"config.info","message":"Service configuration reloaded (including routingPriority and smtpServers)","routingPriority":["allowedSenders","senderDomains","ipRanges"],"smtpServersCount":1}
+{"ts":"2025-12-09T23:55:45.675Z","level":"config.info","message":"Tenants reloaded successfully","count":3,"tenants":["E-cowarenhuis","Omnibuzz","test"]}
+{"ts":"2025-12-10T00:00:58.777Z","level":"config.info","message":"Service configuration reloaded (including routingPriority and smtpServers)","routingPriority":["allowedSenders","senderDomains","ipRanges"],"smtpServersCount":1}
+{"ts":"2025-12-10T00:00:58.778Z","level":"config.info","message":"Tenants reloaded successfully","count":3,"tenants":["E-cowarenhuis","Omnibuzz","test"]}
+{"ts":"2025-12-10T00:17:53.725Z","level":"config.info","message":"Tenant reload ready - triggered on save"}
+{"ts":"2025-12-10T00:17:53.771Z","level":"config.info","message":"Starting SMTP server on port 2525","host":"0.0.0.0"}
+{"ts":"2025-12-10T00:17:53.779Z","level":"config.info","message":"SMTP server ready on 0.0.0.0:2525","port":2525,"host":"0.0.0.0"}
+{"ts":"2025-12-10T00:17:53.780Z","level":"config.info","message":"SMTP server configured for service context","maxConnections":100}
+{"ts":"2025-12-10T00:32:31.740Z","level":"config.info","message":"Tenant reload ready - triggered on save"}
+{"ts":"2025-12-10T00:32:31.783Z","level":"config.info","message":"Starting SMTP server on port 2525","host":"0.0.0.0"}
+{"ts":"2025-12-10T00:32:31.788Z","level":"config.info","message":"SMTP server ready on 0.0.0.0:2525","port":2525,"host":"0.0.0.0"}
+{"ts":"2025-12-10T00:32:31.789Z","level":"config.info","message":"SMTP server configured for service context","maxConnections":100}
+{"ts":"2025-12-10T00:37:14.855Z","level":"config.info","message":"Tenant reload ready - triggered on save"}
+{"ts":"2025-12-10T00:37:14.897Z","level":"config.info","message":"Starting SMTP server on port 2525","host":"0.0.0.0"}
+{"ts":"2025-12-10T00:37:14.903Z","level":"config.info","message":"SMTP server ready on 0.0.0.0:2525","port":2525,"host":"0.0.0.0"}
+{"ts":"2025-12-10T00:37:14.904Z","level":"config.info","message":"SMTP server configured for service context","maxConnections":100}
+{"ts":"2025-12-10T00:40:44.255Z","level":"debug","msgId":"b445505b-eec2-4307-bac5-5ebcf699346d","message":"Nieuwe SMTP client verbinding","remoteIP":"127.0.0.1","remotePort":64422,"allowlistIPs":[],"allowlistIPsConfigured":false}
+{"ts":"2025-12-10T00:40:44.257Z","level":"deliver.err","msgId":"ed26bc60-8e49-4a42-874f-a9cb755c192d","tenant":"unknown","remoteIP":"127.0.0.1","error":"IP not allowed (geen match in tenant ipRanges)","reason":"ip_not_allowed"}
+{"ts":"2025-12-10T00:41:33.154Z","level":"debug","msgId":"634f7dbf-7f08-4cb5-8f16-9b33c030510e","message":"Nieuwe SMTP client verbinding","remoteIP":"192.168.111.16","remotePort":64439,"allowlistIPs":[],"allowlistIPsConfigured":false}
+{"ts":"2025-12-10T00:41:33.155Z","level":"debug","message":"IP toegestaan","remoteIP":"192.168.111.16","allowlistIPsUsed":false}
+{"ts":"2025-12-10T00:41:33.164Z","level":"debug","msgId":"e88908a2-7f0e-4a96-a11f-8adc120eca29","message":"MAIL FROM command ontvangen","mailFrom":"info@e-cowarenhuis.nl","remoteIP":"192.168.111.16","authenticated":"anonymous"}
+{"ts":"2025-12-10T00:41:33.166Z","level":"debug","msgId":"96271b3a-53a4-457f-a459-6a105ed31736","message":"RCPT TO command ontvangen","rcptTo":"info@coolservers.org","remoteIP":"192.168.111.16"}
+{"ts":"2025-12-10T00:41:33.167Z","level":"debug","msgId":"aa61f8c5-c9ac-49a7-a273-ab1b9f1347e1","message":"onData gestart - email ontvangen","remoteIP":"192.168.111.16","envelopeFrom":"info@e-cowarenhuis.nl","envelopeTo":"info@coolservers.org"}
+{"ts":"2025-12-10T00:41:33.172Z","level":"debug","msgId":"aa61f8c5-c9ac-49a7-a273-ab1b9f1347e1","message":"Email data compleet - start verwerking","remoteIP":"192.168.111.16","sizeBytes":312501}
+{"ts":"2025-12-10T00:41:33.222Z","level":"debug","msgId":"aa61f8c5-c9ac-49a7-a273-ab1b9f1347e1","message":"Email geparsed","envelopeFrom":"info@e-cowarenhuis.nl","parsedFrom":"info@e-cowarenhuis.nl"}
+{"ts":"2025-12-10T00:41:33.565Z","level":"deliver.ok","msgId":"aa61f8c5-c9ac-49a7-a273-ab1b9f1347e1","tenant":"E-cowarenhuis","from":"info@e-cowarenhuis.nl","rcptCount":1,"rcpts":"info@coolservers.org","sizeKB":306,"remoteIP":"192.168.111.16","deliveryMethod":"graph"}
+{"ts":"2025-12-10T00:48:21.354Z","level":"config.info","message":"Tenant reload ready - triggered on save"}
+{"ts":"2025-12-10T00:48:21.390Z","level":"config.info","message":"Starting SMTP server on port 2525","host":"0.0.0.0"}
+{"ts":"2025-12-10T00:48:21.395Z","level":"config.info","message":"SMTP server ready on 0.0.0.0:2525","port":2525,"host":"0.0.0.0"}
+{"ts":"2025-12-10T00:48:21.396Z","level":"config.info","message":"SMTP server configured for service context","maxConnections":100}
+{"ts":"2025-12-10T00:54:31.517Z","level":"config.info","message":"Tenant reload ready - triggered on save"}
+{"ts":"2025-12-10T00:54:31.551Z","level":"config.info","message":"Starting SMTP server on port 2525","host":"0.0.0.0"}
+{"ts":"2025-12-10T00:54:31.557Z","level":"config.info","message":"SMTP server ready on 0.0.0.0:2525","port":2525,"host":"0.0.0.0"}
+{"ts":"2025-12-10T00:54:31.557Z","level":"config.info","message":"SMTP server configured for service context","maxConnections":100}
+{"ts":"2025-12-10T01:04:26.909Z","level":"config.info","message":"Tenant reload ready - triggered on save"}
+{"ts":"2025-12-10T01:04:26.952Z","level":"config.info","message":"Starting SMTP server on port 2525","host":"0.0.0.0"}
+{"ts":"2025-12-10T01:04:26.959Z","level":"config.info","message":"SMTP server ready on 0.0.0.0:2525","port":2525,"host":"0.0.0.0"}
+{"ts":"2025-12-10T01:04:26.959Z","level":"config.info","message":"SMTP server configured for service context","maxConnections":100}
+{"ts":"2025-12-10T01:15:18.438Z","level":"config.info","message":"Tenant reload ready - triggered on save"}
+{"ts":"2025-12-10T01:15:18.472Z","level":"config.info","message":"Starting SMTP server on port 2525","host":"0.0.0.0"}
+{"ts":"2025-12-10T01:15:18.478Z","level":"config.info","message":"SMTP server ready on 0.0.0.0:2525","port":2525,"host":"0.0.0.0"}
+{"ts":"2025-12-10T01:15:18.479Z","level":"config.info","message":"SMTP server configured for service context","maxConnections":100}
+{"ts":"2025-12-10T01:31:56.451Z","level":"config.info","message":"Tenant reload ready - triggered on save"}
+{"ts":"2025-12-10T01:31:56.483Z","level":"config.info","message":"Starting SMTP server on port 2525","host":"0.0.0.0"}
+{"ts":"2025-12-10T01:31:56.488Z","level":"config.info","message":"SMTP server ready on 0.0.0.0:2525","port":2525,"host":"0.0.0.0"}
+{"ts":"2025-12-10T01:31:56.489Z","level":"config.info","message":"SMTP server configured for service context","maxConnections":100}
+{"ts":"2025-12-10T01:35:12.799Z","level":"config.info","message":"Tenant reload ready - triggered on save"}
+{"ts":"2025-12-10T01:35:13.121Z","level":"config.info","message":"Starting SMTP server on port 2525","host":"0.0.0.0"}
+{"ts":"2025-12-10T01:35:13.205Z","level":"config.info","message":"SMTP server ready on 0.0.0.0:2525","port":2525,"host":"0.0.0.0"}
+{"ts":"2025-12-10T01:35:13.211Z","level":"config.info","message":"SMTP server configured for service context","maxConnections":100}
+{"ts":"2025-12-10T01:49:10.670Z","level":"config.info","message":"Tenant reload ready - triggered on save"}
+{"ts":"2025-12-10T01:49:10.704Z","level":"config.info","message":"Starting SMTP server on port 2525","host":"0.0.0.0"}
+{"ts":"2025-12-10T01:49:10.710Z","level":"config.info","message":"SMTP server ready on 0.0.0.0:2525","port":2525,"host":"0.0.0.0"}
+{"ts":"2025-12-10T01:49:10.711Z","level":"config.info","message":"SMTP server configured for service context","maxConnections":100}
+{"ts":"2025-12-10T01:50:45.438Z","level":"config.info","message":"Tenant reload ready - triggered on save"}
+{"ts":"2025-12-10T01:50:45.473Z","level":"config.info","message":"Starting SMTP server on port 2525","host":"0.0.0.0"}
+{"ts":"2025-12-10T01:50:45.480Z","level":"config.info","message":"SMTP server ready on 0.0.0.0:2525","port":2525,"host":"0.0.0.0"}
+{"ts":"2025-12-10T01:50:45.480Z","level":"config.info","message":"SMTP server configured for service context","maxConnections":100}
+{"ts":"2025-12-12T12:23:20.154Z","level":"config.info","message":"Tenant reload ready - triggered on save"}
+{"ts":"2025-12-12T12:23:20.319Z","level":"config.info","message":"Starting SMTP server on port 2525","host":"0.0.0.0"}
+{"ts":"2025-12-12T13:15:06.601Z","level":"config.info","message":"Service configuration reloaded (including routingPriority and smtpServers)","routingPriority":["allowedSenders","senderDomains","ipRanges"],"smtpServersCount":1}
+{"ts":"2025-12-12T13:15:06.602Z","level":"config.info","message":"Tenants reloaded successfully","count":3,"tenants":["E-cowarenhuis","Omnibuzz","test"]}
+{"ts":"2025-12-12T13:21:14.766Z","level":"config.info","message":"Tenant reload ready - triggered on save"}
+{"ts":"2025-12-12T13:21:14.814Z","level":"config.info","message":"Starting SMTP server on port 2525","host":"0.0.0.0"}
+{"ts":"2025-12-12T13:21:14.820Z","level":"config.info","message":"SMTP server ready on 0.0.0.0:2525","port":2525,"host":"0.0.0.0"}
+{"ts":"2025-12-12T13:21:14.821Z","level":"config.info","message":"SMTP server configured for service context","maxConnections":100}
+{"ts":"2025-12-12T23:05:32.182Z","level":"config.info","message":"Tenant reload ready - triggered on save"}
+{"ts":"2025-12-12T23:05:32.253Z","level":"config.info","message":"Starting SMTP server on port 2525","host":"0.0.0.0"}
+{"ts":"2025-12-12T23:05:32.260Z","level":"config.info","message":"SMTP server ready on 0.0.0.0:2525","port":2525,"host":"0.0.0.0"}
+{"ts":"2025-12-12T23:05:32.261Z","level":"config.info","message":"SMTP server configured for service context","maxConnections":100}

@@ -213,7 +213,10 @@ const SCHEMA = JSON.parse(fs.readFileSync(path.join(ROOT, "schema", "tenant.sche
 app.set('trust proxy', true);
 
 app.use(cors());
-app.use(express.json());
+// Verhoog body size limiet voor bijlages in test emails (50MB limiet)
+// Base64 encoding maakt bestanden ~33% groter, dus dit ondersteunt bestanden tot ~37MB
+app.use(express.json({ limit: '50mb' }));
+app.use(express.urlencoded({ extended: true, limit: '50mb' }));
 
 // Helper functie om remote IP te krijgen (rekening houdend met proxies)
 function getRemoteIP(req) {
@@ -377,17 +380,280 @@ app.get("/admin/tenants", (req, res) => {
   res.json(items);
 });
 
-app.get("/admin/tenants/:name", (req, res) => {
-  const data = readTenant(req.params.name);
-  if (!data) return res.status(404).json({ error: "Not found" });
-  res.json(data);
-});
+// BELANGRIJK: Specifieke routes moeten VOOR parameterized routes staan!
+// Anders wordt "/admin/tenants/test" geïnterpreteerd als "/admin/tenants/:name" waarbij name="test"
 
 app.post("/admin/tenants/validate", (req, res) => {
   const data = req.body;
   const ok = validate(data);
   if (!ok) return res.status(400).json({ ok: false, errors: validate.errors });
   res.json({ ok: true });
+});
+
+// Test endpoint voor tenant configuratie validatie (zonder opslaan)
+app.post("/admin/tenants/test", (req, res) => {
+  const data = req.body;
+  const remoteIP = getRemoteIP(req);
+  console.log(`🧪 Tenant configuratie testen - ontvangen data: ${JSON.stringify(data, null, 2)} - Remote IP: ${remoteIP}`);
+  
+  const validationResults = {
+    ok: true,
+    errors: [],
+    warnings: [],
+    checks: []
+  };
+  
+  try {
+    // Basis validatie: Tenant naam
+    if (!data.name || !data.name.trim()) {
+      validationResults.ok = false;
+      validationResults.errors.push({ field: "name", message: "Tenant naam is verplicht" });
+    } else {
+      validationResults.checks.push({ field: "name", status: "ok", message: "Tenant naam is ingevuld" });
+    }
+    
+    // Aangepaste validatie: Graph API velden zijn alleen verplicht als delivery method "graph" is
+    const deliveryMethod = data.delivery?.method || "graph";
+    
+    // Bij SMTP: verwijder Graph API velden voordat schema validatie wordt uitgevoerd
+    let dataForValidation = JSON.parse(JSON.stringify(data)); // Deep copy
+    if (deliveryMethod === "smtp") {
+      // Verwijder Graph API velden bij SMTP - ze worden niet gebruikt
+      delete dataForValidation.tenantId;
+      delete dataForValidation.clientId;
+      delete dataForValidation.auth;
+      delete dataForValidation.defaultMailbox;
+    }
+    
+    // Validatie: Ten minste één routing criterium is verplicht (routing.senderDomains of allowedSenders)
+    const hasRoutingDomains = data.routing?.senderDomains && data.routing.senderDomains.length > 0;
+    const hasAllowedSenders = data.allowedSenders && data.allowedSenders.length > 0;
+    
+    if (!hasRoutingDomains && !hasAllowedSenders) {
+      validationResults.ok = false;
+      validationResults.errors.push({ 
+        field: "routing", 
+        message: "Ten minste één van de volgende velden is verplicht: Routing domains of Allowed senders (gebruikt voor tenant routing)" 
+      });
+    } else {
+      if (hasRoutingDomains) {
+        validationResults.checks.push({ field: "routing.senderDomains", status: "ok", message: `Routing domains geconfigureerd (${data.routing.senderDomains.length} domain(s))` });
+      }
+      if (hasAllowedSenders) {
+        validationResults.checks.push({ field: "allowedSenders", status: "ok", message: `Allowed senders geconfigureerd (${data.allowedSenders.length} sender(s))` });
+      }
+    }
+    
+    // Delivery method validatie
+    if (deliveryMethod === "graph") {
+      // Voor Graph API zijn deze velden verplicht - controleer nieuwe structuur (delivery.graph) of legacy (top-level)
+      const graphConfig = data.delivery?.graph || {};
+      const hasGraphConfig = (graphConfig.tenantId && graphConfig.clientId && graphConfig.auth && graphConfig.defaultMailbox) ||
+                            (data.tenantId && data.clientId && data.auth && data.defaultMailbox);
+      if (!hasGraphConfig) {
+        validationResults.ok = false;
+        validationResults.errors.push({ 
+          field: "delivery.graph", 
+          message: "Voor Graph API zijn Tenant ID, Client ID, Auth en Default Mailbox verplicht" 
+        });
+      } else {
+        validationResults.checks.push({ field: "delivery.graph", status: "ok", message: "Graph API configuratie compleet" });
+      }
+    } else if (deliveryMethod === "smtp") {
+      // Voor SMTP is alleen de SMTP server verplicht
+      const smtpServer = data.delivery?.smtp?.smtpServer || data.delivery?.smtpServer;
+      if (!smtpServer) {
+        validationResults.ok = false;
+        validationResults.errors.push({ 
+          field: "delivery.smtp", 
+          message: "Voor SMTP delivery is een SMTP server verplicht" 
+        });
+      } else {
+        validationResults.checks.push({ field: "delivery.smtp", status: "ok", message: `SMTP server geselecteerd: ${smtpServer}` });
+      }
+    }
+    
+    // Schema validatie op data zonder Graph API velden bij SMTP
+    const validationSchema = createSchemaForDeliveryMethod(deliveryMethod);
+    const validateForMethod = ajv.compile(validationSchema);
+    const schemaOk = validateForMethod(dataForValidation);
+    if (!schemaOk) {
+      validationResults.ok = false;
+      validationResults.errors.push(...validateForMethod.errors.map(err => ({
+        field: err.instancePath || err.schemaPath,
+        message: err.message
+      })));
+    } else {
+      validationResults.checks.push({ field: "schema", status: "ok", message: "Schema validatie geslaagd" });
+    }
+    
+    // Extra checks voor specifieke velden
+    if (data.routing?.ipRanges && data.routing.ipRanges.length > 0) {
+      validationResults.checks.push({ field: "routing.ipRanges", status: "ok", message: `IP ranges geconfigureerd (${data.routing.ipRanges.length} range(s))` });
+    }
+    
+    if (data.policy?.maxMessageSizeKB) {
+      validationResults.checks.push({ field: "policy.maxMessageSizeKB", status: "ok", message: `Max message size: ${data.policy.maxMessageSizeKB} KB` });
+    }
+    
+    if (data.policy?.rateLimit) {
+      const rateLimit = data.policy.rateLimit;
+      if (rateLimit.perMinute) {
+        validationResults.checks.push({ field: "policy.rateLimit.perMinute", status: "ok", message: `Rate limit per minuut: ${rateLimit.perMinute}` });
+      }
+      if (rateLimit.perHour) {
+        validationResults.checks.push({ field: "policy.rateLimit.perHour", status: "ok", message: `Rate limit per uur: ${rateLimit.perHour}` });
+      }
+    }
+    
+    res.json(validationResults);
+  } catch (error) {
+    console.error("❌ Fout bij testen tenant configuratie:", error);
+    res.status(500).json({ 
+      ok: false, 
+      error: error.message,
+      errors: [{ field: "general", message: error.message }]
+    });
+  }
+});
+
+// BELANGRIJK: Test email endpoint moet ook vóór parameterized routes staan
+// Test email versturen endpoint
+app.post("/admin/tenants/test-send", async (req, res) => {
+  const remoteIP = getRemoteIP(req);
+  console.log(`📧 Test email endpoint aangeroepen - Remote IP: ${remoteIP}`);
+  console.log(`📧 Request body:`, JSON.stringify(req.body, null, 2));
+  
+  try {
+    const { tenant, testEmail } = req.body;
+    console.log(`📧 Test email versturen - Tenant: ${tenant?.name}, Remote IP: ${remoteIP}`);
+    
+    if (!tenant || !tenant.name) {
+      return res.status(400).json({ ok: false, error: "Tenant configuratie ontbreekt" });
+    }
+    
+    if (!testEmail || !testEmail.to || !testEmail.from) {
+      return res.status(400).json({ ok: false, error: "Test email gegevens ontbreken (to en from zijn verplicht)" });
+    }
+    
+    // Laad service configuratie om SMTP servers op te halen
+    const config = await loadConfig();
+    const svc = config.service || {};
+    
+    // Bepaal delivery method
+    const deliveryMethod = tenant.delivery?.method || "graph";
+    
+    // Maak een mock parsed email object voor test
+    const mailparser = await import("mailparser");
+    const { simpleParser } = mailparser;
+    
+    // Simuleer een email bericht
+    const emailText = `From: ${testEmail.from}
+To: ${testEmail.to}
+Subject: ${testEmail.subject || "Test Email"}
+Content-Type: text/plain; charset=utf-8
+
+${testEmail.body || "Dit is een test email verzonden via de tenant configuratie."}`;
+    
+    const parsed = await simpleParser(emailText);
+    
+    // Voeg bijlages toe als deze zijn opgegeven
+    if (testEmail.attachments && testEmail.attachments.length > 0) {
+      parsed.attachments = testEmail.attachments.map(att => {
+        // Converteer base64 string terug naar Buffer
+        const contentBuffer = Buffer.from(att.content, 'base64');
+        return {
+          filename: att.filename || 'attachment',
+          contentType: att.contentType || 'application/octet-stream',
+          content: contentBuffer,
+          size: contentBuffer.length
+        };
+      });
+      console.log(`📎 ${testEmail.attachments.length} bijlage(s) toegevoegd aan test email`);
+    }
+    
+    const rcpts = [testEmail.to];
+    const envelopeFrom = testEmail.from;
+    
+    let result;
+    
+    if (deliveryMethod === "smtp") {
+      // SMTP delivery
+      const smtpServerName = tenant.delivery?.smtp?.smtpServer || tenant.delivery?.smtpServer;
+      if (!smtpServerName) {
+        return res.status(400).json({ ok: false, error: "SMTP server niet geconfigureerd" });
+      }
+      
+      const smtpServers = svc.smtpServers || [];
+      const smtpServer = smtpServers.find(s => s.naam === smtpServerName);
+      if (!smtpServer) {
+        return res.status(400).json({ ok: false, error: `SMTP server niet gevonden: ${smtpServerName}` });
+      }
+      
+      const { sendViaSMTP } = await import("./lib/smtp.js");
+      result = await sendViaSMTP({ tenant, parsed, rcpts, envelopeFrom, smtpServer });
+      
+    } else {
+      // Graph API delivery
+      const graphConfig = tenant.delivery?.graph || {};
+      const mailbox = graphConfig.defaultMailbox || tenant.defaultMailbox;
+      
+      if (!mailbox) {
+        return res.status(400).json({ ok: false, error: "Default mailbox niet geconfigureerd voor Graph API" });
+      }
+      
+      // Controleer of Graph API configuratie compleet is
+      const hasGraphConfig = (graphConfig.tenantId && graphConfig.clientId && graphConfig.auth) ||
+                            (tenant.tenantId && tenant.clientId && tenant.auth);
+      
+      if (!hasGraphConfig) {
+        return res.status(400).json({ ok: false, error: "Graph API configuratie niet compleet" });
+      }
+      
+      // Maak tenant object met Graph API configuratie
+      const graphTenant = {
+        name: tenant.name,
+        tenantId: graphConfig.tenantId || tenant.tenantId,
+        clientId: graphConfig.clientId || tenant.clientId,
+        auth: graphConfig.auth || tenant.auth,
+        defaultMailbox: mailbox
+      };
+      
+      const { sendViaGraph } = await import("./lib/graph.js");
+      const bccRecipients = testEmail.bcc ? [testEmail.bcc] : [];
+      result = await sendViaGraph({ 
+        tenant: graphTenant, 
+        mailbox, 
+        parsed, 
+        rcpts, 
+        envelopeFrom,
+        bccRecipients,
+        saveToSent: false 
+      });
+    }
+    
+    res.json({ 
+      ok: true, 
+      message: "Test email succesvol verzonden",
+      messageId: result?.messageId || "N/A",
+      deliveryMethod 
+    });
+    
+  } catch (error) {
+    console.error("❌ Fout bij versturen test email:", error);
+    res.status(500).json({ 
+      ok: false, 
+      error: error.message,
+      details: error.stack 
+    });
+  }
+});
+
+// Parameterized routes moeten NA specifieke routes staan
+app.get("/admin/tenants/:name", (req, res) => {
+  const data = readTenant(req.params.name);
+  if (!data) return res.status(404).json({ error: "Not found" });
+  res.json(data);
 });
 
 app.post("/admin/tenants", (req, res) => {
@@ -647,11 +913,11 @@ app.post("/admin/tenants/reload", async (req, res) => {
 const LOG_FILE = path.join(ROOT, "logs", "relay.jsonl");
 
 function parseWindow(str) {
-  if (!str) return 60 * 60 * 1000; // 60m default
+  if (!str) return 24 * 60 * 60 * 1000; // 24h default
   const t = String(str).trim().toLowerCase();
   if (t === "all" || t === "alles" || t === "*") return null; // onbeperkt
   const m = /^([0-9]+)\s*([smhd])$/.exec(t);
-  if (!m) return 60 * 60 * 1000;
+  if (!m) return 24 * 60 * 60 * 1000; // 24h default
   const n = parseInt(m[1], 10);
   const unit = m[2];
   const mult = unit === "s" ? 1000 : unit === "m" ? 60000 : unit === "h" ? 3600000 : 86400000;
@@ -740,6 +1006,165 @@ app.get("/admin/stats", (req, res) => {
   }
   
   res.json({ tenants, lastReset: resetTime });
+});
+
+// Chart data endpoint voor trend grafieken
+app.get("/admin/stats/chart", (req, res) => {
+  try {
+    const windowMs = parseWindow(req.query.window);
+    const tenant = req.query.tenant?.trim();
+    const since = (windowMs == null) ? 0 : (Date.now() - windowMs);
+    
+    // Lees alle log lines (voor chart hebben we alle data nodig binnen het window)
+    const lines = readLogLines(windowMs == null ? Infinity : undefined);
+    
+    // Haal reset tijd op
+    const resetTime = getStatsResetTime();
+    
+    // Als er een reset tijd is, filter alleen events na die tijd
+    const effectiveSince = resetTime && (!since || new Date(resetTime).getTime() > since) 
+      ? new Date(resetTime).getTime() 
+      : since;
+    
+    console.log(`📊 Chart request: window=${req.query.window || "24h"}, tenant=${tenant || "all"}, since=${new Date(effectiveSince).toISOString()}, lines=${lines.length}`);
+    
+    // Bepaal aantal buckets op basis van window
+    let bucketCount = 24; // Standaard 24 buckets
+    let bucketSizeMs = windowMs ? windowMs / bucketCount : 60 * 60 * 1000; // 1 uur per bucket standaard
+    
+    if (windowMs) {
+      if (windowMs <= 15 * 60 * 1000) {
+        // 15 minuten of minder: 15 buckets van 1 minuut
+        bucketCount = 15;
+        bucketSizeMs = 60 * 1000;
+      } else if (windowMs <= 60 * 60 * 1000) {
+        // 1 uur of minder: 12 buckets van 5 minuten
+        bucketCount = 12;
+        bucketSizeMs = 5 * 60 * 1000;
+      } else if (windowMs <= 24 * 60 * 60 * 1000) {
+        // 24 uur of minder: 24 buckets van 1 uur
+        bucketCount = 24;
+        bucketSizeMs = 60 * 60 * 1000;
+      } else if (windowMs <= 3 * 24 * 60 * 60 * 1000) {
+        // 3 dagen of minder: 24 buckets van 3 uur
+        bucketCount = 24;
+        bucketSizeMs = 3 * 60 * 60 * 1000;
+      } else if (windowMs <= 7 * 24 * 60 * 60 * 1000) {
+        // 7 dagen of minder: 28 buckets van 6 uur
+        bucketCount = 28;
+        bucketSizeMs = 6 * 60 * 60 * 1000;
+      } else {
+        // 14 dagen of meer: 28 buckets van 12 uur
+        bucketCount = 28;
+        bucketSizeMs = 12 * 60 * 60 * 1000;
+      }
+    }
+    
+    // Initialiseer buckets
+    const buckets = [];
+    const now = Date.now();
+    const startTime = effectiveSince > 0 ? effectiveSince : (windowMs ? now - windowMs : 0);
+    const endTime = now;
+    
+    console.log(`📊 Chart setup: startTime=${new Date(startTime).toISOString()}, endTime=${new Date(endTime).toISOString()}, bucketCount=${bucketCount}, bucketSizeMs=${bucketSizeMs}ms`);
+    
+    for (let i = 0; i < bucketCount; i++) {
+      buckets.push({
+        time: startTime + (i * bucketSizeMs),
+        sent: 0,
+        errors: 0
+      });
+    }
+    
+    // Verwerk events
+    let processedCount = 0;
+    let matchedCount = 0;
+    let timeFilteredCount = 0;
+    let tenantFilteredCount = 0;
+    let deliverOkCount = 0;
+    let deliverErrCount = 0;
+    
+    for (const line of lines) {
+      try {
+        const ev = JSON.parse(line);
+        if (!ev.ts) continue;
+        
+        processedCount++;
+        
+        // Converteer timestamp naar milliseconden (kan ISO string of nummer zijn)
+        let eventTime;
+        if (typeof ev.ts === 'string') {
+          eventTime = new Date(ev.ts).getTime();
+        } else if (typeof ev.ts === 'number') {
+          eventTime = ev.ts;
+        } else {
+          continue;
+        }
+        
+        if (isNaN(eventTime)) continue;
+        
+        // Filter op tijd
+        if (effectiveSince > 0 && eventTime < effectiveSince) {
+          timeFilteredCount++;
+          continue;
+        }
+        if (eventTime < startTime || eventTime > endTime) {
+          timeFilteredCount++;
+          continue;
+        }
+        
+        // Filter op tenant als deze is opgegeven
+        if (tenant && ev.tenant !== tenant) {
+          tenantFilteredCount++;
+          continue;
+        }
+        
+        // Bepaal welke bucket
+        // Bereken relatieve tijd sinds startTime
+        const relativeTime = eventTime - startTime;
+        const bucketIndex = Math.floor(relativeTime / bucketSizeMs);
+        
+        // Zorg dat bucketIndex binnen bereik valt
+        if (bucketIndex >= 0 && bucketIndex < bucketCount) {
+          matchedCount++;
+          if (ev.level === "deliver.ok") {
+            buckets[bucketIndex].sent++;
+            deliverOkCount++;
+          } else if (ev.level === "deliver.err") {
+            buckets[bucketIndex].errors++;
+            deliverErrCount++;
+          }
+        } else if (bucketIndex === bucketCount && relativeTime < bucketSizeMs * 1.1) {
+          // Event valt net op de grens van de laatste bucket, plaats in laatste bucket
+          matchedCount++;
+          if (ev.level === "deliver.ok") {
+            buckets[bucketCount - 1].sent++;
+            deliverOkCount++;
+          } else if (ev.level === "deliver.err") {
+            buckets[bucketCount - 1].errors++;
+            deliverErrCount++;
+          }
+        }
+      } catch (err) {
+        // Silently skip invalid lines
+      }
+    }
+    
+    const totalSent = buckets.reduce((sum, b) => sum + b.sent, 0);
+    const totalErrors = buckets.reduce((sum, b) => sum + b.errors, 0);
+    
+    console.log(`📊 Chart data: ${processedCount} events verwerkt, ${matchedCount} gematcht (${deliverOkCount} ok, ${deliverErrCount} err), ${timeFilteredCount} gefilterd op tijd, ${tenantFilteredCount} gefilterd op tenant`);
+    console.log(`📊 Chart totals: ${totalSent} verzonden, ${totalErrors} errors in ${bucketCount} buckets`);
+    
+    res.json({ 
+      buckets,
+      window: req.query.window || "24h",
+      tenant: tenant || null
+    });
+  } catch (error) {
+    console.error("❌ Error getting chart data:", error);
+    res.status(500).json({ error: "Failed to get chart data", message: error.message });
+  }
 });
 
 app.post("/admin/stats/reset", (req, res) => {
@@ -879,8 +1304,14 @@ app.get("/admin/events", (req, res) => {
   const limit = parseInt(req.query.limit || "200", 10);
   const tenant = req.query.tenant?.trim();
   const reason = req.query.reason?.trim();
+  const levelParam = req.query.level?.trim();
   const lines = readLogLines();
   const events = [];
+  
+  // Parse levels (comma-separated)
+  const levels = levelParam && levelParam !== "all" 
+    ? levelParam.split(",").map(l => l.trim()).filter(Boolean)
+    : [];
   
   for (let i = lines.length - 1; i >= 0 && events.length < limit; i--) {
     try {
@@ -888,6 +1319,9 @@ app.get("/admin/events", (req, res) => {
       
       // Filter op tenant als deze is opgegeven
       if (tenant && ev.tenant !== tenant) continue;
+      
+      // Filter op level(s) als deze zijn opgegeven
+      if (levels.length > 0 && !levels.includes(ev.level)) continue;
       
       // Filter op reason als deze is opgegeven
       if (reason && reason !== "all") {
@@ -944,8 +1378,27 @@ app.get("/admin/server-ips", (req, res) => {
 // Version endpoints
 app.get("/admin/version", (req, res) => {
   try {
+    // Voeg cache-control headers toe om caching te voorkomen
+    res.set({
+      'Cache-Control': 'no-cache, no-store, must-revalidate',
+      'Pragma': 'no-cache',
+      'Expires': '0'
+    });
+    
     const versionData = loadVersion();
-    res.json(versionData);
+    console.log("📦 Versie data geladen:", versionData);
+    
+    // Format versie string met buildnummer voor weergave
+    const versionString = versionData.buildNumber 
+      ? `${versionData.version} build ${versionData.buildNumber}`
+      : versionData.version;
+    
+    console.log("📦 Versie string geformatteerd:", versionString);
+    
+    res.json({
+      ...versionData,
+      versionString // Voeg geformatteerde versie string toe
+    });
   } catch (error) {
     console.error("❌ Error reading version:", error);
     res.status(500).json({ error: "Failed to read version", message: error.message });
@@ -975,6 +1428,155 @@ app.post("/admin/version/bump", (req, res) => {
   } catch (error) {
     console.error("❌ Error bumping version:", error);
     res.status(500).json({ error: "Failed to bump version", message: error.message });
+  }
+});
+
+// Update manifest genereren endpoint
+app.post("/admin/update/generate-manifest", async (req, res) => {
+  try {
+    const { generateManifest, saveManifest } = await import("./lib/update-manifest.js");
+    const manifest = generateManifest();
+    saveManifest(manifest);
+    
+    res.json({
+      ok: true,
+      manifest: manifest,
+      message: `Manifest gegenereerd voor versie ${manifest.version} build ${manifest.buildNumber} met ${manifest.files.length} bestanden`
+    });
+  } catch (error) {
+    console.error("❌ Error generating manifest:", error);
+    res.status(500).json({ error: "Failed to generate manifest", message: error.message });
+  }
+});
+
+// Update check endpoint - controleer op nieuwe versies
+app.get("/admin/update/check", async (req, res) => {
+  try {
+    const currentVersion = loadVersion();
+    const currentVersionString = currentVersion.version;
+    
+    // Laad lokaal manifest om te valideren
+    const { loadManifest, validateManifest } = await import("./lib/update-manifest.js");
+    const localManifest = loadManifest();
+    
+    // Valideer lokale bestanden tegen manifest
+    let validationResult = null;
+    if (localManifest) {
+      validationResult = validateManifest(localManifest);
+    }
+    
+    // TODO: Implementeer remote manifest check logica
+    // In de toekomst kan dit via GitHub API of een andere bron worden gecontroleerd
+    
+    res.json({
+      ok: true,
+      currentVersion: currentVersionString,
+      currentBuildNumber: currentVersion.buildNumber,
+      updateAvailable: false,
+      latestVersion: currentVersionString,
+      latestBuildNumber: currentVersion.buildNumber,
+      localManifestValid: validationResult ? validationResult.valid : null,
+      localManifestErrors: validationResult ? validationResult.errors : [],
+      localManifestMissing: validationResult ? validationResult.missing : [],
+      localManifestChanged: validationResult ? validationResult.changed : [],
+      message: "Update check functionaliteit wordt nog geïmplementeerd. Gebruik /admin/update/generate-manifest om een manifest te genereren."
+    });
+  } catch (error) {
+    console.error("❌ Error checking for updates:", error);
+    res.status(500).json({ error: "Failed to check for updates", message: error.message });
+  }
+});
+
+// Update download endpoint - download nieuwe versie
+app.post("/admin/update/download", async (req, res) => {
+  try {
+    const { manifestUrl, manifestData } = req.body;
+    
+    // TODO: Implementeer download logica
+    // Dit zou de nieuwe versie moeten downloaden van een repository
+    // en het manifest moeten gebruiken om te bepalen welke bestanden moeten worden bijgewerkt
+    
+    if (manifestData) {
+      // Valideer manifest structuur
+      if (!manifestData.version || !manifestData.files || !Array.isArray(manifestData.files)) {
+        return res.status(400).json({ 
+          ok: false, 
+          error: "Ongeldig manifest formaat",
+          message: "Manifest moet versie en files array bevatten"
+        });
+      }
+      
+      // TODO: Download bestanden op basis van manifest
+      // Voor nu retourneren we dat download nog niet geïmplementeerd is
+      
+      res.json({
+        ok: false,
+        error: "Download functionaliteit wordt nog geïmplementeerd",
+        message: `Manifest ontvangen voor versie ${manifestData.version} build ${manifestData.buildNumber} met ${manifestData.files.length} bestanden. Download logica moet nog worden geïmplementeerd.`
+      });
+    } else {
+      res.json({
+        ok: false,
+        error: "Geen manifest data ontvangen",
+        message: "Stuur manifestData in de request body"
+      });
+    }
+  } catch (error) {
+    console.error("❌ Error downloading update:", error);
+    res.status(500).json({ error: "Failed to download update", message: error.message });
+  }
+});
+
+// Update install endpoint - installeer en activeer nieuwe versie
+app.post("/admin/update/install", async (req, res) => {
+  try {
+    const { manifestData, files } = req.body;
+    
+    // TODO: Implementeer install logica
+    // Dit zou de nieuwe versie moeten installeren en de server moeten herstarten
+    // Gebruik manifest om te bepalen welke bestanden moeten worden bijgewerkt
+    
+    if (!manifestData || !files) {
+      return res.status(400).json({
+        ok: false,
+        error: "Manifest data en files zijn verplicht",
+        message: "Stuur manifestData en files array in de request body"
+      });
+    }
+    
+    // Valideer manifest structuur
+    if (!manifestData.version || !manifestData.files || !Array.isArray(manifestData.files)) {
+      return res.status(400).json({
+        ok: false,
+        error: "Ongeldig manifest formaat",
+        message: "Manifest moet versie en files array bevatten"
+      });
+    }
+    
+    // Valideer bestanden tegen manifest hashes
+    const { validateManifest } = await import("./lib/update-manifest.js");
+    const validationResult = validateManifest(manifestData);
+    
+    if (!validationResult.valid) {
+      return res.status(400).json({
+        ok: false,
+        error: "Manifest validatie gefaald",
+        message: "Niet alle bestanden zijn geldig",
+        errors: validationResult.errors
+      });
+    }
+    
+    // TODO: Schrijf bestanden naar disk en herstart server
+    // Voor nu retourneren we dat install nog niet geïmplementeerd is
+    
+    res.json({
+      ok: false,
+      error: "Install functionaliteit wordt nog geïmplementeerd",
+      message: `Manifest gevalideerd voor versie ${manifestData.version} build ${manifestData.buildNumber}. Install logica moet nog worden geïmplementeerd.`
+    });
+  } catch (error) {
+    console.error("❌ Error installing update:", error);
+    res.status(500).json({ error: "Failed to install update", message: error.message });
   }
 });
 

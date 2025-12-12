@@ -5,7 +5,21 @@
   grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
   gap:10px;
 }
+#settingsModal .form-grid{
+  gap:6px;
+}
+#settingsModal .field[style*="display: flex"]{
+  grid-column: 1 / -1;
+  margin-top:0;margin-bottom:0;padding-bottom:0
+}
+#settingsModal .field[style*="grid-column: 1 / -1"]{
+  margin-top:0;margin-bottom:0;padding-top:0;padding-bottom:0
+}
 #tenantModal .field label, #settingsModal .field label{display:block;font-weight:600;font-size:13px;color:var(--muted)}
+#tenantModal .field label.check, #settingsModal .field label.check{display:flex;font-weight:normal;margin-bottom:0;align-items:center}
+#tenantModal .field label.check{margin-bottom:0;min-height:auto}
+#settingsModal .field label.check{margin-top:0;padding-top:0;padding-bottom:0}
+#tenantModal .field:has(label.check){margin-bottom:12px}
 #tenantModal .field input, #tenantModal .field textarea, #settingsModal .field input, #settingsModal .field textarea, #settingsModal .field select{
   width:100%;margin-top:6px;
   padding:8px 10px;border-radius:10px;border:1px solid var(--border);
@@ -268,15 +282,125 @@ header h1 .version {
   font-weight: 400;
   margin-left: 8px;
 }
+
+header h1 {
+  position: relative;
+}
+
+header h1 .version.clickable {
+  cursor: pointer;
+  position: relative;
+  user-select: none;
+  transition: color 0.2s;
+}
+
+header h1 .version.clickable:hover {
+  color: var(--pri);
+}
+
+.version-menu {
+  position: absolute;
+  top: calc(100% + 8px);
+  left: 0;
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  min-width: 220px;
+  z-index: 1000;
+  overflow: hidden;
+}
+
+.version-menu.hidden {
+  display: none;
+}
+
+.version-menu-item {
+  padding: 10px 14px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 13px;
+  color: var(--text);
+  transition: background 0.2s;
+}
+
+.version-menu-item:hover {
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.version-menu-item span {
+  font-size: 14px;
+  width: 20px;
+  text-align: center;
+}
+
+.version-menu-item.disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.version-menu-item.disabled:hover {
+  background: transparent;
+}
+
+.version-menu-separator {
+  height: 1px;
+  background: var(--border);
+  margin: 4px 0;
+}
 h1{font-size:18px;margin:0} h2{margin:0;font-size:16px}
 .muted{color:var(--muted)}
-.grid{display:grid;grid-template-columns:1fr;gap:16px;padding:16px;max-width:1200px;margin:0 auto}
+.grid{display:grid;grid-template-columns:1fr;gap:16px;padding:16px;max-width:90%;margin:0 auto}
 .card{background:var(--card);border:1px solid var(--border);border-radius:14px;box-shadow:0 10px 20px rgba(0,0,0,.25)}
 .card-head{display:flex;justify-content:space-between;align-items:center;padding:12px 14px;border-bottom:1px solid var(--border)}
-.table-wrap{overflow:auto}
+.table-wrap{overflow:auto;position:relative}
 table{width:100%;border-collapse:collapse}
 th,td{padding:10px 12px;border-bottom:1px solid var(--border);font-size:14px}
 tr:hover{background:#0b1a34}
+
+/* Loading overlay voor events tabel */
+.loading-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(11, 26, 52, 0.95);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  z-index: 100;
+  backdrop-filter: blur(4px);
+}
+
+.loading-overlay.hidden {
+  display: none;
+}
+
+.loading-spinner {
+  width: 48px;
+  height: 48px;
+  border: 4px solid var(--border);
+  border-top-color: var(--pri);
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+.loading-text {
+  margin-top: 16px;
+  color: var(--text);
+  font-size: 14px;
+  font-weight: 500;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
 
 /* Smooth transitions voor auto-refresh */
 #eventsTable tbody tr,
@@ -314,6 +438,92 @@ button.primary{background:var(--pri);border-color:transparent;color:#fff}
 button.ghost{background:transparent}
 button.ghost:hover{background:rgba(255,255,255,0.1)}
 button.ghost svg{display:block}
+
+/* Multiselect styling */
+.multiselect-wrapper {
+  position: relative;
+  display: inline-block;
+}
+
+.multiselect-trigger {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  min-width: 150px;
+  padding: 8px 12px;
+  border: 1px solid var(--border);
+  background: #0b1a34;
+  color: var(--text);
+  border-radius: 10px;
+  cursor: pointer;
+  font-size: 14px;
+}
+
+.multiselect-trigger:hover {
+  filter: brightness(1.1);
+}
+
+.multiselect-trigger svg {
+  flex-shrink: 0;
+  transition: transform 0.2s;
+}
+
+.multiselect-wrapper.active .multiselect-trigger svg {
+  transform: rotate(180deg);
+}
+
+.multiselect-dropdown {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  margin-top: 4px;
+  min-width: 200px;
+  max-width: 300px;
+  max-height: 300px;
+  overflow-y: auto;
+  background: #0b1a34;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  z-index: 1000;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+.multiselect-dropdown.hidden {
+  display: none;
+}
+
+.multiselect-options {
+  padding: 4px;
+}
+
+.multiselect-option {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 12px;
+  cursor: pointer;
+  border-radius: 6px;
+  transition: background-color 0.2s;
+}
+
+.multiselect-option:hover {
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.multiselect-option input[type="checkbox"] {
+  margin: 0;
+  cursor: pointer;
+  width: 16px;
+  height: 16px;
+  flex-shrink: 0;
+}
+
+.multiselect-option span {
+  font-size: 14px;
+  color: var(--text);
+  user-select: none;
+}
 .button-row{display:flex;gap:8px;justify-content:flex-end;margin-top:6px}
 .left{display:flex;flex-direction:column;align-items:flex-start;gap:4px}
 .status{display:flex;align-items:center;gap:6px}
@@ -350,12 +560,19 @@ footer{padding:12px 16px;color:var(--muted);text-align:center}
 .modal-head{display:flex;justify-content:space-between;align-items:center;padding:12px 14px;border-bottom:1px solid var(--border)}
 #chartBody{padding:12px}
 .modal-body{padding:12px}
+.modal-footer{padding:12px 14px;border-top:1px solid var(--border);display:flex;justify-content:flex-end;gap:8px}
 .chart{width:100%;height:260px}
 .chart path{fill:none;stroke:#3b82f6;stroke-width:2}
 .chart .axis{stroke:#334155;stroke-width:1}
 .chart .grid{stroke:#1f2937;stroke-width:1;opacity:.6}
 .chart text{fill:#93a2b8;font-size:11px}
-.check{display:flex;align-items:center;gap:6px}
+.check{display:flex;align-items:center;gap:8px;flex-wrap:nowrap;line-height:1.4}
+.check input[type="checkbox"]{flex-shrink:0;margin:0;cursor:pointer;vertical-align:middle}
+.check span{text-align:left;white-space:nowrap}
+#tenantModal .field label.check{line-height:1.5;margin-top:6px;margin-bottom:0;gap:6px}
+#settingsModal .field .check{gap:6px}
+#settingsModal .field .check input[type="checkbox"]{width:16px;height:16px}
+#settingsModal .field .check span{font-size:13px;line-height:1.4;cursor:pointer;user-select:none}
 
 
 

@@ -6,6 +6,7 @@
   
   // Auto-refresh timer variabele (moet bovenaan staan)
   let eventsTimer = null;
+  let isInitialLoad = true; // Track eerste keer laden
 
   function toast(t){
     const el=$("#toast");
@@ -66,7 +67,9 @@
   }
 
   async function api(p,o={}){
-    const r = await fetch(p,{...o,headers:{...(o.headers||{}),...headers()}});
+    // Voeg cache-busting toe voor versie endpoint om altijd de nieuwste versie op te halen
+    const url = p.includes("/admin/version") ? `${p}?_t=${Date.now()}` : p;
+    const r = await fetch(url,{...o,headers:{...(o.headers||{}),...headers()},cache:"no-cache"});
     if(!r.ok){
       let m = r.status + " " + r.statusText;
       let errorData = null;
@@ -131,23 +134,248 @@
   // Laad versie en update UI
   async function loadVersion(){
     try {
-      const versionData = await api("/admin/version");
-      const versionString = `v${versionData.version}`;
+      // Gebruik cache-busting om altijd de nieuwste versie op te halen
+      const versionData = await api(`/admin/version?_t=${Date.now()}`);
+      console.log("📦 Versie data ontvangen:", versionData);
+      
+      // Format versie string met buildnummer
+      let versionString = `v${versionData.version}`;
+      if (versionData.buildNumber) {
+        versionString += ` build ${versionData.buildNumber}`;
+      }
+      
+      console.log("📦 Versie string geformatteerd:", versionString);
       
       // Update versie in header
       const versionHeader = document.getElementById("versionHeader");
       if (versionHeader) {
         versionHeader.textContent = versionString;
+        console.log("✅ Versie header bijgewerkt:", versionString);
+      } else {
+        console.warn("⚠️ Versie header element niet gevonden");
       }
       
       // Update versie in login overlay
       const versionLogin = document.getElementById("versionLogin");
       if (versionLogin) {
         versionLogin.textContent = versionString;
+        console.log("✅ Versie login bijgewerkt:", versionString);
+      } else {
+        console.warn("⚠️ Versie login element niet gevonden");
       }
     } catch (error) {
       console.error("❌ Fout bij laden versie:", error);
       // Fallback naar hardcoded versie blijft staan
+    }
+  }
+
+  // Update check functionaliteit
+  let updateCheckData = null;
+
+  async function checkForUpdates() {
+    try {
+      const checkBtn = document.getElementById("checkUpdateBtn");
+      const downloadBtn = document.getElementById("downloadUpdateBtn");
+      const installBtn = document.getElementById("installUpdateBtn");
+      
+      if (checkBtn) {
+        checkBtn.classList.add("disabled");
+        checkBtn.innerHTML = '<span>⏳</span> Controleren...';
+      }
+      
+      const result = await api("/admin/update/check");
+      updateCheckData = result;
+      
+      if (result.updateAvailable) {
+        toast(`✅ Nieuwe versie beschikbaar: ${result.latestVersion} build ${result.latestBuildNumber}`);
+        if (downloadBtn) {
+          downloadBtn.classList.remove("hidden");
+        }
+        if (installBtn) {
+          installBtn.classList.remove("hidden");
+        }
+      } else {
+        toast("ℹ️ Je gebruikt de nieuwste versie");
+        if (downloadBtn) {
+          downloadBtn.classList.add("hidden");
+        }
+        if (installBtn) {
+          installBtn.classList.add("hidden");
+        }
+      }
+      
+      if (checkBtn) {
+        checkBtn.classList.remove("disabled");
+        checkBtn.innerHTML = '<span>🔄</span> Controleren op updates';
+      }
+    } catch (error) {
+      console.error("❌ Fout bij controleren op updates:", error);
+      toast(`❌ Fout bij controleren op updates: ${error.message}`);
+      
+      const checkBtn = document.getElementById("checkUpdateBtn");
+      if (checkBtn) {
+        checkBtn.classList.remove("disabled");
+        checkBtn.innerHTML = '<span>🔄</span> Controleren op updates';
+      }
+    }
+  }
+
+  async function downloadUpdate() {
+    try {
+      const downloadBtn = document.getElementById("downloadUpdateBtn");
+      const installBtn = document.getElementById("installUpdateBtn");
+      
+      if (downloadBtn) {
+        downloadBtn.classList.add("disabled");
+        downloadBtn.innerHTML = '<span>⏳</span> Downloaden...';
+      }
+      
+      const result = await api("/admin/update/download", { method: "POST" });
+      
+      if (result.ok) {
+        toast("✅ Update gedownload");
+        if (installBtn) {
+          installBtn.classList.remove("hidden");
+        }
+      } else {
+        toast(`❌ Fout bij downloaden: ${result.error || result.message}`);
+      }
+      
+      if (downloadBtn) {
+        downloadBtn.classList.remove("disabled");
+        downloadBtn.innerHTML = '<span>⬇️</span> Download update';
+      }
+    } catch (error) {
+      console.error("❌ Fout bij downloaden update:", error);
+      toast(`❌ Fout bij downloaden: ${error.message}`);
+      
+      const downloadBtn = document.getElementById("downloadUpdateBtn");
+      if (downloadBtn) {
+        downloadBtn.classList.remove("disabled");
+        downloadBtn.innerHTML = '<span>⬇️</span> Download update';
+      }
+    }
+  }
+
+  async function installUpdate() {
+    if (!updateCheckData || !updateCheckData.updateAvailable) {
+      toast("❌ Geen update beschikbaar om te installeren");
+      return;
+    }
+    
+    const confirmed = await showConfirm(
+      "Update installeren",
+      `Weet je zeker dat je wilt updaten naar versie ${updateCheckData.latestVersion} build ${updateCheckData.latestBuildNumber}? De server zal worden herstart.`
+    );
+    
+    if (!confirmed) {
+      return;
+    }
+    
+    try {
+      const installBtn = document.getElementById("installUpdateBtn");
+      
+      if (installBtn) {
+        installBtn.classList.add("disabled");
+        installBtn.innerHTML = '<span>⏳</span> Installeren...';
+      }
+      
+      const result = await api("/admin/update/install", { method: "POST" });
+      
+      if (result.ok) {
+        toast("✅ Update geïnstalleerd. Server wordt herstart...");
+        setTimeout(() => {
+          window.location.reload();
+        }, 2000);
+      } else {
+        toast(`❌ Fout bij installeren: ${result.error || result.message}`);
+      }
+      
+      if (installBtn) {
+        installBtn.classList.remove("disabled");
+        installBtn.innerHTML = '<span>⚡</span> Installeer en activeer';
+      }
+    } catch (error) {
+      console.error("❌ Fout bij installeren update:", error);
+      toast(`❌ Fout bij installeren: ${error.message}`);
+      
+      const installBtn = document.getElementById("installUpdateBtn");
+      if (installBtn) {
+        installBtn.classList.remove("disabled");
+        installBtn.innerHTML = '<span>⚡</span> Installeer en activeer';
+      }
+    }
+  }
+
+  async function showVersionInfo() {
+    try {
+      const versionData = await api(`/admin/version?_t=${Date.now()}`);
+      const versionString = versionData.buildNumber 
+        ? `v${versionData.version} build ${versionData.buildNumber}`
+        : `v${versionData.version}`;
+      toast(`Huidige versie: ${versionString}`);
+    } catch (error) {
+      console.error("❌ Fout bij ophalen versie info:", error);
+      toast("❌ Kon versie informatie niet ophalen");
+    }
+  }
+
+  // Versie menu functionaliteit
+  function setupVersionMenu() {
+    const versionHeader = document.getElementById("versionHeader");
+    const versionMenu = document.getElementById("versionMenu");
+    
+    if (!versionHeader || !versionMenu) return;
+    
+    // Toggle menu bij klik op versienummer
+    versionHeader.addEventListener("click", (e) => {
+      e.stopPropagation();
+      versionMenu.classList.toggle("hidden");
+    });
+    
+    // Sluit menu bij klik buiten menu
+    document.addEventListener("click", (e) => {
+      if (!versionMenu.contains(e.target) && e.target !== versionHeader) {
+        versionMenu.classList.add("hidden");
+      }
+    });
+    
+    // Event listeners voor menu items
+    const checkUpdateBtn = document.getElementById("checkUpdateBtn");
+    const downloadUpdateBtn = document.getElementById("downloadUpdateBtn");
+    const installUpdateBtn = document.getElementById("installUpdateBtn");
+    const versionInfoBtn = document.getElementById("versionInfoBtn");
+    
+    if (checkUpdateBtn) {
+      checkUpdateBtn.addEventListener("click", (e) => {
+        e.stopPropagation();
+        versionMenu.classList.add("hidden");
+        checkForUpdates();
+      });
+    }
+    
+    if (downloadUpdateBtn) {
+      downloadUpdateBtn.addEventListener("click", (e) => {
+        e.stopPropagation();
+        versionMenu.classList.add("hidden");
+        downloadUpdate();
+      });
+    }
+    
+    if (installUpdateBtn) {
+      installUpdateBtn.addEventListener("click", (e) => {
+        e.stopPropagation();
+        versionMenu.classList.add("hidden");
+        installUpdate();
+      });
+    }
+    
+    if (versionInfoBtn) {
+      versionInfoBtn.addEventListener("click", (e) => {
+        e.stopPropagation();
+        versionMenu.classList.add("hidden");
+        showVersionInfo();
+      });
     }
   }
 
@@ -263,10 +491,9 @@
         set("tfThumbprint", d.auth?.thumbprint);
         set("tfForceFrom", d.policy?.forceFrom);
         set("tfMaxSize", d.policy?.maxMessageSizeKB);
-        set("tfSaveToSent", d.policy?.saveToSentItems);
         set("tfBccArchive", d.policy?.bccArchive);
         set("tfIpRanges", d.routing?.ipRanges?.join("\n"));
-        set("tfSenderDomains", d.routing?.senderDomains?.join(", "));
+        set("tfSenderDomains", d.routing?.senderDomains?.join("\n"));
         set("tfPriority", d.routing?.priority);
         set("tfTags", d.tags?.join(", "));
         set("tfRatePerMinute", d.policy?.rateLimit?.perMinute);
@@ -296,20 +523,19 @@
           set("tfThumbprint", d.auth?.thumbprint);
         }
         
-        // SMTP configuratie (uit delivery.smtp)
-        if (d.delivery?.smtp) {
-          $("#tfSmtpServer").value = d.delivery.smtp.smtpServer || "";
-        } else {
-          // Legacy: laad uit delivery.smtpServer (voor backwards compatibility)
-          $("#tfSmtpServer").value = d.delivery?.smtpServer || "";
-        }
+        // Bepaal SMTP server waarde (nieuwe structuur heeft voorrang)
+        const smtpServerValue = d.delivery?.smtp?.smtpServer || d.delivery?.smtpServer || "";
         
         // Update SMTP select dropdown when opening tenant modal
         if (settingsData && settingsData.service?.smtpServers) {
           updateTenantSmtpSelect(settingsData.service.smtpServers);
-          if (deliveryMethod === "smtp" && d.delivery?.smtpServer) {
-            $("#tfSmtpServer").value = d.delivery.smtpServer;
+          // Zet de waarde NA het opbouwen van de dropdown
+          if (smtpServerValue) {
+            $("#tfSmtpServer").value = smtpServerValue;
           }
+        } else {
+          // Als settingsData nog niet geladen is, zet de waarde direct
+          $("#tfSmtpServer").value = smtpServerValue;
         }
         
         // Update zichtbaarheid van Graph configuratie velden
@@ -599,10 +825,21 @@
     // Kick off initial loads
     try{ 
       loadVersion(); // Laad versie
+      setupVersionMenu(); // Setup versie menu functionaliteit
       load(); // Dit laadt tenants
       health(); 
       loadStats(); 
-      loadEvents(); 
+      
+      // Initialiseer level filter eerst zodat selectie kan worden hersteld
+      if (typeof initLevelFilter === 'function') {
+        initLevelFilter();
+      }
+      
+      // Laad events na een korte delay zodat level filter selectie is hersteld
+      setTimeout(() => {
+        loadEvents();
+      }, 150);
+      
       populateTenantFilters && populateTenantFilters(); 
       
       // Bind filters nadat ze zijn gepopuleerd
@@ -635,13 +872,27 @@
     
     // Event listeners voor knoppen
     const saveBtn = document.getElementById("saveEventColors");
+    const saveBtnTop = document.getElementById("saveEventColorsTop");
     const resetBtn = document.getElementById("resetEventColors");
     const configBtn = document.getElementById("eventColorConfigBtn");
     const closeBtn = document.getElementById("closeEventColorConfig");
+    const closeBtnBottom = document.getElementById("closeEventColorConfigBottom");
     const modal = document.getElementById("eventColorConfigModal");
     
     if (saveBtn) {
       saveBtn.addEventListener("click", saveEventColorConfig);
+    }
+    
+    // Top save button
+    if (saveBtnTop) {
+      saveBtnTop.addEventListener("click", saveEventColorConfig);
+    }
+    
+    // Bottom close button
+    if (closeBtnBottom) {
+      closeBtnBottom.addEventListener("click", () => {
+        if (modal) modal.classList.add("hidden");
+      });
     }
     
     if (resetBtn) {
@@ -678,13 +929,27 @@
     
     // Event listeners voor knoppen
     const saveBtn = document.getElementById("saveEventColumns");
+    const saveBtnTop = document.getElementById("saveEventColumnsTop");
     const resetBtn = document.getElementById("resetEventColumns");
     const configBtn = document.getElementById("eventColumnConfigBtn");
     const closeBtn = document.getElementById("closeEventColumnConfig");
+    const closeBtnBottom = document.getElementById("closeEventColumnConfigBottom");
     const modal = document.getElementById("eventColumnConfigModal");
     
     if (saveBtn) {
       saveBtn.addEventListener("click", saveEventColumnConfig);
+    }
+    
+    // Top save button
+    if (saveBtnTop) {
+      saveBtnTop.addEventListener("click", saveEventColumnConfig);
+    }
+    
+    // Bottom close button
+    if (closeBtnBottom) {
+      closeBtnBottom.addEventListener("click", () => {
+        if (modal) modal.classList.add("hidden");
+      });
     }
     
     if (resetBtn) {
@@ -722,7 +987,7 @@
     name=null;
     document.getElementById("tenantModalTitle").textContent = "Nieuwe tenant";
     // Reset alle velden
-    const fields = ["tfName","tfTenantId","tfClientId","tfDefaultMailbox","tfAllowedSenders","tfCertPath","tfThumbprint","tfForceFrom","tfMaxSize","tfRatePerMinute","tfRatePerHour","tfSaveToSent","tfBccArchive","tfIpRanges","tfSenderDomains","tfPriority","tfTags"];
+    const fields = ["tfName","tfTenantId","tfClientId","tfDefaultMailbox","tfAllowedSenders","tfCertPath","tfThumbprint","tfForceFrom","tfMaxSize","tfRatePerMinute","tfRatePerHour","tfBccArchive","tfIpRanges","tfSenderDomains","tfPriority","tfTags"];
     fields.forEach(f => {
       const el = document.getElementById(f);
       if(el) {
@@ -748,6 +1013,16 @@
 
   $("#tenantClose").addEventListener("click",()=>{
     document.getElementById("tenantModal").classList.add("hidden");
+  });
+  
+  // Tenant modal: Top save button
+  $("#tenantSaveTop")?.addEventListener("click",()=>{
+    $("#tenantSave").click();
+  });
+  
+  // Tenant modal: Bottom close button
+  $("#tenantCloseBottom")?.addEventListener("click",()=>{
+    $("#tenantClose").click();
   });
 
   // Toggle Graph configuratie velden op basis van delivery method
@@ -848,6 +1123,584 @@
     }
   });
 
+  // Helper functie om tenant data structuur te maken (gebruikt door zowel save als test)
+  function buildTenantData() {
+    const tenantName = $("#tfName").value.trim();
+    
+    // Delivery method configuratie
+    const deliveryMethodRadio = document.querySelector('input[name="deliveryMethod"]:checked');
+    if (!deliveryMethodRadio) {
+      throw new Error("Selecteer een mail delivery method");
+    }
+    const deliveryMethod = deliveryMethodRadio.value;
+    
+    // Basis tenant object
+    const tenant = {
+      name: tenantName,
+      senderOverrides: {},
+      routing: {
+        ipRanges: $("#tfIpRanges").value.split("\n").map(s=>s.trim()).filter(Boolean),
+        senderDomains: $("#tfSenderDomains").value.split("\n").map(s=>s.trim()).filter(Boolean)
+      },
+      policy: {
+        saveToSentItems: false
+      },
+      tags: $("#tfTags").value.split(",").map(s=>s.trim()).filter(Boolean)
+    };
+
+    // Voeg priority alleen toe als het is ingevuld
+    const priorityValue = $("#tfPriority").value.trim();
+    if (priorityValue) {
+      const priority = parseInt(priorityValue);
+      if (!isNaN(priority)) {
+        tenant.routing.priority = priority;
+      }
+    }
+    
+    // Voeg maxMessageSizeKB alleen toe als het is ingevuld
+    const maxSizeValue = $("#tfMaxSize").value.trim();
+    if (maxSizeValue) {
+      const maxSize = parseInt(maxSizeValue);
+      if (!isNaN(maxSize)) {
+        tenant.policy.maxMessageSizeKB = maxSize;
+      }
+    }
+    
+    // Allowed Senders - beschikbaar voor beide delivery methods (gebruikt voor routing en sender validatie)
+    const allowedSenders = $("#tfAllowedSenders").value.split("\n").map(s=>s.trim()).filter(Boolean);
+    if (allowedSenders.length > 0) {
+      tenant.allowedSenders = allowedSenders;
+    }
+    
+    // Voeg bccArchive alleen toe als het is ingevuld
+    const bccArchive = $("#tfBccArchive").value.trim();
+    if (bccArchive) {
+      tenant.policy.bccArchive = bccArchive;
+    }
+    
+    // Voeg forceFrom alleen toe als het is ingevuld
+    const forceFrom = $("#tfForceFrom").value.trim();
+    if (forceFrom) {
+      tenant.policy.forceFrom = forceFrom;
+    }
+    
+    // Rate limit configuratie
+    const ratePerMinute = parseInt($("#tfRatePerMinute").value);
+    const ratePerHour = parseInt($("#tfRatePerHour").value);
+    if (ratePerMinute || ratePerHour) {
+      tenant.policy.rateLimit = {};
+      if (ratePerMinute) tenant.policy.rateLimit.perMinute = ratePerMinute;
+      if (ratePerHour) tenant.policy.rateLimit.perHour = ratePerHour;
+    }
+    
+    // Delivery method configuratie - sla beide configuraties op
+    const deliveryConfig = {
+      method: deliveryMethod
+    };
+    
+    // Graph API configuratie - altijd opslaan (ook als niet actief)
+    const tenantId = $("#tfTenantId").value.trim();
+    const clientId = $("#tfClientId").value.trim();
+    const defaultMailbox = $("#tfDefaultMailbox").value.trim();
+    const certPath = $("#tfCertPath").value.trim();
+    const thumbprint = $("#tfThumbprint").value.trim();
+    
+    if (tenantId || clientId || defaultMailbox || certPath || thumbprint) {
+      // Alleen opslaan als er ten minste één veld is ingevuld
+      deliveryConfig.graph = {};
+      if (tenantId) deliveryConfig.graph.tenantId = tenantId;
+      if (clientId) deliveryConfig.graph.clientId = clientId;
+      if (defaultMailbox) deliveryConfig.graph.defaultMailbox = defaultMailbox;
+      if (certPath || thumbprint) {
+        deliveryConfig.graph.auth = {
+          type: "certificate"
+        };
+        if (certPath) deliveryConfig.graph.auth.certPath = certPath;
+        if (thumbprint) deliveryConfig.graph.auth.thumbprint = thumbprint;
+      }
+    }
+    
+    // SMTP configuratie - altijd opslaan (ook als niet actief)
+    const smtpServer = $("#tfSmtpServer").value.trim();
+    if (smtpServer) {
+      deliveryConfig.smtp = {
+        smtpServer: smtpServer
+      };
+    }
+    
+    tenant.delivery = deliveryConfig;
+    
+    // Verwijder eventuele extra velden die niet in schema staan (zoals 'file')
+    const cleanTenant = {
+      name: tenant.name
+    };
+    
+    // senderOverrides is altijd verplicht volgens schema, maar kan leeg zijn
+    if (tenant.senderOverrides && Object.keys(tenant.senderOverrides).length > 0) {
+      cleanTenant.senderOverrides = tenant.senderOverrides;
+    } else {
+      cleanTenant.senderOverrides = {}; // Leeg object is toegestaan volgens schema
+    }
+    
+    // allowedSenders is beschikbaar voor beide delivery methods - wordt gebruikt voor routing en sender validatie
+    if (tenant.allowedSenders && tenant.allowedSenders.length > 0) {
+      cleanTenant.allowedSenders = tenant.allowedSenders;
+    }
+    
+    // Routing object - alleen toevoegen als er ten minste één veld is ingevuld
+    if (tenant.routing) {
+      const cleanRouting = {};
+      if (tenant.routing.ipRanges && Array.isArray(tenant.routing.ipRanges) && tenant.routing.ipRanges.length > 0) {
+        cleanRouting.ipRanges = tenant.routing.ipRanges;
+      }
+      if (tenant.routing.senderDomains && Array.isArray(tenant.routing.senderDomains) && tenant.routing.senderDomains.length > 0) {
+        cleanRouting.senderDomains = tenant.routing.senderDomains;
+      }
+      if (tenant.routing.priority !== undefined && tenant.routing.priority !== null && tenant.routing.priority !== "") {
+        const priorityValue = parseInt(tenant.routing.priority);
+        if (!isNaN(priorityValue)) {
+          cleanRouting.priority = priorityValue;
+        }
+      }
+      if (Object.keys(cleanRouting).length > 0) {
+        cleanTenant.routing = cleanRouting;
+      }
+    }
+    
+    // Policy object - alleen toevoegen als er ten minste één veld is ingevuld
+    if (tenant.policy) {
+      const cleanPolicy = {};
+      if (tenant.policy.maxMessageSizeKB !== undefined && tenant.policy.maxMessageSizeKB !== null && tenant.policy.maxMessageSizeKB !== "") {
+        cleanPolicy.maxMessageSizeKB = tenant.policy.maxMessageSizeKB;
+      }
+      if (tenant.policy.saveToSentItems !== undefined) {
+        cleanPolicy.saveToSentItems = tenant.policy.saveToSentItems;
+      }
+      if (tenant.policy.forceFrom && tenant.policy.forceFrom.trim() !== "") {
+        cleanPolicy.forceFrom = tenant.policy.forceFrom;
+      }
+      if (tenant.policy.bccArchive && tenant.policy.bccArchive.trim() !== "") {
+        cleanPolicy.bccArchive = tenant.policy.bccArchive;
+      }
+      if (tenant.policy.rateLimit) {
+        const cleanRateLimit = {};
+        if (tenant.policy.rateLimit.perMinute !== undefined && tenant.policy.rateLimit.perMinute !== null && tenant.policy.rateLimit.perMinute !== "") {
+          cleanRateLimit.perMinute = tenant.policy.rateLimit.perMinute;
+        }
+        if (tenant.policy.rateLimit.perHour !== undefined && tenant.policy.rateLimit.perHour !== null && tenant.policy.rateLimit.perHour !== "") {
+          cleanRateLimit.perHour = tenant.policy.rateLimit.perHour;
+        }
+        if (Object.keys(cleanRateLimit).length > 0) {
+          cleanPolicy.rateLimit = cleanRateLimit;
+        }
+      }
+      if (Object.keys(cleanPolicy).length > 0) {
+        cleanTenant.policy = cleanPolicy;
+      }
+    }
+    
+    // Tags - alleen toevoegen als er tags zijn
+    if (tenant.tags && tenant.tags.length > 0) {
+      cleanTenant.tags = tenant.tags;
+    }
+    
+    // Delivery - sla beide configuraties op (graph en smtp)
+    if (tenant.delivery) {
+      const cleanDelivery = {
+        method: tenant.delivery.method || deliveryMethod || "graph"
+      };
+      
+      // Graph API configuratie - gebruik de configuratie die we hebben gemaakt
+      if (tenant.delivery.graph && Object.keys(tenant.delivery.graph).length > 0) {
+        cleanDelivery.graph = tenant.delivery.graph;
+      }
+      
+      // SMTP configuratie - gebruik de configuratie die we hebben gemaakt
+      if (tenant.delivery.smtp && Object.keys(tenant.delivery.smtp).length > 0) {
+        cleanDelivery.smtp = tenant.delivery.smtp;
+      }
+      
+      // Zorg dat delivery altijd wordt toegevoegd als er een method is
+      cleanTenant.delivery = cleanDelivery;
+    }
+
+    // Final cleanup: verwijder alle velden die niet in het schema staan
+    const schemaProperties = [
+      "name", "tenantId", "clientId", "auth", "defaultMailbox", "allowedSenders",
+      "senderOverrides", "routing", "policy", "tags", "delivery"
+    ];
+    const finalTenant = {};
+    schemaProperties.forEach(prop => {
+      if (cleanTenant.hasOwnProperty(prop) && cleanTenant[prop] !== undefined) {
+        // Controleer of het geen lege array of leeg object is
+        if (Array.isArray(cleanTenant[prop])) {
+          if (cleanTenant[prop].length > 0) {
+            finalTenant[prop] = cleanTenant[prop];
+          }
+        } else if (typeof cleanTenant[prop] === "object" && cleanTenant[prop] !== null) {
+          // Voor senderOverrides: leeg object {} is toegestaan (verplicht veld volgens schema)
+          if (prop === "senderOverrides") {
+            finalTenant[prop] = cleanTenant[prop];
+          } else if (prop === "delivery") {
+            // Delivery object moet altijd worden toegevoegd (bevat altijd minstens method)
+            finalTenant[prop] = cleanTenant[prop];
+          } else if (Object.keys(cleanTenant[prop]).length > 0) {
+            finalTenant[prop] = cleanTenant[prop];
+          }
+        } else if (cleanTenant[prop] !== null && cleanTenant[prop] !== "") {
+          finalTenant[prop] = cleanTenant[prop];
+        }
+      }
+    });
+    
+    return { tenant: finalTenant, deliveryMethod };
+  }
+
+  // Sla tenant data op voor test email functionaliteit
+  let currentTestTenant = null;
+
+  // Test tenant configuratie functie
+  async function testTenantConfig() {
+    try {
+      const tenantName = $("#tfName").value.trim();
+      if (!tenantName) {
+        toast("Tenant naam is verplicht");
+        return;
+      }
+      
+      const { tenant, deliveryMethod } = buildTenantData();
+      
+      // Sla tenant data op voor test email
+      currentTestTenant = tenant;
+      
+      // Roep test endpoint aan
+      const result = await api("/admin/tenants/test", {
+        method: "POST",
+        body: JSON.stringify(tenant)
+      });
+      
+      // Toon resultaten in overlay
+      showTestResults(result, tenant);
+    } catch (e) {
+      let errorMsg = e.message;
+      let errors = [];
+      if (e.data?.errors && Array.isArray(e.data.errors)) {
+        errors = e.data.errors.map(err => ({
+          field: err.field || err.instancePath || 'Algemeen',
+          message: err.message || errorMsg
+        }));
+      } else {
+        errors = [{ field: "Algemeen", message: errorMsg }];
+      }
+      showTestResults({ ok: false, errors, checks: [], warnings: [] }, null);
+      console.error("Tenant test error:", e, e.data);
+    }
+  }
+
+  // Toon test resultaten in overlay modal
+  function showTestResults(result, tenant) {
+    const modal = document.getElementById("testResultModal");
+    const title = document.getElementById("testResultTitle");
+    const content = document.getElementById("testResultContent");
+    const testEmailSection = document.getElementById("testEmailSection");
+    const testEmailResult = document.getElementById("testEmailResult");
+    
+    if (!modal || !title || !content) {
+      // Fallback naar toast als modal niet bestaat
+      if (result.ok) {
+        toast("✅ Configuratie is geldig!");
+      } else {
+        toast("❌ Configuratie bevat fouten");
+      }
+      return;
+    }
+    
+    // Reset test email result
+    if (testEmailResult) {
+      testEmailResult.style.display = "none";
+      testEmailResult.innerHTML = "";
+    }
+    
+    // Toon test email sectie alleen als configuratie geldig is
+    if (testEmailSection) {
+      testEmailSection.style.display = result.ok ? "block" : "none";
+    }
+    
+    // Vul test email velden met standaard waarden
+    if (result.ok && tenant) {
+      const testEmailFrom = document.getElementById("testEmailFrom");
+      const testEmailTo = document.getElementById("testEmailTo");
+      const testEmailSubject = document.getElementById("testEmailSubject");
+      const testEmailBody = document.getElementById("testEmailBody");
+      
+      if (testEmailFrom && !testEmailFrom.value) {
+        // Gebruik defaultMailbox of allowedSenders[0] als from
+        const defaultFrom = tenant.delivery?.graph?.defaultMailbox || 
+                           tenant.defaultMailbox || 
+                           (tenant.allowedSenders && tenant.allowedSenders.length > 0 ? tenant.allowedSenders[0] : "");
+        testEmailFrom.value = defaultFrom;
+      }
+      
+      if (testEmailSubject && !testEmailSubject.value) {
+        testEmailSubject.value = `Test Email - ${tenant.name}`;
+      }
+      
+      if (testEmailBody && !testEmailBody.value) {
+        testEmailBody.value = `Dit is een test email verzonden via de tenant configuratie "${tenant.name}".\n\nAls je deze email ontvangt, werkt de configuratie correct!`;
+      }
+    }
+    
+    // Stel titel in
+    if (result.ok) {
+      title.textContent = "✅ Test Geslaagd";
+      title.style.color = "var(--acc)";
+    } else {
+      title.textContent = "❌ Test Gefaald";
+      title.style.color = "var(--err)";
+    }
+    
+    // Bouw HTML voor resultaten
+    let html = "";
+    
+    // Status indicator
+    if (result.ok) {
+      html += `<div style="padding: 16px; background: rgba(34, 197, 94, 0.1); border: 1px solid var(--acc); border-radius: 8px; margin-bottom: 16px;">
+        <div style="display: flex; align-items: center; gap: 8px;">
+          <span style="font-size: 24px;">✅</span>
+          <strong style="color: var(--acc);">De configuratie is geldig en kan worden opgeslagen.</strong>
+        </div>
+      </div>`;
+    } else {
+      html += `<div style="padding: 16px; background: rgba(239, 68, 68, 0.1); border: 1px solid var(--err); border-radius: 8px; margin-bottom: 16px;">
+        <div style="display: flex; align-items: center; gap: 8px;">
+          <span style="font-size: 24px;">❌</span>
+          <strong style="color: var(--err);">De configuratie bevat fouten en moet worden gecorrigeerd voordat deze kan worden opgeslagen.</strong>
+        </div>
+      </div>`;
+    }
+    
+    // Errors sectie
+    if (result.errors && result.errors.length > 0) {
+      html += `<div style="margin-bottom: 16px;">
+        <h4 style="margin: 0 0 8px 0; color: var(--err); font-size: 14px; font-weight: 600;">Fouten:</h4>
+        <div style="display: flex; flex-direction: column; gap: 8px;">`;
+      result.errors.forEach(err => {
+        html += `<div style="padding: 10px; background: rgba(239, 68, 68, 0.05); border-left: 3px solid var(--err); border-radius: 4px;">
+          <div style="font-weight: 600; color: var(--text); margin-bottom: 4px;">${err.field || 'Algemeen'}</div>
+          <div style="color: var(--muted); font-size: 13px;">${err.message}</div>
+        </div>`;
+      });
+      html += `</div></div>`;
+    }
+    
+    // Warnings sectie
+    if (result.warnings && result.warnings.length > 0) {
+      html += `<div style="margin-bottom: 16px;">
+        <h4 style="margin: 0 0 8px 0; color: var(--warn); font-size: 14px; font-weight: 600;">Waarschuwingen:</h4>
+        <div style="display: flex; flex-direction: column; gap: 8px;">`;
+      result.warnings.forEach(warn => {
+        html += `<div style="padding: 10px; background: rgba(234, 179, 8, 0.05); border-left: 3px solid var(--warn); border-radius: 4px;">
+          <div style="font-weight: 600; color: var(--text); margin-bottom: 4px;">${warn.field || 'Algemeen'}</div>
+          <div style="color: var(--muted); font-size: 13px;">${warn.message}</div>
+        </div>`;
+      });
+      html += `</div></div>`;
+    }
+    
+    // Checks sectie (succesvolle validaties)
+    if (result.checks && result.checks.length > 0) {
+      html += `<div style="margin-bottom: 16px;">
+        <h4 style="margin: 0 0 8px 0; color: var(--acc); font-size: 14px; font-weight: 600;">Gecontroleerde velden:</h4>
+        <div style="display: flex; flex-direction: column; gap: 6px;">`;
+      result.checks.forEach(check => {
+        html += `<div style="padding: 8px 10px; background: rgba(34, 197, 94, 0.05); border-left: 3px solid var(--acc); border-radius: 4px; display: flex; align-items: center; gap: 8px;">
+          <span style="color: var(--acc); font-size: 16px;">✓</span>
+          <span style="color: var(--text); font-size: 13px;">${check.message}</span>
+        </div>`;
+      });
+      html += `</div></div>`;
+    }
+    
+    content.innerHTML = html;
+    modal.classList.remove("hidden");
+  }
+
+  // Helper functie om bestand naar base64 te converteren
+  function fileToBase64(file) {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = () => {
+        // Verwijder data URL prefix (data:mime/type;base64,)
+        const base64 = reader.result.split(',')[1];
+        resolve({
+          filename: file.name,
+          contentType: file.type || 'application/octet-stream',
+          content: base64,
+          size: file.size
+        });
+      };
+      reader.onerror = reject;
+      reader.readAsDataURL(file);
+    });
+  }
+
+  // Update bijlage lijst weergave
+  function updateAttachmentList() {
+    const attachmentInput = document.getElementById("testEmailAttachment");
+    const attachmentList = document.getElementById("testEmailAttachmentList");
+    
+    if (!attachmentInput || !attachmentList) return;
+    
+    const files = Array.from(attachmentInput.files);
+    if (files.length === 0) {
+      attachmentList.textContent = "";
+      return;
+    }
+    
+    const fileList = files.map((file, idx) => 
+      `${idx + 1}. ${file.name} (${(file.size / 1024).toFixed(2)} KB)`
+    ).join("\n");
+    
+    attachmentList.textContent = `${files.length} bestand(en) geselecteerd:\n${fileList}`;
+    attachmentList.style.whiteSpace = "pre-line";
+  }
+
+  // Event listener voor bijlage selectie
+  document.addEventListener("DOMContentLoaded", () => {
+    const attachmentInput = document.getElementById("testEmailAttachment");
+    if (attachmentInput) {
+      attachmentInput.addEventListener("change", updateAttachmentList);
+    }
+  });
+
+  // Verstuur test email
+  async function sendTestEmail() {
+    if (!currentTestTenant) {
+      toast("Geen tenant configuratie beschikbaar voor test email");
+      return;
+    }
+    
+    const testEmailTo = document.getElementById("testEmailTo")?.value.trim();
+    const testEmailFrom = document.getElementById("testEmailFrom")?.value.trim();
+    const testEmailSubject = document.getElementById("testEmailSubject")?.value.trim();
+    const testEmailBody = document.getElementById("testEmailBody")?.value.trim();
+    const testEmailAttachment = document.getElementById("testEmailAttachment");
+    const testEmailResult = document.getElementById("testEmailResult");
+    const testEmailSendBtn = document.getElementById("testEmailSendBtn");
+    
+    if (!testEmailTo) {
+      toast("Email adres 'Naar' is verplicht");
+      return;
+    }
+    
+    if (!testEmailFrom) {
+      toast("Email adres 'Van' is verplicht");
+      return;
+    }
+    
+    try {
+      // Disable button tijdens verzenden
+      if (testEmailSendBtn) {
+        testEmailSendBtn.disabled = true;
+        testEmailSendBtn.textContent = "⏳ Verzenden...";
+      }
+      
+      // Verberg vorige resultaten
+      if (testEmailResult) {
+        testEmailResult.style.display = "none";
+      }
+      
+      // Lees bijlages als base64
+      const attachments = [];
+      if (testEmailAttachment && testEmailAttachment.files.length > 0) {
+        const files = Array.from(testEmailAttachment.files);
+        for (const file of files) {
+          try {
+            const attachment = await fileToBase64(file);
+            attachments.push(attachment);
+          } catch (error) {
+            console.error("Fout bij lezen bijlage:", error);
+            toast(`Fout bij lezen bijlage ${file.name}: ${error.message}`);
+            return;
+          }
+        }
+      }
+      
+      const result = await api("/admin/tenants/test-send", {
+        method: "POST",
+        body: JSON.stringify({
+          tenant: currentTestTenant,
+          testEmail: {
+            from: testEmailFrom,
+            to: testEmailTo,
+            subject: testEmailSubject || "Test Email",
+            body: testEmailBody || "Dit is een test email.",
+            attachments: attachments.length > 0 ? attachments : undefined
+          }
+        })
+      });
+      
+      if (result.ok) {
+        if (testEmailResult) {
+          testEmailResult.style.display = "block";
+          testEmailResult.style.background = "rgba(34, 197, 94, 0.1)";
+          testEmailResult.style.border = "1px solid var(--acc)";
+          testEmailResult.style.color = "var(--acc)";
+          testEmailResult.innerHTML = `✅ Test email succesvol verzonden via ${result.deliveryMethod || 'onbekend'}!`;
+        }
+        toast(`✅ Test email verzonden naar ${testEmailTo}`);
+      } else {
+        throw new Error(result.error || "Onbekende fout");
+      }
+    } catch (e) {
+      let errorMsg = e.message;
+      if (e.data?.error) {
+        errorMsg = e.data.error;
+      }
+      
+      if (testEmailResult) {
+        testEmailResult.style.display = "block";
+        testEmailResult.style.background = "rgba(239, 68, 68, 0.1)";
+        testEmailResult.style.border = "1px solid var(--err)";
+        testEmailResult.style.color = "var(--err)";
+        testEmailResult.innerHTML = `❌ Fout bij verzenden: ${errorMsg}`;
+      }
+      toast(`❌ Fout bij verzenden: ${errorMsg}`);
+      console.error("Test email error:", e, e.data);
+    } finally {
+      // Re-enable button
+      if (testEmailSendBtn) {
+        testEmailSendBtn.disabled = false;
+        testEmailSendBtn.textContent = "📧 Verstuur Test Email";
+      }
+    }
+  }
+
+  // Event listeners voor test knoppen
+  $("#tenantTestTop")?.addEventListener("click", testTenantConfig);
+  $("#tenantTestBottom")?.addEventListener("click", testTenantConfig);
+  
+  // Event listeners voor test result modal
+  $("#testResultClose")?.addEventListener("click", () => {
+    document.getElementById("testResultModal")?.classList.add("hidden");
+  });
+  $("#testResultCloseBottom")?.addEventListener("click", () => {
+    document.getElementById("testResultModal")?.classList.add("hidden");
+  });
+  
+  // Event listener voor test email verzenden
+  $("#testEmailSendBtn")?.addEventListener("click", sendTestEmail);
+  
+  // Sluit modal bij klik buiten de content
+  const testResultModal = document.getElementById("testResultModal");
+  if (testResultModal) {
+    testResultModal.addEventListener("click", (e) => {
+      if (e.target === testResultModal) {
+        testResultModal.classList.add("hidden");
+      }
+    });
+  }
+
   $("#tenantSave").addEventListener("click",async()=>{
     try{
       const tenantName = $("#tfName").value.trim();
@@ -856,270 +1709,28 @@
         return;
       }
       
-      // Delivery method configuratie
-      const deliveryMethodRadio = document.querySelector('input[name="deliveryMethod"]:checked');
-      if (!deliveryMethodRadio) {
-        toast("Selecteer een mail delivery method");
-        return;
-      }
-      const deliveryMethod = deliveryMethodRadio.value;
-      
-      // Basis tenant object
-      const tenant = {
-        name: tenantName,
-        senderOverrides: {},
-        routing: {
-          ipRanges: $("#tfIpRanges").value.split("\n").map(s=>s.trim()).filter(Boolean),
-          senderDomains: $("#tfSenderDomains").value.split(",").map(s=>s.trim()).filter(Boolean)
-        },
-        policy: {
-          saveToSentItems: $("#tfSaveToSent").checked
-        },
-        tags: $("#tfTags").value.split(",").map(s=>s.trim()).filter(Boolean)
-      };
-
-      // Voeg priority alleen toe als het is ingevuld
-      const priorityValue = $("#tfPriority").value.trim();
-      if (priorityValue) {
-        const priority = parseInt(priorityValue);
-        if (!isNaN(priority)) {
-          tenant.routing.priority = priority;
-        }
-      }
-      
-      // Voeg maxMessageSizeKB alleen toe als het is ingevuld
-      const maxSizeValue = $("#tfMaxSize").value.trim();
-      if (maxSizeValue) {
-        const maxSize = parseInt(maxSizeValue);
-        if (!isNaN(maxSize)) {
-          tenant.policy.maxMessageSizeKB = maxSize;
-        }
-      }
-      
-      // Allowed Senders - beschikbaar voor beide delivery methods (gebruikt voor routing en sender validatie)
-      const allowedSenders = $("#tfAllowedSenders").value.split("\n").map(s=>s.trim()).filter(Boolean);
-      if (allowedSenders.length > 0) {
-        tenant.allowedSenders = allowedSenders;
-      }
-      
-      // Validatie: Ten minste één routing criterium is verplicht (routing.senderDomains of allowedSenders)
-      const hasRoutingDomains = tenant.routing.senderDomains && tenant.routing.senderDomains.length > 0;
-      const hasAllowedSenders = allowedSenders.length > 0;
-      
-      if (!hasRoutingDomains && !hasAllowedSenders) {
-        toast("Ten minste één van de volgende velden is verplicht: Routing domains of Allowed senders (gebruikt voor tenant routing)");
-        return;
-      }
-      
-      // Voeg bccArchive alleen toe als het is ingevuld
-      const bccArchive = $("#tfBccArchive").value.trim();
-      if (bccArchive) {
-        tenant.policy.bccArchive = bccArchive;
-      }
-      
-      // Voeg forceFrom alleen toe als het is ingevuld
-      const forceFrom = $("#tfForceFrom").value.trim();
-      if (forceFrom) {
-        tenant.policy.forceFrom = forceFrom;
-      }
-      
-      // Rate limit configuratie
-      const ratePerMinute = parseInt($("#tfRatePerMinute").value);
-      const ratePerHour = parseInt($("#tfRatePerHour").value);
-      if (ratePerMinute || ratePerHour) {
-        tenant.policy.rateLimit = {};
-        if (ratePerMinute) tenant.policy.rateLimit.perMinute = ratePerMinute;
-        if (ratePerHour) tenant.policy.rateLimit.perHour = ratePerHour;
-      }
-      
-      // Delivery method configuratie - sla beide configuraties op
-      const deliveryConfig = {
-        method: deliveryMethod
-      };
-      
-      // Graph API configuratie - altijd opslaan (ook als niet actief)
-      const tenantId = $("#tfTenantId").value.trim();
-      const clientId = $("#tfClientId").value.trim();
-      const defaultMailbox = $("#tfDefaultMailbox").value.trim();
-      const certPath = $("#tfCertPath").value.trim();
-      const thumbprint = $("#tfThumbprint").value.trim();
-      
-      if (tenantId || clientId || defaultMailbox || certPath || thumbprint) {
-        // Alleen opslaan als er ten minste één veld is ingevuld
-        deliveryConfig.graph = {};
-        if (tenantId) deliveryConfig.graph.tenantId = tenantId;
-        if (clientId) deliveryConfig.graph.clientId = clientId;
-        if (defaultMailbox) deliveryConfig.graph.defaultMailbox = defaultMailbox;
-        if (certPath || thumbprint) {
-          deliveryConfig.graph.auth = {
-            type: "certificate"
-          };
-          if (certPath) deliveryConfig.graph.auth.certPath = certPath;
-          if (thumbprint) deliveryConfig.graph.auth.thumbprint = thumbprint;
-        }
-      }
-      
-      // SMTP configuratie - altijd opslaan (ook als niet actief)
-      const smtpServer = $("#tfSmtpServer").value.trim();
-      if (smtpServer) {
-        deliveryConfig.smtp = {
-          smtpServer: smtpServer
-        };
-      }
+      const { tenant: finalTenant, deliveryMethod } = buildTenantData();
       
       // Validatie: controleer of de actieve delivery method correct is geconfigureerd
       if (deliveryMethod === "smtp") {
+        const smtpServer = finalTenant.delivery?.smtp?.smtpServer;
         if (!smtpServer) {
           toast("Selecteer een SMTP server voor SMTP delivery");
           return;
         }
       } else {
         // Graph API - controleer of alle verplichte velden zijn ingevuld
-        if (!tenantId || !clientId || !defaultMailbox || !certPath || !thumbprint) {
+        const graphConfig = finalTenant.delivery?.graph || {};
+        if (!graphConfig.tenantId || !graphConfig.clientId || !graphConfig.auth || !graphConfig.defaultMailbox) {
           toast("Voor Graph API zijn Tenant ID, Client ID, Default Mailbox, Cert Path en Thumbprint verplicht");
           return;
         }
       }
       
-      tenant.delivery = deliveryConfig;
-      
-      // Verwijder eventuele extra velden die niet in schema staan (zoals 'file')
-      const cleanTenant = {
-        name: tenant.name
-      };
-      
-      // senderOverrides is altijd verplicht volgens schema, maar kan leeg zijn
-      if (tenant.senderOverrides && Object.keys(tenant.senderOverrides).length > 0) {
-        cleanTenant.senderOverrides = tenant.senderOverrides;
-      } else {
-        cleanTenant.senderOverrides = {}; // Leeg object is toegestaan volgens schema
-      }
-      
-      // Graph API velden worden nu opgeslagen in delivery.graph, niet meer op top-level
-      // (behalve voor backwards compatibility met bestaande configuraties)
-      
-      // allowedSenders is beschikbaar voor beide delivery methods - wordt gebruikt voor routing en sender validatie
-      if (tenant.allowedSenders && tenant.allowedSenders.length > 0) {
-        cleanTenant.allowedSenders = tenant.allowedSenders;
-      }
-      
-      // Routing object - alleen toevoegen als er ten minste één veld is ingevuld
-      if (tenant.routing) {
-        const cleanRouting = {};
-        if (tenant.routing.ipRanges && Array.isArray(tenant.routing.ipRanges) && tenant.routing.ipRanges.length > 0) {
-          cleanRouting.ipRanges = tenant.routing.ipRanges;
-        }
-        if (tenant.routing.senderDomains && Array.isArray(tenant.routing.senderDomains) && tenant.routing.senderDomains.length > 0) {
-          cleanRouting.senderDomains = tenant.routing.senderDomains;
-        }
-        if (tenant.routing.priority !== undefined && tenant.routing.priority !== null && tenant.routing.priority !== "") {
-          const priorityValue = parseInt(tenant.routing.priority);
-          if (!isNaN(priorityValue)) {
-            cleanRouting.priority = priorityValue;
-          }
-        }
-        if (Object.keys(cleanRouting).length > 0) {
-          cleanTenant.routing = cleanRouting;
-        }
-      }
-      
-      // Policy object - alleen toevoegen als er ten minste één veld is ingevuld
-      if (tenant.policy) {
-        const cleanPolicy = {};
-        if (tenant.policy.maxMessageSizeKB !== undefined && tenant.policy.maxMessageSizeKB !== null && tenant.policy.maxMessageSizeKB !== "") {
-          cleanPolicy.maxMessageSizeKB = tenant.policy.maxMessageSizeKB;
-        }
-        if (tenant.policy.saveToSentItems !== undefined) {
-          cleanPolicy.saveToSentItems = tenant.policy.saveToSentItems;
-        }
-        if (tenant.policy.forceFrom && tenant.policy.forceFrom.trim() !== "") {
-          cleanPolicy.forceFrom = tenant.policy.forceFrom;
-        }
-        if (tenant.policy.bccArchive && tenant.policy.bccArchive.trim() !== "") {
-          cleanPolicy.bccArchive = tenant.policy.bccArchive;
-        }
-        if (tenant.policy.rateLimit) {
-          const cleanRateLimit = {};
-          if (tenant.policy.rateLimit.perMinute !== undefined && tenant.policy.rateLimit.perMinute !== null && tenant.policy.rateLimit.perMinute !== "") {
-            cleanRateLimit.perMinute = tenant.policy.rateLimit.perMinute;
-          }
-          if (tenant.policy.rateLimit.perHour !== undefined && tenant.policy.rateLimit.perHour !== null && tenant.policy.rateLimit.perHour !== "") {
-            cleanRateLimit.perHour = tenant.policy.rateLimit.perHour;
-          }
-          if (Object.keys(cleanRateLimit).length > 0) {
-            cleanPolicy.rateLimit = cleanRateLimit;
-          }
-        }
-        if (Object.keys(cleanPolicy).length > 0) {
-          cleanTenant.policy = cleanPolicy;
-        }
-      }
-      
-      // Tags - alleen toevoegen als er tags zijn
-      if (tenant.tags && tenant.tags.length > 0) {
-        cleanTenant.tags = tenant.tags;
-      }
-      
-      // Delivery - sla beide configuraties op (graph en smtp)
-      // Gebruik de deliveryConfig die we eerder hebben gemaakt (bevat beide configuraties)
-      if (tenant.delivery) {
-        const cleanDelivery = {
-          method: tenant.delivery.method || deliveryMethod || "graph"
-        };
-        
-        // Graph API configuratie - gebruik de configuratie die we hebben gemaakt
-        if (tenant.delivery.graph && Object.keys(tenant.delivery.graph).length > 0) {
-          cleanDelivery.graph = tenant.delivery.graph;
-        }
-        
-        // SMTP configuratie - gebruik de configuratie die we hebben gemaakt
-        if (tenant.delivery.smtp && Object.keys(tenant.delivery.smtp).length > 0) {
-          cleanDelivery.smtp = tenant.delivery.smtp;
-        }
-        
-        // Zorg dat delivery altijd wordt toegevoegd als er een method is
-        cleanTenant.delivery = cleanDelivery;
-      }
-
-      // Final cleanup: verwijder alle velden die niet in het schema staan
-      const schemaProperties = [
-        "name", "tenantId", "clientId", "auth", "defaultMailbox", "allowedSenders",
-        "senderOverrides", "routing", "policy", "tags", "delivery"
-      ];
-      const finalTenant = {};
-      schemaProperties.forEach(prop => {
-        if (cleanTenant.hasOwnProperty(prop) && cleanTenant[prop] !== undefined) {
-          // Controleer of het geen lege array of leeg object is
-          if (Array.isArray(cleanTenant[prop])) {
-            if (cleanTenant[prop].length > 0) {
-              finalTenant[prop] = cleanTenant[prop];
-            }
-          } else if (typeof cleanTenant[prop] === "object" && cleanTenant[prop] !== null) {
-            // Voor senderOverrides: leeg object {} is toegestaan (verplicht veld volgens schema)
-            if (prop === "senderOverrides") {
-              finalTenant[prop] = cleanTenant[prop];
-            } else if (prop === "delivery") {
-              // Delivery object moet altijd worden toegevoegd (bevat altijd minstens method)
-              finalTenant[prop] = cleanTenant[prop];
-            } else if (Object.keys(cleanTenant[prop]).length > 0) {
-              finalTenant[prop] = cleanTenant[prop];
-            }
-          } else if (cleanTenant[prop] !== null && cleanTenant[prop] !== "") {
-            finalTenant[prop] = cleanTenant[prop];
-          }
-        }
-      });
-      
       console.log("📝 Tenant data voor opslaan:", JSON.stringify(finalTenant, null, 2));
       console.log("📝 Delivery method:", deliveryMethod);
-      console.log("📝 Heeft Graph API velden:", {
-        tenantId: !!finalTenant.tenantId,
-        clientId: !!finalTenant.clientId,
-        auth: !!finalTenant.auth,
-        defaultMailbox: !!finalTenant.defaultMailbox,
-        allowedSenders: !!finalTenant.allowedSenders
-      });
 
+      const name = tenantName;
       const method = name ? "PUT" : "POST";
       const url = name ? `/admin/tenants/${encodeURIComponent(name)}` : "/admin/tenants";
       
@@ -1192,7 +1803,10 @@
 
     configuredSmtpServers.forEach((server, index) => {
       const li = document.createElement("li");
-      const authInfo = server.auth ? ` [Auth: ${server.authUser || server.auth.user}]` : "";
+      const hasAuth = server.auth && server.auth.user && server.auth.pass;
+      const authInfo = hasAuth 
+        ? ` [Auth: ${server.authUser || server.auth.user}]` 
+        : ` <span style="color:var(--warn)">[Geen authenticatie]</span>`;
       const tlsInfo = server.requireTLS ? ` [STARTTLS vereist]` : "";
       const isEditing = editingSmtpIndex === index;
       li.innerHTML = `
@@ -1291,6 +1905,7 @@
     $("#sfHostName").value = svc.hostName || "";
     $("#sfRequireTLS").checked = svc.requireTLS || false;
     $("#sfOptionalBasicAuth").checked = svc.optionalBasicAuth !== false;
+    $("#sfEnableDebug").checked = svc.enableDebug === true;
     $("#sfCertFile").value = svc.tls?.certFile || "";
     $("#sfKeyFile").value = svc.tls?.keyFile || "";
     $("#sfTLSMode").value = svc.tls?.mode || "starttls";
@@ -1453,6 +2068,16 @@
     resetSmtpForm();
     document.getElementById("settingsModal").classList.add("hidden");
   });
+  
+  // Settings modal: Top save button
+  $("#settingsSaveTop")?.addEventListener("click",()=>{
+    $("#settingsSave").click();
+  });
+  
+  // Settings modal: Bottom close button
+  $("#settingsCloseBottom")?.addEventListener("click",()=>{
+    $("#settingsClose").click();
+  });
 
   $("#settingsSave").addEventListener("click",async()=>{
     try{
@@ -1475,6 +2100,7 @@
           allowlistIPs: $("#sfAllowlistIPs").value.split("\n").map(s=>s.trim()).filter(Boolean),
           routingPriority: Array.from($("#sfRoutingPriorityList").children).map(li => li.dataset.value),
           optionalBasicAuth: $("#sfOptionalBasicAuth").checked,
+          enableDebug: $("#sfEnableDebug").checked,
           smtpServers: cleanSmtpServers,
           authUsers: configuredAuthUsers
         }
@@ -1485,6 +2111,8 @@
       resetSmtpForm();
       document.getElementById("settingsModal").classList.add("hidden");
       await loadSettings();
+      // Herlaad events om debug filter direct toe te passen
+      try{loadEvents();}catch{}
     }catch(e){
       toast("Fout bij opslaan settings: " + e.message);
     }
@@ -1642,9 +2270,18 @@
       });
       
       if (res.ok) {
-        $("#testSmtpResult").innerHTML = '<span style="color:var(--acc)">✅ Verbinding succesvol</span>';
+        const authStatus = res.authUsed 
+          ? " met authenticatie" 
+          : " zonder authenticatie";
+        $("#testSmtpResult").innerHTML = `<span style="color:var(--acc)">✅ Verbinding succesvol${authStatus}</span>`;
       } else {
-        $("#testSmtpResult").innerHTML = `<span style="color:var(--err)">❌ Fout: ${res.error || "Onbekende fout"}</span>`;
+        let errorMsg = res.error || "Onbekende fout";
+        // Voeg waarschuwing toe als authenticatie mogelijk nodig is
+        const hasAuth = testServer.auth && testServer.auth.user && testServer.auth.pass;
+        if (!hasAuth && (errorMsg.includes('authentication') || errorMsg.includes('530') || errorMsg.includes('535'))) {
+          errorMsg += '<br><span style="color:var(--warn); font-size:0.9em;">💡 Tip: Deze server vereist mogelijk authenticatie. Voeg een authenticatie gebruiker toe aan de SMTP server configuratie.</span>';
+        }
+        $("#testSmtpResult").innerHTML = `<span style="color:var(--err)">❌ Fout: ${errorMsg}</span>`;
       }
     } catch (e) {
       console.error("Test SMTP error:", e);
@@ -1656,9 +2293,207 @@
   loadSettings();
 
   // Chart modal handlers
-  $("#closeChart").addEventListener("click",()=>{
+  let currentChartTenant = null;
+  
+  const closeChart = () => {
     document.getElementById("chartModal").classList.add("hidden");
+    currentChartTenant = null;
+  };
+  
+  $("#closeChart")?.addEventListener("click", closeChart);
+  $("#closeChartTop")?.addEventListener("click", closeChart);
+  $("#closeChartBottom")?.addEventListener("click", closeChart);
+  
+  // Chart window change handler
+  $("#chartWindow")?.addEventListener("change", () => {
+    if (currentChartTenant) {
+      loadChart(currentChartTenant);
+    }
   });
+  
+  // Laad en render chart data
+  async function loadChart(tenantName) {
+    try {
+      currentChartTenant = tenantName;
+      const chartWindow = document.getElementById("chartWindow")?.value || "24h";
+      const chartBody = document.getElementById("chartBody");
+      
+      if (!chartBody) return;
+      
+      // Toon loading
+      chartBody.innerHTML = "<div style='text-align: center; padding: 40px; color: var(--muted);'>Laden...</div>";
+      
+      const chartData = await api(`/admin/stats/chart?window=${encodeURIComponent(chartWindow)}${tenantName ? `&tenant=${encodeURIComponent(tenantName)}` : ""}`);
+      
+      console.log("📊 Chart data ontvangen:", {
+        buckets: chartData.buckets?.length || 0,
+        window: chartData.window,
+        tenant: chartData.tenant,
+        sampleBucket: chartData.buckets?.[0]
+      });
+      
+      if (!chartData.buckets || chartData.buckets.length === 0) {
+        chartBody.innerHTML = "<div style='text-align: center; padding: 40px; color: var(--muted);'>Geen data beschikbaar voor de geselecteerde periode.</div>";
+        return;
+      }
+      
+      // Debug: toon totale aantallen
+      const totalSent = chartData.buckets.reduce((sum, b) => sum + (b.sent || 0), 0);
+      const totalErrors = chartData.buckets.reduce((sum, b) => sum + (b.errors || 0), 0);
+      console.log(`📊 Chart totals: ${totalSent} verzonden, ${totalErrors} errors`);
+      
+      renderChart(chartBody, chartData.buckets, tenantName || "Alle tenants");
+    } catch (e) {
+      const chartBody = document.getElementById("chartBody");
+      if (chartBody) {
+        chartBody.innerHTML = `<div style='text-align: center; padding: 40px; color: var(--err);'>Fout bij laden chart: ${e.message}</div>`;
+      }
+      console.error("Chart load error:", e);
+    }
+  }
+  
+  // Render SVG chart
+  function renderChart(container, buckets, title) {
+    if (!buckets || buckets.length === 0) {
+      container.innerHTML = "<div style='text-align: center; padding: 40px; color: var(--muted);'>Geen data beschikbaar.</div>";
+      return;
+    }
+    
+    const width = 800;
+    const height = 300;
+    const padding = { top: 20, right: 20, bottom: 40, left: 60 };
+    const chartWidth = width - padding.left - padding.right;
+    const chartHeight = height - padding.top - padding.bottom;
+    
+    // Bepaal max waarde voor schaling
+    const maxSent = Math.max(...buckets.map(b => b.sent), 0);
+    const maxErrors = Math.max(...buckets.map(b => b.errors), 0);
+    const actualMax = Math.max(maxSent, maxErrors);
+    
+    // Rond max waarde af naar boven naar een mooie waarde voor Y-as
+    let maxValue = 10; // Minimum schaal
+    if (actualMax > 0) {
+      if (actualMax <= 10) {
+        maxValue = 10;
+      } else if (actualMax <= 50) {
+        maxValue = Math.ceil(actualMax / 10) * 10;
+      } else if (actualMax <= 100) {
+        maxValue = Math.ceil(actualMax / 20) * 20;
+      } else if (actualMax <= 500) {
+        maxValue = Math.ceil(actualMax / 50) * 50;
+      } else if (actualMax <= 1000) {
+        maxValue = Math.ceil(actualMax / 100) * 100;
+      } else {
+        maxValue = Math.ceil(actualMax / 500) * 500;
+      }
+    }
+    
+    // Genereer punten voor sent en errors
+    const sentPoints = [];
+    const errorPoints = [];
+    
+    buckets.forEach((bucket, i) => {
+      const x = padding.left + (i / Math.max(buckets.length - 1, 1)) * chartWidth;
+      // Bereken Y positie (0 is onderaan, maxValue is bovenaan)
+      const sentY = padding.top + chartHeight - (bucket.sent / maxValue) * chartHeight;
+      const errorY = padding.top + chartHeight - (bucket.errors / maxValue) * chartHeight;
+      
+      sentPoints.push(`${x},${sentY}`);
+      errorPoints.push(`${x},${errorY}`);
+    });
+    
+    // Format tijd labels
+    const timeLabels = [];
+    const labelCount = Math.min(8, buckets.length);
+    for (let i = 0; i < labelCount; i++) {
+      const index = Math.floor((i / Math.max(labelCount - 1, 1)) * Math.max(buckets.length - 1, 0));
+      const bucket = buckets[index];
+      const date = new Date(bucket.time);
+      const hours = String(date.getHours()).padStart(2, "0");
+      const minutes = String(date.getMinutes()).padStart(2, "0");
+      const day = String(date.getDate()).padStart(2, "0");
+      const month = String(date.getMonth() + 1).padStart(2, "0");
+      
+      let label;
+      if (buckets.length <= 24) {
+        label = `${hours}:${minutes}`;
+      } else {
+        label = `${day}/${month} ${hours}:${minutes}`;
+      }
+      
+      const x = padding.left + (index / Math.max(buckets.length - 1, 1)) * chartWidth;
+      timeLabels.push({ x, label });
+    }
+    
+    // Genereer grid lines met mooie afgeronde waarden
+    const gridLines = [];
+    const gridCount = 5;
+    for (let i = 0; i <= gridCount; i++) {
+      const y = padding.top + (i / gridCount) * chartHeight;
+      const value = Math.round((maxValue - (i / gridCount) * maxValue));
+      gridLines.push({ y, value });
+    }
+    
+    // Bouw SVG met zichtbare lijnen
+    const svg = `
+      <svg class="chart" width="${width}" height="${height}" viewBox="0 0 ${width} ${height}">
+        <!-- Grid lines -->
+        ${gridLines.map(g => `
+          <line class="grid" x1="${padding.left}" y1="${g.y}" x2="${width - padding.right}" y2="${g.y}"/>
+          <text x="${padding.left - 10}" y="${g.y + 4}" text-anchor="end" class="axis" font-size="11">${g.value}</text>
+        `).join("")}
+        
+        <!-- Axes -->
+        <line class="axis" x1="${padding.left}" y1="${padding.top}" x2="${padding.left}" y2="${height - padding.bottom}" stroke-width="1.5"/>
+        <line class="axis" x1="${padding.left}" y1="${height - padding.bottom}" x2="${width - padding.right}" y2="${height - padding.bottom}" stroke-width="1.5"/>
+        
+        <!-- Sent line (groen) -->
+        ${sentPoints.length > 0 ? `
+          <path d="M ${sentPoints.join(" L ")}" stroke="#22c55e" fill="none" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+          ${sentPoints.map((p, i) => {
+            const [x, y] = p.split(",");
+            return `<circle cx="${x}" cy="${y}" r="3.5" fill="#22c55e" stroke="#0f172a" stroke-width="1"/>`;
+          }).join("")}
+        ` : ""}
+        
+        <!-- Errors line (rood) -->
+        ${errorPoints.length > 0 ? `
+          <path d="M ${errorPoints.join(" L ")}" stroke="#ef4444" fill="none" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+          ${errorPoints.map((p, i) => {
+            const [x, y] = p.split(",");
+            return `<circle cx="${x}" cy="${y}" r="3.5" fill="#ef4444" stroke="#0f172a" stroke-width="1"/>`;
+          }).join("")}
+        ` : ""}
+        
+        <!-- Time labels -->
+        ${timeLabels.map(t => `
+          <text x="${t.x}" y="${height - padding.bottom + 20}" text-anchor="middle" class="axis" font-size="11">${t.label}</text>
+        `).join("")}
+        
+        <!-- Legend -->
+        <g transform="translate(${width - padding.right - 120}, ${padding.top + 10})">
+          <line x1="0" y1="0" x2="20" y2="0" stroke="#22c55e" stroke-width="2.5"/>
+          <text x="25" y="4" class="axis" font-size="12">Verzonden</text>
+          <line x1="0" y1="15" x2="20" y2="15" stroke="#ef4444" stroke-width="2.5"/>
+          <text x="25" y="19" class="axis" font-size="12">Errors</text>
+        </g>
+      </svg>
+      <div style="margin-top: 16px; padding: 12px; background: rgba(59, 130, 246, 0.05); border-radius: 8px; border: 1px solid var(--border);">
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 12px; font-size: 13px;">
+          <div>
+            <strong style="color: var(--acc);">Totaal Verzonden:</strong>
+            <div style="color: var(--text); margin-top: 4px;">${buckets.reduce((sum, b) => sum + b.sent, 0)}</div>
+          </div>
+          <div>
+            <strong style="color: var(--err);">Totaal Errors:</strong>
+            <div style="color: var(--text); margin-top: 4px;">${buckets.reduce((sum, b) => sum + b.errors, 0)}</div>
+          </div>
+        </div>
+      </div>
+    `;
+    
+    container.innerHTML = svg;
+  }
 
   // Export CSV
   $("#exportStatsCsv").addEventListener("click",()=>{
@@ -1856,6 +2691,127 @@
     try{loadEvents();}catch{}
   });
 
+  // Multiselect level filter - Globale functies
+  let levelFilterWrapper, levelFilterTrigger, levelFilterDropdown, levelFilterText;
+  let levelFilterInitialized = false;
+  
+  // Functie om geselecteerde levels op te slaan in localStorage
+  function saveLevelFilterSelection() {
+    const levelCheckboxes = document.querySelectorAll(".level-checkbox");
+    const selected = Array.from(levelCheckboxes)
+      .filter(cb => cb.checked)
+      .map(cb => cb.value);
+    localStorage.setItem("eventsLevelFilter", JSON.stringify(selected));
+  }
+  
+  // Functie om geselecteerde levels te herstellen uit localStorage
+  function restoreLevelFilterSelection() {
+    try {
+      const saved = localStorage.getItem("eventsLevelFilter");
+      const levelCheckboxes = document.querySelectorAll(".level-checkbox");
+      
+      if (saved && levelCheckboxes.length > 0) {
+        const selectedLevels = JSON.parse(saved);
+        levelCheckboxes.forEach(checkbox => {
+          checkbox.checked = selectedLevels.includes(checkbox.value);
+        });
+        updateLevelFilterText();
+      } else if (levelCheckboxes.length > 0) {
+        // Geen opgeslagen selectie, reset alle checkboxes
+        levelCheckboxes.forEach(checkbox => {
+          checkbox.checked = false;
+        });
+        updateLevelFilterText();
+      }
+    } catch (e) {
+      console.error("❌ Fout bij herstellen level filter:", e);
+    }
+  }
+  
+  // Functie om level filter text bij te werken
+  function updateLevelFilterText() {
+    const levelCheckboxes = document.querySelectorAll(".level-checkbox");
+    const selected = Array.from(levelCheckboxes).filter(cb => cb.checked);
+    
+    if (!levelFilterText) {
+      levelFilterText = document.getElementById("eventsLevelFilterText");
+    }
+    
+    if (!levelFilterText) return;
+    
+    if (selected.length === 0) {
+      levelFilterText.textContent = "Alle niveaus";
+    } else if (selected.length === 1) {
+      levelFilterText.textContent = selected[0].value;
+    } else {
+      levelFilterText.textContent = `${selected.length} niveaus`;
+    }
+  }
+  
+  // Initialiseer multiselect
+  function initLevelFilter() {
+    // Voorkom dubbele initialisatie
+    if (levelFilterInitialized) {
+      console.log("⚠️ Level filter al geïnitialiseerd, skip");
+      return;
+    }
+    
+    levelFilterWrapper = document.querySelector(".multiselect-wrapper");
+    levelFilterTrigger = document.getElementById("eventsLevelFilterTrigger");
+    levelFilterDropdown = document.getElementById("eventsLevelFilterDropdown");
+    levelFilterText = document.getElementById("eventsLevelFilterText");
+    
+    if (!levelFilterTrigger || !levelFilterDropdown) {
+      console.warn("⚠️ Level filter elementen niet gevonden");
+      return;
+    }
+    
+    // Herstel geselecteerde levels bij het laden
+    restoreLevelFilterSelection();
+    
+    // Toggle dropdown
+    levelFilterTrigger.addEventListener("click", (e) => {
+      e.stopPropagation();
+      e.preventDefault();
+      const isActive = levelFilterWrapper.classList.contains("active");
+      levelFilterWrapper.classList.toggle("active");
+      levelFilterDropdown.classList.toggle("hidden");
+      console.log("🔍 Dropdown toggle:", !isActive ? "open" : "sluiten");
+    });
+    
+    // Sluit dropdown bij klik buiten
+    document.addEventListener("click", (e) => {
+      if (levelFilterWrapper && !levelFilterWrapper.contains(e.target)) {
+        levelFilterWrapper.classList.remove("active");
+        levelFilterDropdown.classList.add("hidden");
+      }
+    });
+    
+    // Update text en laad events bij checkbox change
+    // Gebruik event delegation op de dropdown container
+    levelFilterDropdown.addEventListener("change", (e) => {
+      if (e.target.classList.contains("level-checkbox")) {
+        saveLevelFilterSelection();
+        updateLevelFilterText();
+        isInitialLoad = false;
+        try{loadEvents();}catch{}
+      }
+    });
+    
+    levelFilterInitialized = true;
+    console.log("✅ Level filter geïnitialiseerd");
+  }
+  
+  // Initialiseer multiselect wanneer DOM klaar is
+  // Deze functie wordt ook aangeroepen vanuit initializeApp
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', () => {
+      initLevelFilter();
+    });
+  } else {
+    // DOM is al geladen - wordt aangeroepen vanuit initializeApp
+  }
+
   // Events reason filter change
   $("#eventsReasonFilter").addEventListener("change",()=>{
     try{loadEvents();}catch{}
@@ -1927,13 +2883,56 @@
       if (tbody.children.length === 0) {
         for(const [name, agg] of entries){
           const tr = document.createElement("tr");
+          // Trend kolom - knop om chart te openen
+          const trendCell = document.createElement("td");
+          const trendBtn = document.createElement("button");
+          trendBtn.className = "ghost";
+          trendBtn.style.padding = "4px 8px";
+          trendBtn.style.fontSize = "12px";
+          trendBtn.title = "Bekijk trend";
+          trendBtn.innerHTML = "📈";
+          trendBtn.addEventListener("click", () => {
+            // Open chart modal voor deze tenant
+            const chartTitle = document.getElementById("chartTitle");
+            const chartModal = document.getElementById("chartModal");
+            if (chartTitle) chartTitle.textContent = `Trend - ${name}`;
+            if (chartModal) {
+              chartModal.classList.remove("hidden");
+              loadChart(name);
+            }
+          });
+          trendCell.appendChild(trendBtn);
+          
+          // Acties kolom - knoppen voor acties
+          const actionsCell = document.createElement("td");
+          actionsCell.className = "actions-cell";
+          actionsCell.style.textAlign = "right";
+          
+          // Filter events knop
+          const filterBtn = document.createElement("button");
+          filterBtn.className = "action-btn ghost";
+          filterBtn.title = "Filter events op deze tenant";
+          filterBtn.innerHTML = `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"></polygon>
+          </svg>`;
+          filterBtn.addEventListener("click", () => {
+            const tenantFilter = document.querySelector("#tenantFilterEvents");
+            if (tenantFilter) {
+              tenantFilter.value = name;
+              tenantFilter.dispatchEvent(new Event("change"));
+              // Scroll naar events sectie
+              document.getElementById("eventsCard")?.scrollIntoView({ behavior: "smooth", block: "start" });
+            }
+          });
+          actionsCell.appendChild(filterBtn);
+          
           tr.innerHTML = `
             <td>${name}</td>
             <td>${agg.sent}</td>
             <td>${agg.errors>0?`<span style='color:#ef4444'>${agg.errors}</span>`:agg.errors}</td>
-            <td></td>
-            <td></td>
           `;
+          tr.appendChild(trendCell);
+          tr.appendChild(actionsCell);
           tbody.appendChild(tr);
         }
       } else {
@@ -1941,8 +2940,64 @@
         entries.forEach(([name, agg], index) => {
           if (existingRows[index]) {
             const cells = existingRows[index].children;
+            // Update alleen de data kolommen (Tenant naam kan veranderen)
+            if (cells[0].textContent !== name) {
+              cells[0].textContent = name;
+            }
             cells[1].textContent = agg.sent;
             cells[2].innerHTML = agg.errors>0?`<span style='color:#ef4444'>${agg.errors}</span>`:agg.errors;
+            // Trend en Acties kolommen (cells[3] en cells[4]) blijven behouden
+          } else {
+            // Nieuwe rij toevoegen
+            const tr = document.createElement("tr");
+            const trendCell = document.createElement("td");
+            const trendBtn = document.createElement("button");
+            trendBtn.className = "ghost";
+            trendBtn.style.padding = "4px 8px";
+            trendBtn.style.fontSize = "12px";
+            trendBtn.title = "Bekijk trend";
+            trendBtn.innerHTML = "📈";
+            trendBtn.addEventListener("click", () => {
+              const chartTitle = document.getElementById("chartTitle");
+              const chartModal = document.getElementById("chartModal");
+              if (chartTitle) chartTitle.textContent = `Trend - ${name}`;
+              if (chartModal) {
+                chartModal.classList.remove("hidden");
+                loadChart(name);
+              }
+            });
+            trendCell.appendChild(trendBtn);
+            
+            const actionsCell = document.createElement("td");
+            actionsCell.className = "actions-cell";
+            actionsCell.style.textAlign = "right";
+            
+            // Filter events knop
+            const filterBtn = document.createElement("button");
+            filterBtn.className = "action-btn ghost";
+            filterBtn.title = "Filter events op deze tenant";
+            filterBtn.innerHTML = `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"></polygon>
+            </svg>`;
+            filterBtn.addEventListener("click", () => {
+              const tenantFilter = document.querySelector("#tenantFilterEvents");
+              if (tenantFilter) {
+                tenantFilter.value = name;
+                tenantFilter.dispatchEvent(new Event("change"));
+                // Scroll naar events sectie
+                document.getElementById("eventsCard")?.scrollIntoView({ behavior: "smooth", block: "start" });
+              }
+            });
+            actionsCell.appendChild(filterBtn);
+            
+            tr.innerHTML = `
+              <td>${name}</td>
+              <td>${agg.sent}</td>
+              <td>${agg.errors>0?`<span style='color:#ef4444'>${agg.errors}</span>`:agg.errors}</td>
+            `;
+            tr.appendChild(trendCell);
+            tr.appendChild(actionsCell);
+            tbody.appendChild(tr);
           }
         });
         
@@ -1977,28 +3032,51 @@
       }
       
       const t = document.querySelector("#tenantFilterEvents")?.value?.trim() || "";
-      const limit = document.querySelector("#eventsLimit")?.value || "200";
+      // Bij eerste keer laden: laad alle events (10000), anders gebruik de geselecteerde limiet
+      const limit = isInitialLoad ? "10000" : (document.querySelector("#eventsLimit")?.value || "200");
       const reason = document.querySelector("#eventsReasonFilter")?.value || "all";
       
-      const r = await api(`/admin/events?limit=${encodeURIComponent(limit)}${t?`&tenant=${encodeURIComponent(t)}`:""}${reason !== "all" ? `&reason=${encodeURIComponent(reason)}` : ""}`);
+      // Haal geselecteerde levels op uit checkboxes
+      const levelCheckboxes = document.querySelectorAll(".level-checkbox:checked");
+      const selectedLevels = Array.from(levelCheckboxes).map(cb => cb.value);
+      const levelParam = selectedLevels.length > 0 ? selectedLevels.join(",") : "all";
+      
+      // Toon loading overlay bij eerste keer laden
+      const loadingOverlay = document.getElementById("eventsLoadingOverlay");
+      if (isInitialLoad && loadingOverlay) {
+        loadingOverlay.classList.remove("hidden");
+      }
+      
+      const r = await api(`/admin/events?limit=${encodeURIComponent(limit)}${t?`&tenant=${encodeURIComponent(t)}`:""}${reason !== "all" ? `&reason=${encodeURIComponent(reason)}` : ""}${levelParam !== "all" ? `&level=${encodeURIComponent(levelParam)}` : ""}`);
       
       const tbody = document.querySelector("#eventsTable tbody");
       if (!tbody) return;
       
       let events = r.events || [];
       
-      // Filter debug events uit
-      events = events.filter(ev => {
-        // Verberg events met level "debug" of "verbose"
-        if (ev.level === "debug" || ev.level === "verbose") {
-          return false;
-        }
-        // Verberg events met debug-gerelateerde redenen
-        if (ev.reason && ev.reason.includes("debug")) {
-          return false;
-        }
-        return true;
-      });
+      // Haal enableDebug status op uit settings
+      const enableDebug = settingsData?.service?.enableDebug === true;
+      
+      // Filter debug events uit (tenzij enableDebug is ingeschakeld)
+      if (!enableDebug) {
+        events = events.filter(ev => {
+          // Verberg events met level "debug" of "verbose"
+          if (ev.level === "debug" || ev.level === "verbose") {
+            return false;
+          }
+          // Verberg events met debug-gerelateerde redenen
+          if (ev.reason && ev.reason.includes("debug")) {
+            return false;
+          }
+          return true;
+        });
+      }
+      
+      // Verberg loading overlay na laden (ook bij geen events)
+      if (isInitialLoad && loadingOverlay) {
+        loadingOverlay.classList.add("hidden");
+        isInitialLoad = false; // Markeer dat eerste keer laden is voltooid
+      }
       
       if(events.length===0){ 
         tbody.innerHTML = "<tr><td colspan='9' class='muted'>Geen events</td></tr>"; 

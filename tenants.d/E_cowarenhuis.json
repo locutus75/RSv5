@@ -10,6 +10,9 @@
       "192.168.111.0/24",
       "10.100.20.0/24"
     ],
+    "senderDomains": [
+      "e-cowarenhuis.nl"
+    ],
     "priority": 100
   },
   "policy": {
@@ -17,16 +20,16 @@
     "saveToSentItems": false
   },
   "delivery": {
+    "method": "graph",
     "graph": {
       "tenantId": "a7310848-50ce-4808-86e7-c18e113c5d78",
       "clientId": "515c9fc6-d3cc-48a6-b562-282657ecec8b",
+      "defaultMailbox": "info@e-cowarenhuis.nl",
       "auth": {
         "type": "certificate",
         "certPath": "./certs/e-cowarenhuis.pem",
         "thumbprint": "0B6C1AD1F9F1EA67795AB6B0FCBD7ED0C03E4950"
-      },
-      "defaultMailbox": "info@e-cowarenhuis.nl"
-    },
-    "method": "graph"
+      }
+    }
   }
 }
