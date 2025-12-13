@@ -1456,7 +1456,7 @@ app.get("/admin/update/check", async (req, res) => {
     const currentVersionString = currentVersion.version;
     
     // Laad lokaal manifest om te valideren
-    const { loadManifest, validateManifest } = await import("./lib/update-manifest.js");
+    const { loadManifest, validateManifest, fetchRemoteManifest, compareVersions } = await import("./lib/update-manifest.js");
     const localManifest = loadManifest();
     
     // Valideer lokale bestanden tegen manifest
@@ -1465,21 +1465,67 @@ app.get("/admin/update/check", async (req, res) => {
       validationResult = validateManifest(localManifest);
     }
     
-    // TODO: Implementeer remote manifest check logica
-    // In de toekomst kan dit via GitHub API of een andere bron worden gecontroleerd
+    // Haal remote manifest op (van GitHub of andere bron)
+    // Check config voor repository URL, anders gebruik default GitHub raw URL
+    const config = await loadConfig();
+    const repoUrl = config.service?.updateRepositoryUrl || process.env.UPDATE_REPOSITORY_URL;
+    
+    let remoteManifest = null;
+    let updateAvailable = false;
+    let latestVersion = currentVersionString;
+    let latestBuildNumber = currentVersion.buildNumber;
+    let remoteCheckError = null;
+    
+    if (repoUrl) {
+      try {
+        remoteManifest = await fetchRemoteManifest(repoUrl);
+        
+        if (remoteManifest) {
+          // Vergelijk versies
+          const versionComparison = compareVersions(currentVersionString, remoteManifest.version);
+          
+          if (versionComparison < 0) {
+            // Remote versie is nieuwer
+            updateAvailable = true;
+            latestVersion = remoteManifest.version;
+            latestBuildNumber = remoteManifest.buildNumber;
+          } else if (versionComparison === 0) {
+            // Versies zijn gelijk, check buildnummer
+            const currentBuild = parseInt(currentVersion.buildNumber) || 0;
+            const remoteBuild = parseInt(remoteManifest.buildNumber) || 0;
+            
+            if (remoteBuild > currentBuild) {
+              updateAvailable = true;
+              latestVersion = remoteManifest.version;
+              latestBuildNumber = remoteManifest.buildNumber;
+            }
+          }
+        }
+      } catch (error) {
+        console.error("❌ Fout bij controleren remote manifest:", error.message);
+        remoteCheckError = error.message;
+      }
+    } else {
+      remoteCheckError = "Geen repository URL geconfigureerd. Voeg 'updateRepositoryUrl' toe aan config.json service sectie.";
+    }
     
     res.json({
       ok: true,
       currentVersion: currentVersionString,
       currentBuildNumber: currentVersion.buildNumber,
-      updateAvailable: false,
-      latestVersion: currentVersionString,
-      latestBuildNumber: currentVersion.buildNumber,
+      updateAvailable: updateAvailable,
+      latestVersion: latestVersion,
+      latestBuildNumber: latestBuildNumber,
       localManifestValid: validationResult ? validationResult.valid : null,
       localManifestErrors: validationResult ? validationResult.errors : [],
       localManifestMissing: validationResult ? validationResult.missing : [],
       localManifestChanged: validationResult ? validationResult.changed : [],
-      message: "Update check functionaliteit wordt nog geïmplementeerd. Gebruik /admin/update/generate-manifest om een manifest te genereren."
+      remoteCheckError: remoteCheckError,
+      message: updateAvailable 
+        ? `Nieuwe versie beschikbaar: ${latestVersion} build ${latestBuildNumber}`
+        : remoteCheckError 
+          ? `Kan niet controleren op updates: ${remoteCheckError}`
+          : "Je gebruikt de nieuwste versie"
     });
   } catch (error) {
     console.error("❌ Error checking for updates:", error);
