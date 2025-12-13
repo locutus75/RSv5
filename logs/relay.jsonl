@@ -692,3 +692,7 @@
 {"ts":"2025-12-13T01:14:38.905Z","level":"config.info","message":"Starting SMTP server on port 2525","host":"0.0.0.0"}
 {"ts":"2025-12-13T01:14:38.915Z","level":"config.info","message":"SMTP server ready on 0.0.0.0:2525","port":2525,"host":"0.0.0.0"}
 {"ts":"2025-12-13T01:14:38.915Z","level":"config.info","message":"SMTP server configured for service context","maxConnections":100}
+{"ts":"2025-12-13T01:57:06.603Z","level":"config.info","message":"Tenant reload ready - triggered on save"}
+{"ts":"2025-12-13T01:57:06.666Z","level":"config.info","message":"Starting SMTP server on port 2525","host":"0.0.0.0"}
+{"ts":"2025-12-13T01:57:06.674Z","level":"config.info","message":"SMTP server ready on 0.0.0.0:2525","port":2525,"host":"0.0.0.0"}
+{"ts":"2025-12-13T01:57:06.675Z","level":"config.info","message":"SMTP server configured for service context","maxConnections":100}

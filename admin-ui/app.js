@@ -11,8 +11,24 @@
   function toast(t){
     const el=$("#toast");
     el.textContent=t;
+    
+    // Verwijder oude type classes
+    el.classList.remove("ok", "err", "info", "warn");
+    
+    // Bepaal type op basis van emoji of tekst
+    if (t.includes("✅") || t.includes("success") || t.toLowerCase().includes("succes")) {
+      el.classList.add("ok");
+    } else if (t.includes("❌") || t.includes("error") || t.toLowerCase().includes("fout")) {
+      el.classList.add("err");
+    } else if (t.includes("ℹ️") || t.includes("info") || t.toLowerCase().includes("informatie")) {
+      el.classList.add("info");
+    } else if (t.includes("⚠️") || t.includes("warning") || t.toLowerCase().includes("waarschuwing")) {
+      el.classList.add("warn");
+    }
+    
     el.classList.remove("hidden");
-    setTimeout(()=>el.classList.add("hidden"),2500);
+    // Verleng timeout naar 6 seconden voor betere leesbaarheid
+    setTimeout(()=>el.classList.add("hidden"),6000);
   }
 
   // Custom confirm modal functie
