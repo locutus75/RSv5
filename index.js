@@ -207,6 +207,7 @@ const ADMIN_TOKEN = process.env.ADMIN_TOKEN || "ka8jajs@9djj3lsjdklsdfulij238sdf
 const ROOT = process.cwd();
 const TENANTS_DIR = path.join(ROOT, "tenants.d");
 const CONFIG_FILE = path.join(ROOT, "config.json");
+const UPDATE_CONFIG_FILE = path.join(ROOT, "update-config.json");
 const SCHEMA = JSON.parse(fs.readFileSync(path.join(ROOT, "schema", "tenant.schema.json"), "utf8"));
 
 // Stel trust proxy in voor correcte IP detectie achter proxies
@@ -1466,15 +1467,27 @@ app.get("/admin/update/check", async (req, res) => {
     }
     
     // Haal remote manifest op (van GitHub of andere bron)
-    // Check config voor repository URL, anders gebruik default GitHub raw URL
-    const config = await loadConfig();
-    const repoUrl = config.service?.updateRepositoryUrl || process.env.UPDATE_REPOSITORY_URL;
+    // Laad update configuratie uit update-config.json
+    let repoUrl = null;
+    let remoteCheckError = null;
+    
+    try {
+      if (fs.existsSync(UPDATE_CONFIG_FILE)) {
+        const updateConfig = JSON.parse(fs.readFileSync(UPDATE_CONFIG_FILE, "utf8"));
+        repoUrl = updateConfig.repositoryUrl || process.env.UPDATE_REPOSITORY_URL;
+      } else {
+        // Fallback naar environment variable als update-config.json niet bestaat
+        repoUrl = process.env.UPDATE_REPOSITORY_URL || null;
+      }
+    } catch (error) {
+      console.error("❌ Fout bij laden update configuratie:", error.message);
+      remoteCheckError = `Fout bij laden update configuratie: ${error.message}`;
+    }
     
     let remoteManifest = null;
     let updateAvailable = false;
     let latestVersion = currentVersionString;
     let latestBuildNumber = currentVersion.buildNumber;
-    let remoteCheckError = null;
     
     if (repoUrl) {
       try {
@@ -1506,7 +1519,7 @@ app.get("/admin/update/check", async (req, res) => {
         remoteCheckError = error.message;
       }
     } else {
-      remoteCheckError = "Geen repository URL geconfigureerd. Voeg 'updateRepositoryUrl' toe aan config.json service sectie.";
+      remoteCheckError = "Geen repository URL geconfigureerd. Voeg 'repositoryUrl' toe aan update-config.json of stel UPDATE_REPOSITORY_URL environment variable in.";
     }
     
     res.json({
