@@ -1459,8 +1459,11 @@ app.post("/admin/update/generate-manifest", async (req, res) => {
 // Update check endpoint - controleer op nieuwe versies
 app.get("/admin/update/check", async (req, res) => {
   try {
+    console.log("🔄 Update check gestart...");
+    
     const currentVersion = loadVersion();
     const currentVersionString = currentVersion.version;
+    console.log(`📌 Huidige versie: ${currentVersionString} build ${currentVersion.buildNumber}`);
     
     // Laad lokaal manifest om te valideren
     const { loadManifest, validateManifest, fetchRemoteManifest, compareVersions } = await import("./lib/update-manifest.js");
@@ -1469,24 +1472,35 @@ app.get("/admin/update/check", async (req, res) => {
     // Valideer lokale bestanden tegen manifest
     let validationResult = null;
     if (localManifest) {
+      console.log(`📋 Lokaal manifest gevonden: versie ${localManifest.version} build ${localManifest.buildNumber}`);
       validationResult = validateManifest(localManifest);
+    } else {
+      console.log(`ℹ️ Geen lokaal manifest gevonden`);
     }
     
     // Haal remote manifest op (van GitHub of andere bron)
     // Laad update configuratie uit update-config.json
     let repoUrl = null;
     let remoteCheckError = null;
+    let configSource = null;
     
     try {
       if (fs.existsSync(UPDATE_CONFIG_FILE)) {
+        console.log(`📂 Update configuratie bestand gevonden: ${UPDATE_CONFIG_FILE}`);
         const updateConfig = JSON.parse(fs.readFileSync(UPDATE_CONFIG_FILE, "utf8"));
         repoUrl = updateConfig.repositoryUrl || process.env.UPDATE_REPOSITORY_URL;
+        configSource = updateConfig.repositoryUrl ? "update-config.json" : "environment variable";
+        console.log(`🔗 Repository URL uit ${configSource}: ${repoUrl || '(niet ingesteld)'}`);
       } else {
         // Fallback naar environment variable als update-config.json niet bestaat
+        console.log(`⚠️ Update configuratie bestand niet gevonden: ${UPDATE_CONFIG_FILE}`);
         repoUrl = process.env.UPDATE_REPOSITORY_URL || null;
+        configSource = repoUrl ? "environment variable" : null;
+        console.log(`🔗 Repository URL uit environment: ${repoUrl || '(niet ingesteld)'}`);
       }
     } catch (error) {
       console.error("❌ Fout bij laden update configuratie:", error.message);
+      console.error("   Stack trace:", error.stack);
       remoteCheckError = `Fout bij laden update configuratie: ${error.message}`;
     }
     
@@ -1494,41 +1508,68 @@ app.get("/admin/update/check", async (req, res) => {
     let updateAvailable = false;
     let latestVersion = currentVersionString;
     let latestBuildNumber = currentVersion.buildNumber;
+    let manifestUrl = null;
     
     if (repoUrl) {
       try {
+        // Bereken manifest URL voor logging
+        manifestUrl = repoUrl;
+        if (!manifestUrl.endsWith('update-manifest.json')) {
+          manifestUrl = manifestUrl.replace(/\/$/, '') + '/update-manifest.json';
+        }
+        
+        console.log(`🌐 Controleren op remote updates...`);
+        console.log(`   Repository URL: ${repoUrl}`);
+        console.log(`   Manifest URL: ${manifestUrl}`);
+        console.log(`   Bestand: update-manifest.json`);
+        
         remoteManifest = await fetchRemoteManifest(repoUrl);
         
         if (remoteManifest) {
+          console.log(`✅ Remote manifest succesvol opgehaald`);
+          console.log(`   Remote versie: ${remoteManifest.version} build ${remoteManifest.buildNumber}`);
+          
           // Vergelijk versies
           const versionComparison = compareVersions(currentVersionString, remoteManifest.version);
+          console.log(`🔍 Versie vergelijking: ${currentVersionString} vs ${remoteManifest.version} = ${versionComparison}`);
           
           if (versionComparison < 0) {
             // Remote versie is nieuwer
             updateAvailable = true;
             latestVersion = remoteManifest.version;
             latestBuildNumber = remoteManifest.buildNumber;
+            console.log(`✨ Nieuwe versie beschikbaar: ${latestVersion} build ${latestBuildNumber}`);
           } else if (versionComparison === 0) {
             // Versies zijn gelijk, check buildnummer
             const currentBuild = parseInt(currentVersion.buildNumber) || 0;
             const remoteBuild = parseInt(remoteManifest.buildNumber) || 0;
+            console.log(`🔍 Build nummer vergelijking: ${currentBuild} vs ${remoteBuild}`);
             
             if (remoteBuild > currentBuild) {
               updateAvailable = true;
               latestVersion = remoteManifest.version;
               latestBuildNumber = remoteManifest.buildNumber;
+              console.log(`✨ Nieuwe build beschikbaar: ${latestVersion} build ${latestBuildNumber}`);
+            } else {
+              console.log(`✅ Je gebruikt de nieuwste versie`);
             }
+          } else {
+            console.log(`✅ Je gebruikt een nieuwere versie dan remote`);
           }
+        } else {
+          console.log(`ℹ️ Geen remote manifest gevonden of beschikbaar`);
         }
       } catch (error) {
         console.error("❌ Fout bij controleren remote manifest:", error.message);
+        console.error("   Stack trace:", error.stack);
         remoteCheckError = error.message;
       }
     } else {
       remoteCheckError = "Geen repository URL geconfigureerd. Voeg 'repositoryUrl' toe aan update-config.json of stel UPDATE_REPOSITORY_URL environment variable in.";
+      console.log(`⚠️ ${remoteCheckError}`);
     }
     
-    res.json({
+    const responseData = {
       ok: true,
       currentVersion: currentVersionString,
       currentBuildNumber: currentVersion.buildNumber,
@@ -1540,15 +1581,31 @@ app.get("/admin/update/check", async (req, res) => {
       localManifestMissing: validationResult ? validationResult.missing : [],
       localManifestChanged: validationResult ? validationResult.changed : [],
       remoteCheckError: remoteCheckError,
+      checkDetails: {
+        configFile: UPDATE_CONFIG_FILE,
+        configExists: fs.existsSync(UPDATE_CONFIG_FILE),
+        configSource: configSource,
+        repositoryUrl: repoUrl,
+        manifestUrl: manifestUrl,
+        checkedFile: "update-manifest.json"
+      },
       message: updateAvailable 
         ? `Nieuwe versie beschikbaar: ${latestVersion} build ${latestBuildNumber}`
         : remoteCheckError 
           ? `Kan niet controleren op updates: ${remoteCheckError}`
           : "Je gebruikt de nieuwste versie"
-    });
+    };
+    
+    console.log("✅ Update check voltooid");
+    res.json(responseData);
   } catch (error) {
     console.error("❌ Error checking for updates:", error);
-    res.status(500).json({ error: "Failed to check for updates", message: error.message });
+    console.error("   Stack trace:", error.stack);
+    res.status(500).json({ 
+      error: "Failed to check for updates", 
+      message: error.message,
+      stack: process.env.NODE_ENV === 'development' ? error.stack : undefined
+    });
   }
 });
 
