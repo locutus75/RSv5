@@ -33,8 +33,9 @@ const svc = new Service({
   // Environment variables
   env: [
     { name: "NODE_ENV", value: "production" },
-    { name: "PWD", value: __dirname },
-    { name: "ADMIN_TOKEN", value: "ka8jajs@9djj3lsjdklsdfulij238sdfh" }
+    { name: "PWD", value: __dirname }
+    // ADMIN_TOKEN moet worden ingesteld in .env bestand of via environment variable
+    // Voeg handmatig toe indien nodig: { name: "ADMIN_TOKEN", value: "your-token-here" }
   ]
 });
 

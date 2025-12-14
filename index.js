@@ -4,11 +4,17 @@ import { loadVersion, incrementVersion } from "./lib/version.js";
 import express from "express";
 import fs from "fs";
 import path from "path";
+import { fileURLToPath } from "url";
 import cors from "cors";
 import Ajv from "ajv";
 import addFormats from "ajv-formats";
 import { EventEmitter } from "events";
 import os from "os";
+
+// Bepaal applicatie root op basis van waar index.js zich bevindt
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+const APP_ROOT = __dirname;
 
 // Command-line argument parser
 function parseArguments() {
@@ -179,7 +185,7 @@ if (cliOptions.verbose) {
 
 // Load environment variables from .env file if it exists
 try {
-  const envPath = path.join(process.cwd(), '.env');
+  const envPath = path.join(APP_ROOT, '.env');
   if (fs.existsSync(envPath)) {
     const envContent = fs.readFileSync(envPath, 'utf8');
     envContent.split('\n').forEach(line => {
@@ -203,10 +209,11 @@ global.serverEvents = new EventEmitter();
 // Admin server setup
 const app = express();
 const ADMIN_PORT = process.env.ADMIN_PORT || 8080;
-const ADMIN_TOKEN = process.env.ADMIN_TOKEN || "ka8jajs@9djj3lsjdklsdfulij238sdfh";
-const ROOT = process.cwd();
+const ADMIN_TOKEN = process.env.ADMIN_TOKEN || null;
+const ROOT = APP_ROOT;
 const TENANTS_DIR = path.join(ROOT, "tenants.d");
 const CONFIG_FILE = path.join(ROOT, "config.json");
+const UPDATE_CONFIG_FILE = path.join(ROOT, "update-config.json");
 const SCHEMA = JSON.parse(fs.readFileSync(path.join(ROOT, "schema", "tenant.schema.json"), "utf8"));
 
 // Stel trust proxy in voor correcte IP detectie achter proxies
@@ -1466,15 +1473,27 @@ app.get("/admin/update/check", async (req, res) => {
     }
     
     // Haal remote manifest op (van GitHub of andere bron)
-    // Check config voor repository URL, anders gebruik default GitHub raw URL
-    const config = await loadConfig();
-    const repoUrl = config.service?.updateRepositoryUrl || process.env.UPDATE_REPOSITORY_URL;
+    // Laad update configuratie uit update-config.json
+    let repoUrl = null;
+    let remoteCheckError = null;
+    
+    try {
+      if (fs.existsSync(UPDATE_CONFIG_FILE)) {
+        const updateConfig = JSON.parse(fs.readFileSync(UPDATE_CONFIG_FILE, "utf8"));
+        repoUrl = updateConfig.repositoryUrl || process.env.UPDATE_REPOSITORY_URL;
+      } else {
+        // Fallback naar environment variable als update-config.json niet bestaat
+        repoUrl = process.env.UPDATE_REPOSITORY_URL || null;
+      }
+    } catch (error) {
+      console.error("❌ Fout bij laden update configuratie:", error.message);
+      remoteCheckError = `Fout bij laden update configuratie: ${error.message}`;
+    }
     
     let remoteManifest = null;
     let updateAvailable = false;
     let latestVersion = currentVersionString;
     let latestBuildNumber = currentVersion.buildNumber;
-    let remoteCheckError = null;
     
     if (repoUrl) {
       try {
@@ -1506,7 +1525,7 @@ app.get("/admin/update/check", async (req, res) => {
         remoteCheckError = error.message;
       }
     } else {
-      remoteCheckError = "Geen repository URL geconfigureerd. Voeg 'updateRepositoryUrl' toe aan config.json service sectie.";
+      remoteCheckError = "Geen repository URL geconfigureerd. Voeg 'repositoryUrl' toe aan update-config.json of stel UPDATE_REPOSITORY_URL environment variable in.";
     }
     
     res.json({
