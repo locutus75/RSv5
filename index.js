@@ -4,11 +4,17 @@ import { loadVersion, incrementVersion } from "./lib/version.js";
 import express from "express";
 import fs from "fs";
 import path from "path";
+import { fileURLToPath } from "url";
 import cors from "cors";
 import Ajv from "ajv";
 import addFormats from "ajv-formats";
 import { EventEmitter } from "events";
 import os from "os";
+
+// Bepaal applicatie root op basis van waar index.js zich bevindt
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+const APP_ROOT = __dirname;
 
 // Command-line argument parser
 function parseArguments() {
@@ -179,7 +185,7 @@ if (cliOptions.verbose) {
 
 // Load environment variables from .env file if it exists
 try {
-  const envPath = path.join(process.cwd(), '.env');
+  const envPath = path.join(APP_ROOT, '.env');
   if (fs.existsSync(envPath)) {
     const envContent = fs.readFileSync(envPath, 'utf8');
     envContent.split('\n').forEach(line => {
@@ -204,7 +210,7 @@ global.serverEvents = new EventEmitter();
 const app = express();
 const ADMIN_PORT = process.env.ADMIN_PORT || 8080;
 const ADMIN_TOKEN = process.env.ADMIN_TOKEN || "ka8jajs@9djj3lsjdklsdfulij238sdfh";
-const ROOT = process.cwd();
+const ROOT = APP_ROOT;
 const TENANTS_DIR = path.join(ROOT, "tenants.d");
 const CONFIG_FILE = path.join(ROOT, "config.json");
 const UPDATE_CONFIG_FILE = path.join(ROOT, "update-config.json");
