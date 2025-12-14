@@ -85,7 +85,7 @@ node index.js --help
 ## 📁 Project Structuur
 
 ```
-rileesurfis/
+RSv5/
 ├── lib/           # Core server functionaliteit
 ├── admin-ui/      # Web-based admin interface
 ├── tenants.d/     # Tenant configuratie bestanden
