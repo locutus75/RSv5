@@ -209,7 +209,7 @@ global.serverEvents = new EventEmitter();
 // Admin server setup
 const app = express();
 const ADMIN_PORT = process.env.ADMIN_PORT || 8080;
-const ADMIN_TOKEN = process.env.ADMIN_TOKEN || "ka8jajs@9djj3lsjdklsdfulij238sdfh";
+const ADMIN_TOKEN = process.env.ADMIN_TOKEN || null;
 const ROOT = APP_ROOT;
 const TENANTS_DIR = path.join(ROOT, "tenants.d");
 const CONFIG_FILE = path.join(ROOT, "config.json");

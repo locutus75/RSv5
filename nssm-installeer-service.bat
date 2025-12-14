@@ -11,7 +11,8 @@ cd "C:\Apps\RileeSurfis"
 
 # Environment variables
 .\nssm.exe set "RileeSurfis SMTP Server" AppEnvironmentExtra "NODE_ENV=production"
-.\nssm.exe set "RileeSurfis SMTP Server" AppEnvironmentExtra "ADMIN_TOKEN=ka8jajs@9djj3lsjdklsdfulij238sdfh"
+# ADMIN_TOKEN moet worden ingesteld in .env bestand of via environment variable
+# .\nssm.exe set "RileeSurfis SMTP Server" AppEnvironmentExtra "ADMIN_TOKEN=your-token-here"
 .\nssm.exe set "RileeSurfis SMTP Server" AppEnvironmentExtra "PWD=C:\Apps\RileeSurfis"
 
 # Start de service

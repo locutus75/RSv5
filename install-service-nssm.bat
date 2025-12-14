@@ -62,7 +62,8 @@ nssm set "RileeSurfis SMTP Server" Start SERVICE_AUTO_START
 
 REM Environment variables
 nssm set "RileeSurfis SMTP Server" AppEnvironmentExtra "NODE_ENV=production"
-nssm set "RileeSurfis SMTP Server" AppEnvironmentExtra "ADMIN_TOKEN=ka8jajs@9djj3lsjdklsdfulij238sdfh"
+REM ADMIN_TOKEN moet worden ingesteld in .env bestand of via environment variable
+REM nssm set "RileeSurfis SMTP Server" AppEnvironmentExtra "ADMIN_TOKEN=your-token-here"
 nssm set "RileeSurfis SMTP Server" AppEnvironmentExtra "PWD=C:\Apps\RileeSurfis"
 
 echo ✅ Service geconfigureerd
