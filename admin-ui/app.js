@@ -2939,8 +2939,11 @@
   // Export CSV
   $("#exportStatsCsv").addEventListener("click",()=>{
     const csv = [
-      ["Tenant", "Verzonden", "Errors", "Trend"],
-      ...data.map(t => [t.name || "(naamloos)", t.sent || 0, t.errors || 0, ""])
+      ["Tenant", "Verzonden", "Success", "Errors", "Trend"],
+      ...data.map(t => {
+        const success = Math.max(0, (t.sent || 0) - (t.errors || 0));
+        return [t.name || "(naamloos)", t.sent || 0, success, t.errors || 0, ""];
+      })
     ].map(row => row.map(cell => `"${cell}"`).join(",")).join("\n");
     
     const blob = new Blob([csv], { type: "text/csv" });
@@ -3317,7 +3320,7 @@
         .filter(([name, agg]) => name !== "unknown" && name !== "Unknown" && name !== "")
         .sort((a,b)=> (b[1].sent+b[1].errors)-(a[1].sent+a[1].errors));
       if(entries.length===0){ 
-        tbody.innerHTML = "<tr><td colspan='5' class='muted'>Geen data</td></tr>"; 
+        tbody.innerHTML = "<tr><td colspan='6' class='muted'>Geen data</td></tr>"; 
         return; 
       }
       
@@ -3367,10 +3370,12 @@
           });
           actionsCell.appendChild(filterBtn);
           
+          const success = Math.max(0, (agg.sent || 0) - (agg.errors || 0));
           tr.innerHTML = `
             <td>${name}</td>
-            <td>${agg.sent}</td>
-            <td>${agg.errors>0?`<span style='color:#ef4444'>${agg.errors}</span>`:agg.errors}</td>
+            <td>${agg.sent || 0}</td>
+            <td><span style='color:#86efac'>${success}</span></td>
+            <td>${agg.errors>0?`<span style='color:#ef4444'>${agg.errors}</span>`:agg.errors || 0}</td>
           `;
           tr.appendChild(trendCell);
           tr.appendChild(actionsCell);
@@ -3385,9 +3390,11 @@
             if (cells[0].textContent !== name) {
               cells[0].textContent = name;
             }
-            cells[1].textContent = agg.sent;
-            cells[2].innerHTML = agg.errors>0?`<span style='color:#ef4444'>${agg.errors}</span>`:agg.errors;
-            // Trend en Acties kolommen (cells[3] en cells[4]) blijven behouden
+            cells[1].textContent = agg.sent || 0;
+            const success = Math.max(0, (agg.sent || 0) - (agg.errors || 0));
+            cells[2].innerHTML = `<span style='color:#86efac'>${success}</span>`;
+            cells[3].innerHTML = agg.errors>0?`<span style='color:#ef4444'>${agg.errors}</span>`:agg.errors || 0;
+            // Trend en Acties kolommen (cells[4] en cells[5]) blijven behouden
           } else {
             // Nieuwe rij toevoegen
             const tr = document.createElement("tr");
@@ -3431,10 +3438,12 @@
             });
             actionsCell.appendChild(filterBtn);
             
+            const success = Math.max(0, (agg.sent || 0) - (agg.errors || 0));
             tr.innerHTML = `
               <td>${name}</td>
-              <td>${agg.sent}</td>
-              <td>${agg.errors>0?`<span style='color:#ef4444'>${agg.errors}</span>`:agg.errors}</td>
+              <td>${agg.sent || 0}</td>
+              <td><span style='color:#86efac'>${success}</span></td>
+              <td>${agg.errors>0?`<span style='color:#ef4444'>${agg.errors}</span>`:agg.errors || 0}</td>
             `;
             tr.appendChild(trendCell);
             tr.appendChild(actionsCell);
@@ -3449,7 +3458,7 @@
       
     }catch(e){
       const tbody = document.querySelector("#statsTable tbody");
-      if (tbody) tbody.innerHTML = `<tr><td colspan='5'>Fout: ${e.message}</td></tr>`;
+      if (tbody) tbody.innerHTML = `<tr><td colspan='6'>Fout: ${e.message}</td></tr>`;
     }
   }
 
