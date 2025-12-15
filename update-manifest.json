@@ -1,13 +1,13 @@
 {
-  "version": "5.2.2",
-  "buildNumber": "1213",
-  "timestamp": "2025-12-15T00:46:01.083Z",
+  "version": "5.2.3",
+  "buildNumber": "1214",
+  "timestamp": "2025-12-15T01:21:31.655Z",
   "files": [
     {
       "path": "admin-ui/app.js",
-      "hash": "8b300b9c4c8c3d1831f66470ac89540c792fd50934f391f4cbf3fe41483120de",
-      "size": 149363,
-      "modified": "2025-12-15T00:27:57.342Z"
+      "hash": "7b7f8764caf4e80d9b2a7ca57cf49550437535daa2847e5fe37115351425e9fe",
+      "size": 149477,
+      "modified": "2025-12-15T01:18:31.747Z"
     },
     {
       "path": "admin-ui/favicon.png",
@@ -17,9 +17,9 @@
     },
     {
       "path": "admin-ui/index.html",
-      "hash": "e110ab50f8c36dd66f7f26e6546f56b3213ee7aae565b9c16e12191b5e829d91",
-      "size": 38963,
-      "modified": "2025-12-15T00:27:57.341Z"
+      "hash": "fba469c334719e1d51ca67c3b59c65bdb277cb4eb59fc3e1fa349596639dd7ff",
+      "size": 38981,
+      "modified": "2025-12-15T01:18:31.748Z"
     },
     {
       "path": "admin-ui/logo.png",
@@ -29,9 +29,9 @@
     },
     {
       "path": "admin-ui/style.css",
-      "hash": "320f948aff2da17dfbbf66c315fd48b8c77f30ccac436105ae00ac76ae1dcb19",
-      "size": 24971,
-      "modified": "2025-12-13T01:54:57.626Z"
+      "hash": "66a172a66512b59bfd3c3acf937d6a1083a8885f8db78b8c8bddacc021bcba0c",
+      "size": 25068,
+      "modified": "2025-12-15T01:18:31.744Z"
     },
     {
       "path": "admin-ui/test-auto-refresh.html",
@@ -61,7 +61,7 @@
       "path": "index.js",
       "hash": "f354dc49f39b3af3a8b94c0fc9316ec367bf13f8ae4b697ad01e62884a369223",
       "size": 83274,
-      "modified": "2025-12-15T00:38:32.185Z"
+      "modified": "2025-12-15T01:02:13.741Z"
     },
     {
       "path": "install-service-nssm.bat",
@@ -89,9 +89,9 @@
     },
     {
       "path": "lib/server.js",
-      "hash": "258f2184eb29a4a00d5a08bbbe8f64ff0eb2a9db5e74a89f0f8080d01b8a2df0",
-      "size": 21999,
-      "modified": "2025-12-14T22:25:51.681Z"
+      "hash": "714bdb7c569ea111f73c8cdc3e9c3f2025558760109fa3ce3d95376766107d33",
+      "size": 22053,
+      "modified": "2025-12-15T01:18:31.743Z"
     },
     {
       "path": "lib/smtp.js",
@@ -113,9 +113,9 @@
     },
     {
       "path": "package.json",
-      "hash": "9bb8600a1a9a5ca5c81e91a0e17aa5795146c413335b10b0f3874cb466faf7e3",
+      "hash": "57a0843c1381d743606bd7b65f5083298664c830bc81451f0a7d21107ede4370",
       "size": 1532,
-      "modified": "2025-12-15T00:45:58.248Z"
+      "modified": "2025-12-15T01:21:29.255Z"
     },
     {
       "path": "README.md",
