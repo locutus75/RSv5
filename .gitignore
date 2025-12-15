@@ -20,7 +20,6 @@ daemon/
 nssm.exe
 
 # Dynamisch gegenereerde bestanden
-update-manifest.json
 version.json
 
 # Package lock (wordt automatisch gegenereerd)

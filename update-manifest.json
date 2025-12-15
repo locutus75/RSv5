@@ -1,0 +1,175 @@
+{
+  "version": "5.2.2",
+  "buildNumber": "1213",
+  "timestamp": "2025-12-15T00:46:01.083Z",
+  "files": [
+    {
+      "path": "admin-ui/app.js",
+      "hash": "8b300b9c4c8c3d1831f66470ac89540c792fd50934f391f4cbf3fe41483120de",
+      "size": 149363,
+      "modified": "2025-12-15T00:27:57.342Z"
+    },
+    {
+      "path": "admin-ui/favicon.png",
+      "hash": "b0186202a3010f0e789e99a3c02df70c90060c93f9035f4a8188ef3d4724bdf8",
+      "size": 51009,
+      "modified": "2025-08-12T23:54:31.595Z"
+    },
+    {
+      "path": "admin-ui/index.html",
+      "hash": "e110ab50f8c36dd66f7f26e6546f56b3213ee7aae565b9c16e12191b5e829d91",
+      "size": 38963,
+      "modified": "2025-12-15T00:27:57.341Z"
+    },
+    {
+      "path": "admin-ui/logo.png",
+      "hash": "3643c56e844d4fbea14da02db15547b88ac23fb7db873ddb70324b93ecb228dd",
+      "size": 67042,
+      "modified": "2025-08-12T23:53:51.916Z"
+    },
+    {
+      "path": "admin-ui/style.css",
+      "hash": "320f948aff2da17dfbbf66c315fd48b8c77f30ccac436105ae00ac76ae1dcb19",
+      "size": 24971,
+      "modified": "2025-12-13T01:54:57.626Z"
+    },
+    {
+      "path": "admin-ui/test-auto-refresh.html",
+      "hash": "ffaf9cc6daf796bb3f2513ccd67bbb51cef4d63c34ca6363376f571ccb8a7a8b",
+      "size": 6274,
+      "modified": "2025-08-19T22:04:51.724Z"
+    },
+    {
+      "path": "admin-ui/test-login.html",
+      "hash": "acec278ef6aa4a0c0d691d581eb2740d46f56e25722af4cf483dde304cc81ebb",
+      "size": 4903,
+      "modified": "2025-08-19T21:03:52.476Z"
+    },
+    {
+      "path": "debug-service.cjs",
+      "hash": "2aafbecadd5ee9b79000e506abd87d9fb035494ad810021d7c576d4119798c71",
+      "size": 1947,
+      "modified": "2025-08-19T00:16:01.367Z"
+    },
+    {
+      "path": "HOT-RELOAD.md",
+      "hash": "ff820c8e3b4d5692ce3fca7237cefb6b27ca4efd793940639604cb009a044f03",
+      "size": 3791,
+      "modified": "2025-08-11T09:54:14.120Z"
+    },
+    {
+      "path": "index.js",
+      "hash": "f354dc49f39b3af3a8b94c0fc9316ec367bf13f8ae4b697ad01e62884a369223",
+      "size": 83274,
+      "modified": "2025-12-15T00:38:32.185Z"
+    },
+    {
+      "path": "install-service-nssm.bat",
+      "hash": "2c66e9923a5280730aa40bde95eba0561b600af3ed171eac18e335b0583197d0",
+      "size": 2967,
+      "modified": "2025-12-14T21:58:07.890Z"
+    },
+    {
+      "path": "lib/config.js",
+      "hash": "af34a3dd2e4a434f823852c7baa89a3ba19aa54361e0e6850257f58c11a88ca3",
+      "size": 6190,
+      "modified": "2025-12-14T21:58:07.892Z"
+    },
+    {
+      "path": "lib/graph.js",
+      "hash": "3925e393410b027d9053f496d17d6d16eb43f95ab13e60e21c59d684d79934c7",
+      "size": 4468,
+      "modified": "2025-12-12T12:16:36.702Z"
+    },
+    {
+      "path": "lib/rateLimiter.js",
+      "hash": "10eeb9a55be1e80841ca55026eda9df9752fafbb09eb877d69935ba6068fab3e",
+      "size": 505,
+      "modified": "2025-08-08T23:29:17.904Z"
+    },
+    {
+      "path": "lib/server.js",
+      "hash": "258f2184eb29a4a00d5a08bbbe8f64ff0eb2a9db5e74a89f0f8080d01b8a2df0",
+      "size": 21999,
+      "modified": "2025-12-14T22:25:51.681Z"
+    },
+    {
+      "path": "lib/smtp.js",
+      "hash": "60ede9a8af9cd0ad1aa2505586aa607a0e31a13d30c94bac4e36ba9876624b79",
+      "size": 7744,
+      "modified": "2025-12-12T11:11:52.192Z"
+    },
+    {
+      "path": "lib/update-manifest.js",
+      "hash": "63750761cadad66934bedc2adca5dcc5839d097082d0055d2f3d41bc88b52a4b",
+      "size": 12564,
+      "modified": "2025-12-15T00:38:32.182Z"
+    },
+    {
+      "path": "lib/version.js",
+      "hash": "66e1ab3d063934038850e07efed5b233295c034d08b0de7e15a0b3532700d899",
+      "size": 5717,
+      "modified": "2025-12-12T12:26:21.548Z"
+    },
+    {
+      "path": "package.json",
+      "hash": "9bb8600a1a9a5ca5c81e91a0e17aa5795146c413335b10b0f3874cb466faf7e3",
+      "size": 1532,
+      "modified": "2025-12-15T00:45:58.248Z"
+    },
+    {
+      "path": "README.md",
+      "hash": "314dc824c9a143ad6fc92465404d2fc7cfed11df9652d5cc88333d4e5639e0ce",
+      "size": 5326,
+      "modified": "2025-12-14T23:17:32.333Z"
+    },
+    {
+      "path": "schema/tenant.schema.json",
+      "hash": "bd30345068761255e8c65c22772ff5a8113a2994981e802e48b27a557ba538ad",
+      "size": 3660,
+      "modified": "2025-11-25T23:43:04.463Z"
+    },
+    {
+      "path": "scripts/bump-version.js",
+      "hash": "4feb9959e098dcb1a0e8e359c55c0985d28b427ecbbb324fde0ccfd52bed8e1c",
+      "size": 955,
+      "modified": "2025-11-25T23:59:43.180Z"
+    },
+    {
+      "path": "scripts/generate-update-manifest.js",
+      "hash": "31bce87bc941b463823254a8f06c727d8362727f76996bedcc236defa2ac6448",
+      "size": 724,
+      "modified": "2025-12-12T22:51:37.913Z"
+    },
+    {
+      "path": "service-installer.cjs",
+      "hash": "ca49d79b16b5241514c1ee575cb8229b8ddd1e53a13589e5b7aa29430bf6fc9f",
+      "size": 3968,
+      "modified": "2025-12-14T21:58:07.899Z"
+    },
+    {
+      "path": "service-manager.cjs",
+      "hash": "1ed7c392091d99ecd53edb66ddd7484023fea163c997edb7dc814bd9fb70dd64",
+      "size": 2209,
+      "modified": "2025-08-19T00:16:01.367Z"
+    },
+    {
+      "path": "service-uninstaller.cjs",
+      "hash": "0df92bf77d26dc937bee6a0024615b3ddafb31082b4acebee8e644b7335c1109",
+      "size": 572,
+      "modified": "2025-08-18T22:03:02.063Z"
+    },
+    {
+      "path": "uninstall-service-nssm.bat",
+      "hash": "ce580bf7255ff324bb55af8592e40344fcb9f7725208c6bbaf66cd112b2d7d01",
+      "size": 1052,
+      "modified": "2025-08-19T11:27:09.504Z"
+    },
+    {
+      "path": "update-config.json",
+      "hash": "4c86a23ca0a434de648d8e0d24738d46e329ae06d8da4207ac9f902a9fff2936",
+      "size": 148,
+      "modified": "2025-12-14T23:17:32.331Z"
+    }
+  ]
+}
