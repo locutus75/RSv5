@@ -696,6 +696,27 @@
     </div>
   </div>
 
+  <!-- Update Info Modal -->
+  <div id="updateInfoModal" class="modal hidden">
+    <div class="modal-content modal-large">
+      <div class="modal-head">
+        <h3>🔄 Update Informatie</h3>
+        <button class="ghost" id="updateInfoClose">✕</button>
+      </div>
+      <div class="modal-body" style="max-height: 70vh; overflow-y: auto;">
+        <div id="updateInfoContent">
+          <div style="text-align: center; padding: 20px;">
+            <p class="muted">Update informatie wordt geladen...</p>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer" style="padding: 12px 14px; border-top: 1px solid var(--border); display: flex; justify-content: flex-end; gap: 8px;">
+        <button id="updateInfoRefresh" class="ghost">🔄 Opnieuw controleren</button>
+        <button id="updateInfoCloseBtn" class="primary">Sluiten</button>
+      </div>
+    </div>
+  </div>
+
   <script src="app.js"></script>
 
 <div id="loginOverlay" class="overlay hidden">

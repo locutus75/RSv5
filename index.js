@@ -1471,9 +1471,51 @@ app.get("/admin/update/check", async (req, res) => {
     
     // Valideer lokale bestanden tegen manifest
     let validationResult = null;
+    const isDebugMode = cliOptions.debug || cliOptions.logLevel === 'debug' || cliOptions.logLevel === 'verbose';
+    
     if (localManifest) {
       console.log(`📋 Lokaal manifest gevonden: versie ${localManifest.version} build ${localManifest.buildNumber}`);
+      
+      if (isDebugMode && localManifest.files) {
+        console.log(`🐛 Debug: Lokaal manifest bevat ${localManifest.files.length} bestanden`);
+        console.log(`🐛 Debug: Bestanden in lokaal manifest:`);
+        localManifest.files.forEach((file, index) => {
+          console.log(`🐛   ${index + 1}. ${file.path} (${file.size} bytes, hash: ${file.hash.substring(0, 8)}...)`);
+        });
+      }
+      
       validationResult = validateManifest(localManifest);
+      
+      if (isDebugMode && validationResult) {
+        console.log(`🐛 Debug: Validatie resultaat:`);
+        console.log(`🐛   - Geldige bestanden: ${validationResult.valid ? validationResult.valid.length : 0}`);
+        console.log(`🐛   - Ontbrekende bestanden: ${validationResult.missing ? validationResult.missing.length : 0}`);
+        console.log(`🐛   - Gewijzigde bestanden: ${validationResult.changed ? validationResult.changed.length : 0}`);
+        console.log(`🐛   - Fouten: ${validationResult.errors ? validationResult.errors.length : 0}`);
+        
+        if (validationResult.missing && validationResult.missing.length > 0) {
+          console.log(`🐛 Debug: Ontbrekende bestanden:`);
+          validationResult.missing.forEach((file, index) => {
+            console.log(`🐛   ${index + 1}. ${file}`);
+          });
+        }
+        
+        if (validationResult.changed && validationResult.changed.length > 0) {
+          console.log(`🐛 Debug: Gewijzigde bestanden:`);
+          validationResult.changed.forEach((file, index) => {
+            console.log(`🐛   ${index + 1}. ${file.path}`);
+            console.log(`🐛      Verwacht hash: ${file.expectedHash.substring(0, 16)}...`);
+            console.log(`🐛      Huidige hash:  ${file.actualHash.substring(0, 16)}...`);
+          });
+        }
+        
+        if (validationResult.errors && validationResult.errors.length > 0) {
+          console.log(`🐛 Debug: Validatie fouten:`);
+          validationResult.errors.forEach((error, index) => {
+            console.log(`🐛   ${index + 1}. ${error}`);
+          });
+        }
+      }
     } else {
       console.log(`ℹ️ Geen lokaal manifest gevonden`);
     }
@@ -1488,9 +1530,16 @@ app.get("/admin/update/check", async (req, res) => {
       if (fs.existsSync(UPDATE_CONFIG_FILE)) {
         console.log(`📂 Update configuratie bestand gevonden: ${UPDATE_CONFIG_FILE}`);
         const updateConfig = JSON.parse(fs.readFileSync(UPDATE_CONFIG_FILE, "utf8"));
-        repoUrl = updateConfig.repositoryUrl || process.env.UPDATE_REPOSITORY_URL;
-        configSource = updateConfig.repositoryUrl ? "update-config.json" : "environment variable";
-        console.log(`🔗 Repository URL uit ${configSource}: ${repoUrl || '(niet ingesteld)'}`);
+        repoUrl = updateConfig.repositoryUrl || process.env.UPDATE_REPOSITORY_URL || null;
+        // Alleen "environment variable" als source als updateConfig.repositoryUrl falsy is EN process.env.UPDATE_REPOSITORY_URL truthy is
+        if (updateConfig.repositoryUrl) {
+          configSource = "update-config.json";
+        } else if (process.env.UPDATE_REPOSITORY_URL) {
+          configSource = "environment variable";
+        } else {
+          configSource = null;
+        }
+        console.log(`🔗 Repository URL uit ${configSource || 'geen bron'}: ${repoUrl || '(niet ingesteld)'}`);
       } else {
         // Fallback naar environment variable als update-config.json niet bestaat
         console.log(`⚠️ Update configuratie bestand niet gevonden: ${UPDATE_CONFIG_FILE}`);
@@ -1529,6 +1578,69 @@ app.get("/admin/update/check", async (req, res) => {
           console.log(`✅ Remote manifest succesvol opgehaald`);
           console.log(`   Remote versie: ${remoteManifest.version} build ${remoteManifest.buildNumber}`);
           
+          if (isDebugMode && remoteManifest.files) {
+            console.log(`🐛 Debug: Remote manifest bevat ${remoteManifest.files.length} bestanden`);
+            console.log(`🐛 Debug: Bestanden in remote manifest:`);
+            remoteManifest.files.forEach((file, index) => {
+              console.log(`🐛   ${index + 1}. ${file.path} (${file.size} bytes, hash: ${file.hash.substring(0, 8)}...)`);
+            });
+            
+            // Vergelijk lokale en remote bestanden als beide beschikbaar zijn
+            if (localManifest && localManifest.files) {
+              const localFilePaths = new Set(localManifest.files.map(f => f.path));
+              const remoteFilePaths = new Set(remoteManifest.files.map(f => f.path));
+              
+              const onlyInLocal = localManifest.files.filter(f => !remoteFilePaths.has(f.path));
+              const onlyInRemote = remoteManifest.files.filter(f => !localFilePaths.has(f.path));
+              const inBoth = localManifest.files.filter(f => remoteFilePaths.has(f.path));
+              
+              console.log(`🐛 Debug: Bestandsvergelijking tussen lokaal en remote:`);
+              console.log(`🐛   - Alleen lokaal: ${onlyInLocal.length} bestanden`);
+              console.log(`🐛   - Alleen remote: ${onlyInRemote.length} bestanden`);
+              console.log(`🐛   - In beide: ${inBoth.length} bestanden`);
+              
+              if (onlyInLocal.length > 0) {
+                console.log(`🐛 Debug: Bestanden alleen in lokaal manifest:`);
+                onlyInLocal.forEach((file, index) => {
+                  console.log(`🐛   ${index + 1}. ${file.path}`);
+                });
+              }
+              
+              if (onlyInRemote.length > 0) {
+                console.log(`🐛 Debug: Bestanden alleen in remote manifest:`);
+                onlyInRemote.forEach((file, index) => {
+                  console.log(`🐛   ${index + 1}. ${file.path} (${file.size} bytes)`);
+                });
+              }
+              
+              // Check welke bestanden verschillen in hash
+              const differentHashes = [];
+              inBoth.forEach(localFile => {
+                const remoteFile = remoteManifest.files.find(f => f.path === localFile.path);
+                if (remoteFile && localFile.hash !== remoteFile.hash) {
+                  differentHashes.push({
+                    path: localFile.path,
+                    localHash: localFile.hash,
+                    remoteHash: remoteFile.hash,
+                    localSize: localFile.size,
+                    remoteSize: remoteFile.size
+                  });
+                }
+              });
+              
+              if (differentHashes.length > 0) {
+                console.log(`🐛 Debug: Bestanden met verschillende hashes (${differentHashes.length}):`);
+                differentHashes.forEach((file, index) => {
+                  console.log(`🐛   ${index + 1}. ${file.path}`);
+                  console.log(`🐛      Lokaal:  ${file.localHash.substring(0, 16)}... (${file.localSize} bytes)`);
+                  console.log(`🐛      Remote:  ${file.remoteHash.substring(0, 16)}... (${file.remoteSize} bytes)`);
+                });
+              } else if (inBoth.length > 0) {
+                console.log(`🐛 Debug: Alle ${inBoth.length} gemeenschappelijke bestanden hebben dezelfde hash`);
+              }
+            }
+          }
+          
           // Vergelijk versies
           const versionComparison = compareVersions(currentVersionString, remoteManifest.version);
           console.log(`🔍 Versie vergelijking: ${currentVersionString} vs ${remoteManifest.version} = ${versionComparison}`);
@@ -1557,7 +1669,9 @@ app.get("/admin/update/check", async (req, res) => {
             console.log(`✅ Je gebruikt een nieuwere versie dan remote`);
           }
         } else {
+          // remoteManifest is null - dit betekent meestal een 404 (manifest niet gevonden)
           console.log(`ℹ️ Geen remote manifest gevonden of beschikbaar`);
+          remoteCheckError = `Remote manifest niet gevonden op ${manifestUrl}. Controleer of het bestand bestaat in de repository.`;
         }
       } catch (error) {
         console.error("❌ Fout bij controleren remote manifest:", error.message);
@@ -1581,6 +1695,7 @@ app.get("/admin/update/check", async (req, res) => {
       localManifestMissing: validationResult ? validationResult.missing : [],
       localManifestChanged: validationResult ? validationResult.changed : [],
       remoteCheckError: remoteCheckError,
+      remoteManifest: remoteManifest, // Voeg remote manifest toe voor download
       checkDetails: {
         configFile: UPDATE_CONFIG_FILE,
         configExists: fs.existsSync(UPDATE_CONFIG_FILE),
@@ -1595,6 +1710,18 @@ app.get("/admin/update/check", async (req, res) => {
           ? `Kan niet controleren op updates: ${remoteCheckError}`
           : "Je gebruikt de nieuwste versie"
     };
+    
+    if (isDebugMode) {
+      console.log(`🐛 Debug: Update check samenvatting:`);
+      console.log(`🐛   - Huidige versie: ${currentVersionString} build ${currentVersion.buildNumber}`);
+      console.log(`🐛   - Laatste versie: ${latestVersion} build ${latestBuildNumber}`);
+      console.log(`🐛   - Update beschikbaar: ${updateAvailable ? 'Ja' : 'Nee'}`);
+      console.log(`🐛   - Lokaal manifest: ${localManifest ? `versie ${localManifest.version} (${localManifest.files ? localManifest.files.length : 0} bestanden)` : 'niet gevonden'}`);
+      console.log(`🐛   - Remote manifest: ${remoteManifest ? `versie ${remoteManifest.version} (${remoteManifest.files ? remoteManifest.files.length : 0} bestanden)` : 'niet gevonden'}`);
+      console.log(`🐛   - Configuratie bron: ${configSource || 'geen'}`);
+      console.log(`🐛   - Repository URL: ${repoUrl || 'niet ingesteld'}`);
+      console.log(`🐛   - Remote check fout: ${remoteCheckError || 'geen'}`);
+    }
     
     console.log("✅ Update check voltooid");
     res.json(responseData);
@@ -1614,38 +1741,170 @@ app.post("/admin/update/download", async (req, res) => {
   try {
     const { manifestUrl, manifestData } = req.body;
     
-    // TODO: Implementeer download logica
-    // Dit zou de nieuwe versie moeten downloaden van een repository
-    // en het manifest moeten gebruiken om te bepalen welke bestanden moeten worden bijgewerkt
+    // Als geen manifestData is opgegeven, probeer het remote manifest op te halen
+    let manifestToUse = manifestData;
     
-    if (manifestData) {
-      // Valideer manifest structuur
-      if (!manifestData.version || !manifestData.files || !Array.isArray(manifestData.files)) {
-        return res.status(400).json({ 
-          ok: false, 
-          error: "Ongeldig manifest formaat",
-          message: "Manifest moet versie en files array bevatten"
+    if (!manifestToUse) {
+      // Haal remote manifest op
+      let repoUrl = null;
+      try {
+        if (fs.existsSync(UPDATE_CONFIG_FILE)) {
+          const updateConfig = JSON.parse(fs.readFileSync(UPDATE_CONFIG_FILE, "utf8"));
+          repoUrl = updateConfig.repositoryUrl || process.env.UPDATE_REPOSITORY_URL;
+        } else {
+          repoUrl = process.env.UPDATE_REPOSITORY_URL || null;
+        }
+      } catch (error) {
+        return res.status(500).json({
+          ok: false,
+          error: "Fout bij laden configuratie",
+          message: error.message
         });
       }
       
-      // TODO: Download bestanden op basis van manifest
-      // Voor nu retourneren we dat download nog niet geïmplementeerd is
+      if (!repoUrl) {
+        return res.status(400).json({
+          ok: false,
+          error: "Geen repository URL geconfigureerd",
+          message: "Voeg 'repositoryUrl' toe aan update-config.json of stel UPDATE_REPOSITORY_URL environment variable in."
+        });
+      }
       
-      res.json({
+      const { fetchRemoteManifest } = await import("./lib/update-manifest.js");
+      manifestToUse = await fetchRemoteManifest(repoUrl);
+      
+      if (!manifestToUse) {
+        return res.status(404).json({
+          ok: false,
+          error: "Remote manifest niet gevonden",
+          message: "Kon remote manifest niet ophalen. Controleer of het bestand bestaat in de repository."
+        });
+      }
+    }
+    
+    if (!manifestToUse) {
+      return res.status(400).json({
         ok: false,
-        error: "Download functionaliteit wordt nog geïmplementeerd",
-        message: `Manifest ontvangen voor versie ${manifestData.version} build ${manifestData.buildNumber} met ${manifestData.files.length} bestanden. Download logica moet nog worden geïmplementeerd.`
-      });
-    } else {
-      res.json({
-        ok: false,
-        error: "Geen manifest data ontvangen",
-        message: "Stuur manifestData in de request body"
+        error: "Geen manifest data beschikbaar",
+        message: "Stuur manifestData in de request body of configureer repository URL"
       });
     }
+    
+    // Valideer manifest structuur
+    if (!manifestToUse.version || !manifestToUse.files || !Array.isArray(manifestToUse.files)) {
+      return res.status(400).json({ 
+        ok: false, 
+        error: "Ongeldig manifest formaat",
+        message: "Manifest moet versie en files array bevatten"
+      });
+    }
+    
+    console.log(`📥 Download update gestart voor versie ${manifestToUse.version} build ${manifestToUse.buildNumber}`);
+    
+    // Haal repository URL op uit configuratie
+    let repoUrl = null;
+    try {
+      if (fs.existsSync(UPDATE_CONFIG_FILE)) {
+        const updateConfig = JSON.parse(fs.readFileSync(UPDATE_CONFIG_FILE, "utf8"));
+        repoUrl = updateConfig.repositoryUrl || process.env.UPDATE_REPOSITORY_URL;
+      } else {
+        repoUrl = process.env.UPDATE_REPOSITORY_URL || null;
+      }
+    } catch (error) {
+      console.error("❌ Fout bij laden update configuratie:", error.message);
+      return res.status(500).json({
+        ok: false,
+        error: "Fout bij laden configuratie",
+        message: error.message
+      });
+    }
+    
+    if (!repoUrl) {
+      return res.status(400).json({
+        ok: false,
+        error: "Geen repository URL geconfigureerd",
+        message: "Voeg 'repositoryUrl' toe aan update-config.json of stel UPDATE_REPOSITORY_URL environment variable in."
+      });
+    }
+    
+    // Normaliseer repoUrl
+    repoUrl = repoUrl.replace(/\/$/, '');
+    
+    const { downloadFile, shouldExcludeFile } = await import("./lib/update-manifest.js");
+    const downloadedFiles = [];
+    const errors = [];
+    const skipped = [];
+    
+    console.log(`📦 Downloaden van ${manifestToUse.files.length} bestanden...`);
+    
+    // Download alle bestanden uit het manifest
+    for (const fileEntry of manifestToUse.files) {
+      try {
+        // Skip bestanden die uitgesloten moeten worden
+        if (shouldExcludeFile(fileEntry.path)) {
+          skipped.push(fileEntry.path);
+          console.log(`⏭️  Overgeslagen (uitgesloten): ${fileEntry.path}`);
+          continue;
+        }
+        
+        console.log(`⬇️  Downloaden: ${fileEntry.path}...`);
+        const fileContent = await downloadFile(repoUrl, fileEntry.path);
+        
+        // Valideer hash
+        const { validateFileHash } = await import("./lib/update-manifest.js");
+        if (!validateFileHash(fileContent, fileEntry.hash)) {
+          throw new Error(`Hash validatie gefaald voor ${fileEntry.path}`);
+        }
+        
+        downloadedFiles.push({
+          path: fileEntry.path,
+          content: fileContent.toString('base64'), // Encode als base64 voor transport
+          hash: fileEntry.hash,
+          size: fileEntry.size
+        });
+        
+        console.log(`✅ Gedownload: ${fileEntry.path} (${fileEntry.size} bytes)`);
+      } catch (error) {
+        console.error(`❌ Fout bij downloaden ${fileEntry.path}:`, error.message);
+        errors.push({
+          path: fileEntry.path,
+          error: error.message
+        });
+      }
+    }
+    
+    if (errors.length > 0 && downloadedFiles.length === 0) {
+      return res.status(500).json({
+        ok: false,
+        error: "Download gefaald",
+        message: `Kon geen bestanden downloaden. ${errors.length} fouten opgetreden.`,
+        errors: errors
+      });
+    }
+    
+    console.log(`✅ Download voltooid: ${downloadedFiles.length} bestanden gedownload, ${skipped.length} overgeslagen, ${errors.length} fouten`);
+    
+    res.json({
+      ok: true,
+      message: `Download voltooid: ${downloadedFiles.length} bestanden gedownload`,
+      version: manifestToUse.version,
+      buildNumber: manifestToUse.buildNumber,
+      manifestData: manifestToUse, // Retourneer manifest voor installatie
+      files: downloadedFiles, // Retourneer gedownloade bestanden
+      downloaded: downloadedFiles.length,
+      skipped: skipped.length,
+      errors: errors.length,
+      skippedFiles: skipped,
+      downloadErrors: errors.length > 0 ? errors : undefined
+    });
   } catch (error) {
     console.error("❌ Error downloading update:", error);
-    res.status(500).json({ error: "Failed to download update", message: error.message });
+    console.error("   Stack trace:", error.stack);
+    res.status(500).json({ 
+      ok: false,
+      error: "Failed to download update", 
+      message: error.message 
+    });
   }
 });
 
@@ -1653,10 +1912,6 @@ app.post("/admin/update/download", async (req, res) => {
 app.post("/admin/update/install", async (req, res) => {
   try {
     const { manifestData, files } = req.body;
-    
-    // TODO: Implementeer install logica
-    // Dit zou de nieuwe versie moeten installeren en de server moeten herstarten
-    // Gebruik manifest om te bepalen welke bestanden moeten worden bijgewerkt
     
     if (!manifestData || !files) {
       return res.status(400).json({
@@ -1675,30 +1930,137 @@ app.post("/admin/update/install", async (req, res) => {
       });
     }
     
-    // Valideer bestanden tegen manifest hashes
-    const { validateManifest } = await import("./lib/update-manifest.js");
-    const validationResult = validateManifest(manifestData);
+    console.log(`🔧 Installatie update gestart voor versie ${manifestData.version} build ${manifestData.buildNumber}`);
     
-    if (!validationResult.valid) {
-      return res.status(400).json({
+    const { validateFileHash, shouldExcludeFile, backupFile } = await import("./lib/update-manifest.js");
+    const installedFiles = [];
+    const backedUpFiles = [];
+    const errors = [];
+    const skipped = [];
+    
+    // Valideer en installeer bestanden
+    console.log(`📝 Installeren van ${files.length} bestanden...`);
+    
+    for (const fileData of files) {
+      try {
+        const filePath = fileData.path;
+        const fileContent = Buffer.from(fileData.content, 'base64');
+        
+        // Skip bestanden die uitgesloten moeten worden
+        if (shouldExcludeFile(filePath)) {
+          skipped.push(filePath);
+          console.log(`⏭️  Overgeslagen (uitgesloten): ${filePath}`);
+          continue;
+        }
+        
+        // Vind bijbehorende manifest entry
+        const manifestEntry = manifestData.files.find(f => f.path === filePath);
+        if (!manifestEntry) {
+          throw new Error(`Geen manifest entry gevonden voor ${filePath}`);
+        }
+        
+        // Valideer hash
+        if (!validateFileHash(fileContent, manifestEntry.hash)) {
+          throw new Error(`Hash validatie gefaald voor ${filePath}`);
+        }
+        
+        // Maak volledig pad
+        const fullPath = path.join(ROOT, filePath);
+        const dirPath = path.dirname(fullPath);
+        
+        // Maak directory aan als deze niet bestaat
+        if (!fs.existsSync(dirPath)) {
+          fs.mkdirSync(dirPath, { recursive: true });
+          console.log(`📁 Directory aangemaakt: ${dirPath}`);
+        }
+        
+        // Maak backup van bestaand bestand
+        const backupPath = backupFile(fullPath);
+        if (backupPath) {
+          backedUpFiles.push({ original: filePath, backup: backupPath });
+          console.log(`💾 Backup gemaakt: ${backupPath}`);
+        }
+        
+        // Schrijf bestand
+        fs.writeFileSync(fullPath, fileContent);
+        installedFiles.push(filePath);
+        console.log(`✅ Geïnstalleerd: ${filePath} (${fileContent.length} bytes)`);
+      } catch (error) {
+        console.error(`❌ Fout bij installeren ${fileData.path}:`, error.message);
+        errors.push({
+          path: fileData.path,
+          error: error.message
+        });
+      }
+    }
+    
+    if (errors.length > 0 && installedFiles.length === 0) {
+      return res.status(500).json({
         ok: false,
-        error: "Manifest validatie gefaald",
-        message: "Niet alle bestanden zijn geldig",
-        errors: validationResult.errors
+        error: "Installatie gefaald",
+        message: `Kon geen bestanden installeren. ${errors.length} fouten opgetreden.`,
+        errors: errors
       });
     }
     
-    // TODO: Schrijf bestanden naar disk en herstart server
-    // Voor nu retourneren we dat install nog niet geïmplementeerd is
+    // Update versie bestand
+    try {
+      const { saveVersion } = await import("./lib/version.js");
+      saveVersion({
+        version: manifestData.version,
+        buildNumber: manifestData.buildNumber,
+        lastUpdated: new Date().toISOString(),
+        lastBuildUpdate: new Date().toISOString()
+      });
+      console.log(`✅ Versie bijgewerkt naar ${manifestData.version} build ${manifestData.buildNumber}`);
+    } catch (error) {
+      console.error(`⚠️ Kon versie niet bijwerken:`, error.message);
+    }
     
+    // Update lokaal manifest
+    try {
+      const { saveManifest } = await import("./lib/update-manifest.js");
+      saveManifest(manifestData);
+      console.log(`✅ Lokaal manifest bijgewerkt`);
+    } catch (error) {
+      console.error(`⚠️ Kon manifest niet bijwerken:`, error.message);
+    }
+    
+    console.log(`✅ Installatie voltooid: ${installedFiles.length} bestanden geïnstalleerd, ${skipped.length} overgeslagen, ${errors.length} fouten`);
+    
+    // Stuur response VOORDAT server wordt herstart
     res.json({
-      ok: false,
-      error: "Install functionaliteit wordt nog geïmplementeerd",
-      message: `Manifest gevalideerd voor versie ${manifestData.version} build ${manifestData.buildNumber}. Install logica moet nog worden geïmplementeerd.`
+      ok: true,
+      message: `Update succesvol geïnstalleerd: versie ${manifestData.version} build ${manifestData.buildNumber}`,
+      version: manifestData.version,
+      buildNumber: manifestData.buildNumber,
+      installed: installedFiles.length,
+      skipped: skipped.length,
+      errors: errors.length,
+      backedUp: backedUpFiles.length,
+      installedFiles: installedFiles,
+      skippedFiles: skipped,
+      backedUpFiles: backedUpFiles,
+      errors: errors.length > 0 ? errors : undefined,
+      restartRequired: true,
+      restartMessage: "Server moet worden herstart om de update te activeren. Gebruik 'npm run service:restart' of herstart de service handmatig."
     });
+    
+    // Geef tijd voor response om te worden verzonden
+    setTimeout(() => {
+      console.log(`🔄 Update geïnstalleerd. Server herstart wordt aanbevolen.`);
+      console.log(`   Gebruik: npm run service:restart`);
+      console.log(`   Of herstart de service handmatig via Windows Service Manager`);
+    }, 1000);
+    
   } catch (error) {
     console.error("❌ Error installing update:", error);
-    res.status(500).json({ error: "Failed to install update", message: error.message });
+    console.error("   Stack trace:", error.stack);
+    res.status(500).json({ 
+      ok: false,
+      error: "Failed to install update", 
+      message: error.message 
+    });
   }
 });
 

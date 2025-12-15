@@ -220,6 +220,13 @@
         }
       }
       
+      // Update update info modal als deze open is
+      const updateInfoModal = document.getElementById("updateInfoModal");
+      const updateInfoContent = document.getElementById("updateInfoContent");
+      if (updateInfoModal && updateInfoContent && !updateInfoModal.classList.contains("hidden")) {
+        updateInfoContent.innerHTML = generateUpdateInfoHTML(result);
+      }
+      
       if (checkBtn) {
         checkBtn.classList.remove("disabled");
         checkBtn.innerHTML = '<span>🔄</span> Controleren op updates';
@@ -241,20 +248,47 @@
       const downloadBtn = document.getElementById("downloadUpdateBtn");
       const installBtn = document.getElementById("installUpdateBtn");
       
+      if (!updateCheckData || !updateCheckData.updateAvailable) {
+        toast("❌ Geen update beschikbaar om te downloaden");
+        return;
+      }
+      
       if (downloadBtn) {
         downloadBtn.classList.add("disabled");
         downloadBtn.innerHTML = '<span>⏳</span> Downloaden...';
       }
       
-      const result = await api("/admin/update/download", { method: "POST" });
+      // Gebruik remote manifest uit update check data
+      const manifestData = updateCheckData.remoteManifest;
+      
+      if (!manifestData) {
+        toast("❌ Geen manifest beschikbaar. Voer eerst een update check uit.");
+        if (downloadBtn) {
+          downloadBtn.classList.remove("disabled");
+          downloadBtn.innerHTML = '<span>⬇️</span> Download update';
+        }
+        return;
+      }
+      
+      const result = await api("/admin/update/download", {
+        method: "POST",
+        body: JSON.stringify({ manifestData: manifestData })
+      });
       
       if (result.ok) {
-        toast("✅ Update gedownload");
+        // Sla gedownloade bestanden op voor installatie
+        updateCheckData.downloadedFiles = result.files;
+        updateCheckData.downloadedManifest = result.manifestData;
+        
+        toast(`✅ Update gedownload: ${result.downloaded} bestanden`);
         if (installBtn) {
           installBtn.classList.remove("hidden");
         }
       } else {
         toast(`❌ Fout bij downloaden: ${result.error || result.message}`);
+        if (result.downloadErrors && result.downloadErrors.length > 0) {
+          console.error("Download fouten:", result.downloadErrors);
+        }
       }
       
       if (downloadBtn) {
@@ -279,9 +313,17 @@
       return;
     }
     
+    // Controleer of bestanden zijn gedownload
+    if (!updateCheckData.downloadedFiles || !updateCheckData.downloadedManifest) {
+      toast("❌ Bestanden niet gedownload. Download eerst de update.");
+      return;
+    }
+    
     const confirmed = await showConfirm(
       "Update installeren",
-      `Weet je zeker dat je wilt updaten naar versie ${updateCheckData.latestVersion} build ${updateCheckData.latestBuildNumber}? De server zal worden herstart.`
+      `Weet je zeker dat je wilt updaten naar versie ${updateCheckData.latestVersion} build ${updateCheckData.latestBuildNumber}?\n\n` +
+      `Er worden ${updateCheckData.downloadedFiles.length} bestanden geïnstalleerd.\n\n` +
+      `De server moet handmatig worden herstart na installatie.`
     );
     
     if (!confirmed) {
@@ -296,15 +338,39 @@
         installBtn.innerHTML = '<span>⏳</span> Installeren...';
       }
       
-      const result = await api("/admin/update/install", { method: "POST" });
+      const result = await api("/admin/update/install", {
+        method: "POST",
+        body: JSON.stringify({
+          manifestData: updateCheckData.downloadedManifest,
+          files: updateCheckData.downloadedFiles
+        })
+      });
       
       if (result.ok) {
-        toast("✅ Update geïnstalleerd. Server wordt herstart...");
+        toast(`✅ Update geïnstalleerd: ${result.installed} bestanden. ${result.restartMessage || 'Herstart de server handmatig.'}`);
+        
+        // Reset update check data
+        updateCheckData = null;
+        
+        // Verberg download en install knoppen
+        const downloadBtn = document.getElementById("downloadUpdateBtn");
+        const checkBtn = document.getElementById("checkUpdateBtn");
+        if (downloadBtn) downloadBtn.classList.add("hidden");
+        if (installBtn) installBtn.classList.add("hidden");
+        if (checkBtn) {
+          checkBtn.classList.remove("disabled");
+          checkBtn.innerHTML = '<span>🔄</span> Controleren op updates';
+        }
+        
+        // Herlaad pagina na 3 seconden om nieuwe versie te tonen
         setTimeout(() => {
           window.location.reload();
-        }, 2000);
+        }, 3000);
       } else {
         toast(`❌ Fout bij installeren: ${result.error || result.message}`);
+        if (result.errors && result.errors.length > 0) {
+          console.error("Installatie fouten:", result.errors);
+        }
       }
       
       if (installBtn) {
@@ -321,6 +387,214 @@
         installBtn.innerHTML = '<span>⚡</span> Installeer en activeer';
       }
     }
+  }
+
+  async function showUpdateInfo() {
+    try {
+      // Toon modal
+      const modal = document.getElementById("updateInfoModal");
+      const content = document.getElementById("updateInfoContent");
+      
+      if (!modal || !content) return;
+      
+      modal.classList.remove("hidden");
+      content.innerHTML = '<div style="text-align: center; padding: 20px;"><p class="muted">Update informatie wordt geladen...</p></div>';
+      
+      // Haal update check data op
+      const result = await api("/admin/update/check");
+      
+      // Update checkData voor gebruik in andere functies
+      updateCheckData = result;
+      
+      // Genereer HTML content
+      content.innerHTML = generateUpdateInfoHTML(result);
+      
+    } catch (error) {
+      console.error("❌ Fout bij ophalen update informatie:", error);
+      const content = document.getElementById("updateInfoContent");
+      if (content) {
+        content.innerHTML = `
+          <div style="text-align: center; padding: 20px;">
+            <p style="color: var(--danger);">❌ Fout bij ophalen update informatie: ${error.message}</p>
+          </div>
+        `;
+      }
+    }
+  }
+
+  function generateUpdateInfoHTML(data) {
+    if (!data) {
+      return '<div style="text-align: center; padding: 20px;"><p class="muted">Geen update informatie beschikbaar</p></div>';
+    }
+    
+    const statusIcon = data.updateAvailable ? '✨' : (data.remoteCheckError ? '⚠️' : '✅');
+    const statusText = data.updateAvailable ? 'Update beschikbaar' : (data.remoteCheckError ? 'Fout bij controleren' : 'Up-to-date');
+    const statusColor = data.updateAvailable ? 'var(--success)' : (data.remoteCheckError ? 'var(--danger)' : 'var(--muted)');
+    
+    let html = `
+      <div style="display: grid; gap: 20px;">
+        <!-- Status Sectie -->
+        <div style="background: var(--bg-secondary); padding: 16px; border-radius: 8px; border: 1px solid var(--border);">
+          <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 12px;">
+            <span style="font-size: 24px;">${statusIcon}</span>
+            <h3 style="margin: 0; color: ${statusColor};">${statusText}</h3>
+          </div>
+          <p style="margin: 0; color: var(--muted); font-size: 14px;">${data.message || 'Geen bericht'}</p>
+        </div>
+        
+        <!-- Versie Informatie -->
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
+          <div style="background: var(--bg-secondary); padding: 16px; border-radius: 8px; border: 1px solid var(--border);">
+            <h4 style="margin: 0 0 12px 0; color: var(--muted); font-size: 12px; text-transform: uppercase;">Huidige Versie</h4>
+            <div style="font-size: 24px; font-weight: bold; margin-bottom: 4px;">${data.currentVersion || 'Onbekend'}</div>
+            <div style="color: var(--muted); font-size: 14px;">Build ${data.currentBuildNumber || 'Onbekend'}</div>
+          </div>
+          <div style="background: var(--bg-secondary); padding: 16px; border-radius: 8px; border: 1px solid var(--border);">
+            <h4 style="margin: 0 0 12px 0; color: var(--muted); font-size: 12px; text-transform: uppercase;">Laatste Versie</h4>
+            <div style="font-size: 24px; font-weight: bold; margin-bottom: 4px; color: ${data.updateAvailable ? 'var(--success)' : 'inherit'};">${data.latestVersion || 'Onbekend'}</div>
+            <div style="color: var(--muted); font-size: 14px;">Build ${data.latestBuildNumber || 'Onbekend'}</div>
+          </div>
+        </div>
+    `;
+    
+    // Lokaal Manifest Informatie
+    if (data.localManifestValid !== null) {
+      const localStatus = data.localManifestValid ? '✅' : '⚠️';
+      const localStatusColor = data.localManifestValid ? 'var(--success)' : 'var(--warning)';
+      
+      html += `
+        <div style="background: var(--bg-secondary); padding: 16px; border-radius: 8px; border: 1px solid var(--border);">
+          <h4 style="margin: 0 0 12px 0; display: flex; align-items: center; gap: 8px;">
+            <span>${localStatus}</span>
+            <span>Lokaal Manifest</span>
+            <span style="color: ${localStatusColor}; font-size: 12px; margin-left: auto;">
+              ${data.localManifestValid ? 'Geldig' : 'Ongeldig'}
+            </span>
+          </h4>
+      `;
+      
+      if (!data.localManifestValid) {
+        if (data.localManifestMissing && data.localManifestMissing.length > 0) {
+          html += `
+            <div style="margin-top: 12px;">
+              <strong style="color: var(--danger); font-size: 13px;">Ontbrekende bestanden (${data.localManifestMissing.length}):</strong>
+              <ul style="margin: 8px 0 0 0; padding-left: 20px; font-size: 12px; color: var(--muted);">
+                ${data.localManifestMissing.slice(0, 10).map(f => `<li>${f}</li>`).join('')}
+                ${data.localManifestMissing.length > 10 ? `<li><em>... en ${data.localManifestMissing.length - 10} meer</em></li>` : ''}
+              </ul>
+            </div>
+          `;
+        }
+        
+        if (data.localManifestChanged && data.localManifestChanged.length > 0) {
+          html += `
+            <div style="margin-top: 12px;">
+              <strong style="color: var(--warning); font-size: 13px;">Gewijzigde bestanden (${data.localManifestChanged.length}):</strong>
+              <ul style="margin: 8px 0 0 0; padding-left: 20px; font-size: 12px; color: var(--muted);">
+                ${data.localManifestChanged.slice(0, 10).map(f => `<li>${typeof f === 'string' ? f : f.path}</li>`).join('')}
+                ${data.localManifestChanged.length > 10 ? `<li><em>... en ${data.localManifestChanged.length - 10} meer</em></li>` : ''}
+              </ul>
+            </div>
+          `;
+        }
+        
+        if (data.localManifestErrors && data.localManifestErrors.length > 0) {
+          html += `
+            <div style="margin-top: 12px;">
+              <strong style="color: var(--danger); font-size: 13px;">Fouten (${data.localManifestErrors.length}):</strong>
+              <ul style="margin: 8px 0 0 0; padding-left: 20px; font-size: 12px; color: var(--muted);">
+                ${data.localManifestErrors.slice(0, 10).map(e => `<li>${e}</li>`).join('')}
+                ${data.localManifestErrors.length > 10 ? `<li><em>... en ${data.localManifestErrors.length - 10} meer</em></li>` : ''}
+              </ul>
+            </div>
+          `;
+        }
+      }
+      
+      html += `</div>`;
+    }
+    
+    // Remote Check Details
+    if (data.checkDetails) {
+      html += `
+        <div style="background: var(--bg-secondary); padding: 16px; border-radius: 8px; border: 1px solid var(--border);">
+          <h4 style="margin: 0 0 12px 0;">🔗 Configuratie Details</h4>
+          <div style="display: grid; gap: 8px; font-size: 13px;">
+            <div style="display: flex; justify-content: space-between;">
+              <span style="color: var(--muted);">Configuratie bestand:</span>
+              <span style="font-family: monospace; font-size: 12px;">${data.checkDetails.configFile || 'Onbekend'}</span>
+            </div>
+            <div style="display: flex; justify-content: space-between;">
+              <span style="color: var(--muted);">Bestand bestaat:</span>
+              <span style="color: ${data.checkDetails.configExists ? 'var(--success)' : 'var(--danger)'};">
+                ${data.checkDetails.configExists ? '✅ Ja' : '❌ Nee'}
+              </span>
+            </div>
+            <div style="display: flex; justify-content: space-between;">
+              <span style="color: var(--muted);">Configuratie bron:</span>
+              <span>${data.checkDetails.configSource || 'Geen'}</span>
+            </div>
+            <div style="display: flex; justify-content: space-between;">
+              <span style="color: var(--muted);">Repository URL:</span>
+              <span style="font-family: monospace; font-size: 11px; word-break: break-all; text-align: right; max-width: 60%;">
+                ${data.checkDetails.repositoryUrl || 'Niet ingesteld'}
+              </span>
+            </div>
+            <div style="display: flex; justify-content: space-between;">
+              <span style="color: var(--muted);">Manifest URL:</span>
+              <span style="font-family: monospace; font-size: 11px; word-break: break-all; text-align: right; max-width: 60%;">
+                ${data.checkDetails.manifestUrl || 'Niet beschikbaar'}
+              </span>
+            </div>
+            <div style="display: flex; justify-content: space-between;">
+              <span style="color: var(--muted);">Gecheckt bestand:</span>
+              <span style="font-family: monospace; font-size: 12px;">${data.checkDetails.checkedFile || 'update-manifest.json'}</span>
+            </div>
+          </div>
+        </div>
+      `;
+    }
+    
+    // Remote Check Error
+    if (data.remoteCheckError) {
+      html += `
+        <div style="background: rgba(239, 68, 68, 0.1); padding: 16px; border-radius: 8px; border: 1px solid var(--danger);">
+          <h4 style="margin: 0 0 8px 0; color: var(--danger);">⚠️ Remote Check Fout</h4>
+          <p style="margin: 0; color: var(--muted); font-size: 13px;">${data.remoteCheckError}</p>
+        </div>
+      `;
+    }
+    
+    // Remote Manifest Informatie
+    if (data.remoteManifest) {
+      html += `
+        <div style="background: var(--bg-secondary); padding: 16px; border-radius: 8px; border: 1px solid var(--border);">
+          <h4 style="margin: 0 0 12px 0;">📦 Remote Manifest</h4>
+          <div style="display: grid; gap: 8px; font-size: 13px;">
+            <div style="display: flex; justify-content: space-between;">
+              <span style="color: var(--muted);">Versie:</span>
+              <span style="font-weight: bold;">${data.remoteManifest.version || 'Onbekend'}</span>
+            </div>
+            <div style="display: flex; justify-content: space-between;">
+              <span style="color: var(--muted);">Build nummer:</span>
+              <span>${data.remoteManifest.buildNumber || 'Onbekend'}</span>
+            </div>
+            <div style="display: flex; justify-content: space-between;">
+              <span style="color: var(--muted);">Timestamp:</span>
+              <span style="font-family: monospace; font-size: 11px;">${data.remoteManifest.timestamp || 'Onbekend'}</span>
+            </div>
+            <div style="display: flex; justify-content: space-between;">
+              <span style="color: var(--muted);">Aantal bestanden:</span>
+              <span>${data.remoteManifest.files ? data.remoteManifest.files.length : 0}</span>
+            </div>
+          </div>
+        </div>
+      `;
+    }
+    
+    html += `</div>`;
+    
+    return html;
   }
 
   async function showVersionInfo() {
@@ -360,6 +634,39 @@
     const checkUpdateBtn = document.getElementById("checkUpdateBtn");
     const downloadUpdateBtn = document.getElementById("downloadUpdateBtn");
     const installUpdateBtn = document.getElementById("installUpdateBtn");
+    // Update Info Modal handlers
+    const updateInfoModal = document.getElementById("updateInfoModal");
+    const updateInfoClose = document.getElementById("updateInfoClose");
+    const updateInfoCloseBtn = document.getElementById("updateInfoCloseBtn");
+    const updateInfoRefresh = document.getElementById("updateInfoRefresh");
+    
+    if (updateInfoClose) {
+      updateInfoClose.addEventListener("click", () => {
+        if (updateInfoModal) updateInfoModal.classList.add("hidden");
+      });
+    }
+    
+    if (updateInfoCloseBtn) {
+      updateInfoCloseBtn.addEventListener("click", () => {
+        if (updateInfoModal) updateInfoModal.classList.add("hidden");
+      });
+    }
+    
+    if (updateInfoRefresh) {
+      updateInfoRefresh.addEventListener("click", async () => {
+        await showUpdateInfo();
+      });
+    }
+    
+    // Sluit modal bij klik buiten de content
+    if (updateInfoModal) {
+      updateInfoModal.addEventListener("click", (e) => {
+        if (e.target === updateInfoModal) {
+          updateInfoModal.classList.add("hidden");
+        }
+      });
+    }
+    
     const versionInfoBtn = document.getElementById("versionInfoBtn");
     
     if (checkUpdateBtn) {
@@ -390,7 +697,42 @@
       versionInfoBtn.addEventListener("click", (e) => {
         e.stopPropagation();
         versionMenu.classList.add("hidden");
-        showVersionInfo();
+        showUpdateInfo(); // Toon update info in plaats van alleen versie info
+      });
+    }
+  }
+  
+  // Update Info Modal handlers
+  function setupUpdateInfoModal() {
+    const updateInfoModal = document.getElementById("updateInfoModal");
+    const updateInfoClose = document.getElementById("updateInfoClose");
+    const updateInfoCloseBtn = document.getElementById("updateInfoCloseBtn");
+    const updateInfoRefresh = document.getElementById("updateInfoRefresh");
+    
+    if (updateInfoClose) {
+      updateInfoClose.addEventListener("click", () => {
+        if (updateInfoModal) updateInfoModal.classList.add("hidden");
+      });
+    }
+    
+    if (updateInfoCloseBtn) {
+      updateInfoCloseBtn.addEventListener("click", () => {
+        if (updateInfoModal) updateInfoModal.classList.add("hidden");
+      });
+    }
+    
+    if (updateInfoRefresh) {
+      updateInfoRefresh.addEventListener("click", async () => {
+        await showUpdateInfo();
+      });
+    }
+    
+    // Sluit modal bij klik buiten de content
+    if (updateInfoModal) {
+      updateInfoModal.addEventListener("click", (e) => {
+        if (e.target === updateInfoModal) {
+          updateInfoModal.classList.add("hidden");
+        }
       });
     }
   }
@@ -842,6 +1184,7 @@
     try{ 
       loadVersion(); // Laad versie
       setupVersionMenu(); // Setup versie menu functionaliteit
+      setupUpdateInfoModal(); // Setup update info modal
       load(); // Dit laadt tenants
       health(); 
       loadStats(); 
