@@ -3456,7 +3456,7 @@
           const tr = document.createElement("tr");
           tr.setAttribute("data-event-id", ev.msgId || `event-${ev.ts}-${ev.from}`);
           const ts = ev.ts ? new Date(ev.ts).toLocaleString() : "";
-          const badge = ev.reason ? `<span class="badge ${ev.reason === 'fallback' ? 'warn' : ev.reason === 'tenant_ip_not_allowed' ? 'err' : 'err'}">${ev.reason}</span>` : "";
+          const badge = ev.reason ? `<span class="badge ${ev.reason === 'message_delivered' ? 'success' : ev.reason === 'fallback' ? 'warn' : ev.reason === 'tenant_ip_not_allowed' ? 'err' : 'err'}">${ev.reason}</span>` : "";
           const info = ev.message || ev.error || "";
           const remoteIP = ev.remoteIP || "";
           tr.innerHTML = `<td>${ts}</td><td>${ev.level}</td><td>${badge}</td><td>${ev.tenant||""}</td><td>${ev.from||""}</td><td>${ev.rcptCount||""}</td><td>${ev.sizeKB||""}</td><td>${remoteIP}</td><td>${info.toString().slice(0,200)}</td>`;
@@ -3481,7 +3481,7 @@
             tr.style.opacity = "0"; // Start onzichtbaar
             
             const ts = ev.ts ? new Date(ev.ts).toLocaleString() : "";
-            const badge = ev.reason ? `<span class="badge ${ev.reason === 'fallback' ? 'warn' : ev.reason === 'tenant_ip_not_allowed' ? 'err' : 'err'}">${ev.reason}</span>` : "";
+            const badge = ev.reason ? `<span class="badge ${ev.reason === 'message_delivered' ? 'success' : ev.reason === 'fallback' ? 'warn' : ev.reason === 'tenant_ip_not_allowed' ? 'err' : 'err'}">${ev.reason}</span>` : "";
             const info = ev.message || ev.error || "";
             const remoteIP = ev.remoteIP || "";
             tr.innerHTML = `<td>${ts}</td><td>${ev.level}</td><td>${badge}</td><td>${ev.tenant||""}</td><td>${ev.from||""}</td><td>${ev.rcptCount||""}</td><td>${ev.sizeKB||""}</td><td>${remoteIP}</td><td>${info.toString().slice(0,200)}</td>`;
@@ -3726,7 +3726,7 @@
     },
     success: {
       levels: "success,ok",
-      reasons: "deliver.ok,ok"
+      reasons: "deliver.ok,ok,message_delivered"
     }
   };
 
