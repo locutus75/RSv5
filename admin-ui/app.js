@@ -204,19 +204,27 @@
       
       if (result.updateAvailable) {
         toast(`✅ Nieuwe versie beschikbaar: ${result.latestVersion} build ${result.latestBuildNumber}`);
+        const downloadAndInstallBtn = document.getElementById("downloadAndInstallBtn");
         if (downloadBtn) {
           downloadBtn.classList.remove("hidden");
         }
         if (installBtn) {
           installBtn.classList.remove("hidden");
         }
+        if (downloadAndInstallBtn) {
+          downloadAndInstallBtn.classList.remove("hidden");
+        }
       } else {
         toast("ℹ️ Je gebruikt de nieuwste versie");
+        const downloadAndInstallBtn = document.getElementById("downloadAndInstallBtn");
         if (downloadBtn) {
           downloadBtn.classList.add("hidden");
         }
         if (installBtn) {
           installBtn.classList.add("hidden");
+        }
+        if (downloadAndInstallBtn) {
+          downloadAndInstallBtn.classList.add("hidden");
         }
       }
       
@@ -307,7 +315,67 @@
     }
   }
 
-  async function installUpdate() {
+  async function downloadAndInstallUpdate() {
+    if (!updateCheckData || !updateCheckData.updateAvailable) {
+      toast("❌ Geen update beschikbaar om te downloaden en installeren");
+      return;
+    }
+    
+    // Vraag bevestiging voor download en install
+    const confirmed = await showConfirm(
+      "Update downloaden en installeren",
+      `Weet je zeker dat je wilt updaten naar versie ${updateCheckData.latestVersion} build ${updateCheckData.latestBuildNumber}?\n\n` +
+      `De update wordt gedownload en direct geïnstalleerd.\n\n` +
+      `De server moet handmatig worden herstart na installatie.`
+    );
+    
+    if (!confirmed) {
+      return;
+    }
+    
+    try {
+      const downloadAndInstallBtn = document.getElementById("downloadAndInstallBtn");
+      if (downloadAndInstallBtn) {
+        downloadAndInstallBtn.classList.add("disabled");
+        downloadAndInstallBtn.innerHTML = '<span>⏳</span> Downloaden en installeren...';
+      }
+      
+      // Stap 1: Download update
+      await downloadUpdate();
+      
+      // Wacht even zodat download kan voltooien
+      await new Promise(resolve => setTimeout(resolve, 500));
+      
+      // Controleer of download succesvol was
+      if (!updateCheckData || !updateCheckData.downloadedFiles || !updateCheckData.downloadedManifest) {
+        toast("❌ Download gefaald. Kan niet installeren.");
+        if (downloadAndInstallBtn) {
+          downloadAndInstallBtn.classList.remove("disabled");
+          downloadAndInstallBtn.innerHTML = '<span>🚀</span> Download en installeer';
+        }
+        return;
+      }
+      
+      // Stap 2: Installeer update (zonder extra bevestiging, gebruiker heeft al bevestigd)
+      await installUpdate(true); // true = skip confirmation
+      
+      if (downloadAndInstallBtn) {
+        downloadAndInstallBtn.classList.remove("disabled");
+        downloadAndInstallBtn.innerHTML = '<span>🚀</span> Download en installeer';
+      }
+    } catch (error) {
+      console.error("❌ Fout bij downloaden en installeren:", error);
+      toast(`❌ Fout bij downloaden en installeren: ${error.message}`);
+      
+      const downloadAndInstallBtn = document.getElementById("downloadAndInstallBtn");
+      if (downloadAndInstallBtn) {
+        downloadAndInstallBtn.classList.remove("disabled");
+        downloadAndInstallBtn.innerHTML = '<span>🚀</span> Download en installeer';
+      }
+    }
+  }
+
+  async function installUpdate(skipConfirmation = false) {
     if (!updateCheckData || !updateCheckData.updateAvailable) {
       toast("❌ Geen update beschikbaar om te installeren");
       return;
@@ -319,15 +387,18 @@
       return;
     }
     
-    const confirmed = await showConfirm(
-      "Update installeren",
-      `Weet je zeker dat je wilt updaten naar versie ${updateCheckData.latestVersion} build ${updateCheckData.latestBuildNumber}?\n\n` +
-      `Er worden ${updateCheckData.downloadedFiles.length} bestanden geïnstalleerd.\n\n` +
-      `De server moet handmatig worden herstart na installatie.`
-    );
-    
-    if (!confirmed) {
-      return;
+    // Vraag bevestiging tenzij skipConfirmation true is
+    if (!skipConfirmation) {
+      const confirmed = await showConfirm(
+        "Update installeren",
+        `Weet je zeker dat je wilt updaten naar versie ${updateCheckData.latestVersion} build ${updateCheckData.latestBuildNumber}?\n\n` +
+        `Er worden ${updateCheckData.downloadedFiles.length} bestanden geïnstalleerd.\n\n` +
+        `De server moet handmatig worden herstart na installatie.`
+      );
+      
+      if (!confirmed) {
+        return;
+      }
     }
     
     try {
@@ -354,9 +425,11 @@
         
         // Verberg download en install knoppen
         const downloadBtn = document.getElementById("downloadUpdateBtn");
+        const downloadAndInstallBtn = document.getElementById("downloadAndInstallBtn");
         const checkBtn = document.getElementById("checkUpdateBtn");
         if (downloadBtn) downloadBtn.classList.add("hidden");
         if (installBtn) installBtn.classList.add("hidden");
+        if (downloadAndInstallBtn) downloadAndInstallBtn.classList.add("hidden");
         if (checkBtn) {
           checkBtn.classList.remove("disabled");
           checkBtn.innerHTML = '<span>🔄</span> Controleren op updates';
@@ -690,6 +763,15 @@
         e.stopPropagation();
         versionMenu.classList.add("hidden");
         installUpdate();
+      });
+    }
+    
+    const downloadAndInstallBtn = document.getElementById("downloadAndInstallBtn");
+    if (downloadAndInstallBtn) {
+      downloadAndInstallBtn.addEventListener("click", (e) => {
+        e.stopPropagation();
+        versionMenu.classList.add("hidden");
+        downloadAndInstallUpdate();
       });
     }
     
