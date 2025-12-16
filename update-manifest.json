@@ -1,13 +1,13 @@
 {
-  "version": "5.2.5",
-  "buildNumber": "1216",
-  "timestamp": "2025-12-15T01:51:09.728Z",
+  "version": "5.2.6",
+  "buildNumber": "1217",
+  "timestamp": "2025-12-16T22:43:05.819Z",
   "files": [
     {
       "path": "admin-ui/app.js",
-      "hash": "39205227ee1809777c67a9b393e86b62c9477f72895758ec8aa910df16ac0f3a",
-      "size": 153480,
-      "modified": "2025-12-15T01:51:04.919Z"
+      "hash": "27fe142cc19c78e9c442e7a93575ad759c0fc78b5990e789987806935b23df71",
+      "size": 154647,
+      "modified": "2025-12-16T22:30:13.168Z"
     },
     {
       "path": "admin-ui/favicon.png",
@@ -17,9 +17,9 @@
     },
     {
       "path": "admin-ui/index.html",
-      "hash": "b39f387e58294be6e38cd96117f90eb39b3568f3427b35243c14c714cb4e4c08",
-      "size": 39158,
-      "modified": "2025-12-15T01:50:25.909Z"
+      "hash": "2875f4e9db08d48ba7cf46eb2f262f115ffe4710f6de68dd2f796f59f583bd7d",
+      "size": 39402,
+      "modified": "2025-12-16T22:30:13.164Z"
     },
     {
       "path": "admin-ui/logo.png",
@@ -89,9 +89,9 @@
     },
     {
       "path": "lib/server.js",
-      "hash": "714bdb7c569ea111f73c8cdc3e9c3f2025558760109fa3ce3d95376766107d33",
-      "size": 22053,
-      "modified": "2025-12-15T01:18:31.743Z"
+      "hash": "b35db51f1b098092e9b939b9c0eb5c856d3420227cbc3411addf423d0b94fd41",
+      "size": 22236,
+      "modified": "2025-12-16T22:30:13.168Z"
     },
     {
       "path": "lib/smtp.js",
@@ -113,15 +113,15 @@
     },
     {
       "path": "package.json",
-      "hash": "10b07bdd3a053d4c3db0eb6c08199adf8b8db5378b4d428fcbc5ae5bd2b65c0f",
+      "hash": "d8e29417fb17ed5d229612139337ebfc0dca3fc548c1520e77bad9079d4fd774",
       "size": 1532,
-      "modified": "2025-12-15T01:51:07.578Z"
+      "modified": "2025-12-16T22:43:03.159Z"
     },
     {
       "path": "README.md",
-      "hash": "314dc824c9a143ad6fc92465404d2fc7cfed11df9652d5cc88333d4e5639e0ce",
-      "size": 5326,
-      "modified": "2025-12-14T23:17:32.333Z"
+      "hash": "f72c72c7d13be4afe4bb894b8869e81add3ae9da6c2e5c95d9a123beb9bcb54d",
+      "size": 5495,
+      "modified": "2025-12-16T21:07:50.072Z"
     },
     {
       "path": "schema/tenant.schema.json",

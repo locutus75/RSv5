@@ -2340,7 +2340,7 @@
     }
   }
 
-  function populateSettingsForm(config){
+  async function populateSettingsForm(config){
     const svc = config.service || {};
     $("#sfListenPort").value = svc.listenPort || 2525;
     $("#sfHostName").value = svc.hostName || "";
@@ -2352,6 +2352,35 @@
     $("#sfTLSMode").value = svc.tls?.mode || "starttls";
     const ips = svc.allowlistIPs || [];
     $("#sfAllowlistIPs").value = ips.join("\n");
+    
+    // Laad beschikbare server IP adressen en vul dropdown
+    try {
+      const response = await api("/admin/server-ips");
+      const serverIPs = response.ips || [];
+      const serverIPSelect = $("#sfServerIP");
+      const currentServerIP = svc.serverIP || "0.0.0.0";
+      
+      // Reset dropdown met standaard optie
+      serverIPSelect.innerHTML = '<option value="0.0.0.0">Alle interfaces (0.0.0.0)</option>';
+      
+      // Voeg beschikbare IPv4 adressen toe
+      serverIPs.forEach(ipInfo => {
+        const option = document.createElement("option");
+        option.value = ipInfo.address;
+        option.textContent = `${ipInfo.address} (${ipInfo.interface})`;
+        if (ipInfo.netmask && ipInfo.netmask !== "255.0.0.0") {
+          option.textContent += ` - ${ipInfo.netmask}`;
+        }
+        serverIPSelect.appendChild(option);
+      });
+      
+      // Stel geselecteerde IP in
+      serverIPSelect.value = currentServerIP;
+    } catch (error) {
+      console.error("❌ Fout bij ophalen server IPs:", error);
+      // Bij fout, gebruik standaard waarde
+      $("#sfServerIP").value = svc.serverIP || "0.0.0.0";
+    }
     
     // Routing priority configuratie
     const routingPriority = svc.routingPriority || ["allowedSenders", "senderDomains", "ipRanges"];
@@ -2497,7 +2526,7 @@
       if(!settingsData){
         await loadSettings();
       }
-      populateSettingsForm(settingsData);
+      await populateSettingsForm(settingsData);
       resetSmtpForm(); // Reset editing state bij openen modal
       document.getElementById("settingsModal").classList.remove("hidden");
     }catch(e){

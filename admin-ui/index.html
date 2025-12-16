@@ -421,6 +421,9 @@
           <div class="field" style="display: flex; align-items: flex-start; gap: 12px; flex-wrap: nowrap; grid-column: 1 / -1;">
             <div style="flex: 0 0 auto; width: 150px;"><label>Host Name<input id="sfHostName" type="text" placeholder="relay.example.com"/></label></div>
             <div style="flex: 0 0 auto; width: 100px;"><label>Listen Port<input id="sfListenPort" type="number" min="1" max="65535" placeholder="2525"/></label></div>
+            <div style="flex: 0 0 auto; width: 180px;"><label>Server IP <span class="hint">(IPv4 adres)</span><select id="sfServerIP">
+              <option value="0.0.0.0">Alle interfaces (0.0.0.0)</option>
+            </select></label></div>
             <div style="display: flex; flex-direction: column; gap: 8px; flex: 1; margin-left: 16px; padding-top: 24px;">
               <label class="check"><input id="sfRequireTLS" type="checkbox"/><span>Require TLS</span></label>
               <label class="check"><input id="sfOptionalBasicAuth" type="checkbox"/><span>Optional Basic Auth</span></label>
