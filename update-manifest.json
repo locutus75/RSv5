@@ -1,7 +1,7 @@
 {
-  "version": "5.2.8",
-  "buildNumber": "1219",
-  "timestamp": "2025-12-16T23:30:18.699Z",
+  "version": "5.2.9",
+  "buildNumber": "1220",
+  "timestamp": "2025-12-16T23:40:05.970Z",
   "files": [
     {
       "path": "admin-ui/app.js",
@@ -95,9 +95,9 @@
     },
     {
       "path": "lib/smtp.js",
-      "hash": "4f80d55eefe38e343c8301a969259a85df7fd10f99fad8feb0caa1765475f4e7",
-      "size": 10705,
-      "modified": "2025-12-16T23:29:56.314Z"
+      "hash": "fa3056b14e28e4d60447a8de62c10c55f8f5aea09791757c1c49be444da29b2f",
+      "size": 12365,
+      "modified": "2025-12-16T23:39:45.722Z"
     },
     {
       "path": "lib/update-manifest.js",
@@ -113,9 +113,9 @@
     },
     {
       "path": "package.json",
-      "hash": "dd4377f197d02f013f30a3485a9419a85acda5edac25e9b8be7b7506b6ed5bd0",
+      "hash": "b60b6981970e5d42bf91bd757184cfb304db624cd3b45ede3b5eb5697a7ca05d",
       "size": 1532,
-      "modified": "2025-12-16T23:30:16.401Z"
+      "modified": "2025-12-16T23:40:02.979Z"
     },
     {
       "path": "README.md",
