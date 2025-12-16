@@ -320,9 +320,14 @@ app.post("/admin/test-smtp-connection", async (req, res) => {
       return res.status(400).json({ ok: false, error: "SMTP server adres en poort zijn verplicht" });
     }
     
+    // Haal serverIP op uit configuratie voor uitgaande verbinding
+    const { loadConfig } = await import("./lib/config.js");
+    const config = await loadConfig();
+    const serverIP = config.service?.serverIP || "0.0.0.0";
+    
     // Dynamisch importeren van smtp module
     const { testSMTPConnection } = await import("./lib/smtp.js");
-    const result = await testSMTPConnection(smtpServer);
+    const result = await testSMTPConnection(smtpServer, serverIP);
     
     console.log("📧 Test resultaat:", result);
     res.json(result);
@@ -597,8 +602,13 @@ ${testEmail.body || "Dit is een test email verzonden via de tenant configuratie.
         return res.status(400).json({ ok: false, error: `SMTP server niet gevonden: ${smtpServerName}` });
       }
       
+      // Haal serverIP op uit configuratie voor uitgaande verbinding
+      const { loadConfig } = await import("./lib/config.js");
+      const config = await loadConfig();
+      const serverIP = config.service?.serverIP || "0.0.0.0";
+      
       const { sendViaSMTP } = await import("./lib/smtp.js");
-      result = await sendViaSMTP({ tenant, parsed, rcpts, envelopeFrom, smtpServer });
+      result = await sendViaSMTP({ tenant, parsed, rcpts, envelopeFrom, smtpServer, localAddress: serverIP });
       
     } else {
       // Graph API delivery

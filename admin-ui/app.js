@@ -2343,7 +2343,6 @@
   async function populateSettingsForm(config){
     const svc = config.service || {};
     $("#sfListenPort").value = svc.listenPort || 2525;
-    $("#sfHostName").value = svc.hostName || "";
     $("#sfRequireTLS").checked = svc.requireTLS || false;
     $("#sfOptionalBasicAuth").checked = svc.optionalBasicAuth !== false;
     $("#sfEnableDebug").checked = svc.enableDebug === true;
@@ -2561,7 +2560,7 @@
         service: {
           listenPort: parseInt($("#sfListenPort").value) || 2525,
           requireTLS: $("#sfRequireTLS").checked,
-          hostName: $("#sfHostName").value.trim(),
+          serverIP: $("#sfServerIP").value || "0.0.0.0",
           tls: {
             certFile: $("#sfCertFile").value.trim(),
             keyFile: $("#sfKeyFile").value.trim(),

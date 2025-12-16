@@ -1,13 +1,13 @@
 {
-  "version": "5.2.6",
-  "buildNumber": "1217",
-  "timestamp": "2025-12-16T22:43:05.819Z",
+  "version": "5.2.7",
+  "buildNumber": "1218",
+  "timestamp": "2025-12-16T22:58:21.433Z",
   "files": [
     {
       "path": "admin-ui/app.js",
-      "hash": "27fe142cc19c78e9c442e7a93575ad759c0fc78b5990e789987806935b23df71",
-      "size": 154647,
-      "modified": "2025-12-16T22:30:13.168Z"
+      "hash": "c576cb0ff0d3fabd6c6e490e6d3edd1526adc26ba92f5b38b845d60a0dbe492b",
+      "size": 154592,
+      "modified": "2025-12-16T22:53:02.902Z"
     },
     {
       "path": "admin-ui/favicon.png",
@@ -17,9 +17,9 @@
     },
     {
       "path": "admin-ui/index.html",
-      "hash": "2875f4e9db08d48ba7cf46eb2f262f115ffe4710f6de68dd2f796f59f583bd7d",
-      "size": 39402,
-      "modified": "2025-12-16T22:30:13.164Z"
+      "hash": "ece835ee2a91321657d47298a8f5bd8c8224cf57871f248645d1bb7def125231",
+      "size": 39274,
+      "modified": "2025-12-16T22:53:02.900Z"
     },
     {
       "path": "admin-ui/logo.png",
@@ -59,9 +59,9 @@
     },
     {
       "path": "index.js",
-      "hash": "f354dc49f39b3af3a8b94c0fc9316ec367bf13f8ae4b697ad01e62884a369223",
-      "size": 83274,
-      "modified": "2025-12-15T01:02:13.741Z"
+      "hash": "76c8646a1a6b75d17776ca36804d1aa3ac850695f14bfa5a5de8a31ced23a47d",
+      "size": 83780,
+      "modified": "2025-12-16T22:53:02.998Z"
     },
     {
       "path": "install-service-nssm.bat",
@@ -89,15 +89,15 @@
     },
     {
       "path": "lib/server.js",
-      "hash": "b35db51f1b098092e9b939b9c0eb5c856d3420227cbc3411addf423d0b94fd41",
-      "size": 22236,
-      "modified": "2025-12-16T22:30:13.168Z"
+      "hash": "8332199be636ffc075cef7c8bd5ea7eeb25606ca5086884e997ca0a06a35a0df",
+      "size": 22353,
+      "modified": "2025-12-16T22:53:02.904Z"
     },
     {
       "path": "lib/smtp.js",
-      "hash": "60ede9a8af9cd0ad1aa2505586aa607a0e31a13d30c94bac4e36ba9876624b79",
-      "size": 7744,
-      "modified": "2025-12-12T11:11:52.192Z"
+      "hash": "eb952683b22c1e8f5d4eb903f13e5561e7c36201c07795a1e38036d075ab92ce",
+      "size": 8429,
+      "modified": "2025-12-16T22:53:02.965Z"
     },
     {
       "path": "lib/update-manifest.js",
@@ -113,9 +113,9 @@
     },
     {
       "path": "package.json",
-      "hash": "d8e29417fb17ed5d229612139337ebfc0dca3fc548c1520e77bad9079d4fd774",
+      "hash": "b3c175583ad506a0af136def06bdc3a62c98cf149ed5fc8a99842ef2bd292865",
       "size": 1532,
-      "modified": "2025-12-16T22:43:03.159Z"
+      "modified": "2025-12-16T22:58:18.401Z"
     },
     {
       "path": "README.md",
