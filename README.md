@@ -112,7 +112,7 @@ Alle IP filtering gebeurt op tenant niveau. Elke tenant definieert zijn eigen to
 ```json
 {
   "routing": {
-    "ipRanges": ["192.168.111.0/24", "10.100.20.0/24"]
+    "ipRanges": ["192.168.1.0/24", "10.20.30.0/24"]
   }
 }
 ```
