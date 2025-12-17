@@ -1,7 +1,7 @@
 {
-  "version": "5.3.1",
-  "buildNumber": "1222",
-  "timestamp": "2025-12-17T00:48:22.807Z",
+  "version": "5.3.2",
+  "buildNumber": "1223",
+  "timestamp": "2025-12-17T01:07:53.778Z",
   "files": [
     {
       "path": "admin-ui/app.js",
@@ -71,9 +71,9 @@
     },
     {
       "path": "lib/config.js",
-      "hash": "af34a3dd2e4a434f823852c7baa89a3ba19aa54361e0e6850257f58c11a88ca3",
-      "size": 6190,
-      "modified": "2025-12-14T21:58:07.892Z"
+      "hash": "94a1f34937d5492dacdba8a367d470d976d227be35a5f3737610fe8e616e19d1",
+      "size": 6695,
+      "modified": "2025-12-17T01:07:34.320Z"
     },
     {
       "path": "lib/graph.js",
@@ -89,9 +89,9 @@
     },
     {
       "path": "lib/server.js",
-      "hash": "34bf1c3022f668dcddade053047e07e80896a0a6cd7f3bfc521d44692aaaa12f",
-      "size": 22587,
-      "modified": "2025-12-17T00:48:00.103Z"
+      "hash": "b817f4a46cc54b6a5dabc4a810cfbc72d59af6e5561931302f76227373f45264",
+      "size": 23231,
+      "modified": "2025-12-17T01:07:19.923Z"
     },
     {
       "path": "lib/smtp.js",
@@ -113,9 +113,9 @@
     },
     {
       "path": "package.json",
-      "hash": "51bfdb8b6d81d3a8d39f8e9249a697c1d99e7bfd1f784c23acd6ccfd68ecc417",
+      "hash": "7fa6e6609b15ecd41767e19fe0de1756f7030a3d33c362c9e0f3b65ca289657e",
       "size": 1532,
-      "modified": "2025-12-17T00:48:19.530Z"
+      "modified": "2025-12-17T01:07:50.640Z"
     },
     {
       "path": "README.md",
