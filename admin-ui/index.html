@@ -298,8 +298,8 @@
           <div class="field"><label>Routing domains <span class="hint">(1 per regel) - gebruikt voor tenant routing</span>
             <textarea id="tfSenderDomains" rows="3" placeholder="example.com"></textarea>
           </label></div>
-          <div class="field"><label>Routing IP ranges <span class="hint">(1 per regel) - gebruikt voor tenant routing</span>
-            <textarea id="tfIpRanges" rows="3" placeholder="203.0.113.0/24"></textarea>
+          <div class="field"><label>Routing IP ranges <span class="hint">(1 per regel) - gebruikt voor tenant routing. CIDR notatie (192.168.0.0/24) of los IP-adres (192.168.1.1)</span>
+            <textarea id="tfIpRanges" rows="3" placeholder="192.168.0.0/24&#10;10.0.0.1&#10;203.0.113.0/24"></textarea>
             <button type="button" id="addServerIPsBtn" class="ghost" style="margin-top: 6px; white-space: nowrap; padding: 8px 12px;" title="Voeg server IP-adressen toe">+ Server IP's</button>
           </label></div>
           <div class="field" style="width: 30%;"><label>Prioriteit<input id="tfPriority" type="number" min="0" placeholder="100"/></label></div>

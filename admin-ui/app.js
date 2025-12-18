@@ -2150,6 +2150,22 @@
         return;
       }
       
+      // Validatie: controleer IP ranges formaat
+      const ipRanges = $("#tfIpRanges").value.split("\n").map(s => s.trim()).filter(Boolean);
+      const invalidIPs = [];
+      const ipPattern = /^(\d{1,3}\.){3}\d{1,3}(\/\d{1,2})?$/;
+      
+      for (const ipRange of ipRanges) {
+        if (!ipPattern.test(ipRange)) {
+          invalidIPs.push(ipRange);
+        }
+      }
+      
+      if (invalidIPs.length > 0) {
+        toast(`❌ Ongeldige IP range(s): ${invalidIPs.join(", ")}\nGebruik CIDR notatie (192.168.0.0/24) of los IP-adres (192.168.1.1)`);
+        return;
+      }
+      
       const { tenant: finalTenant, deliveryMethod } = buildTenantData();
       
       // Validatie: controleer of de actieve delivery method correct is geconfigureerd

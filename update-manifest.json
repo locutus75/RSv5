@@ -1,13 +1,13 @@
 {
-  "version": "5.3.6",
-  "buildNumber": "1227",
-  "timestamp": "2025-12-17T21:51:39.183Z",
+  "version": "5.3.7",
+  "buildNumber": "1228",
+  "timestamp": "2025-12-18T11:17:33.054Z",
   "files": [
     {
       "path": "admin-ui/app.js",
-      "hash": "c576cb0ff0d3fabd6c6e490e6d3edd1526adc26ba92f5b38b845d60a0dbe492b",
-      "size": 154592,
-      "modified": "2025-12-16T22:53:02.902Z"
+      "hash": "cf12f9aada96aa8685d37aaaf9f306e10ad1c6baa7cdf44cb0a0b7496cc1b7d9",
+      "size": 155180,
+      "modified": "2025-12-18T11:17:09.812Z"
     },
     {
       "path": "admin-ui/favicon.png",
@@ -61,7 +61,7 @@
       "path": "index.js",
       "hash": "76c8646a1a6b75d17776ca36804d1aa3ac850695f14bfa5a5de8a31ced23a47d",
       "size": 83780,
-      "modified": "2025-12-16T22:53:02.998Z"
+      "modified": "2025-12-18T11:13:47.350Z"
     },
     {
       "path": "install-service-nssm.bat",
@@ -89,9 +89,9 @@
     },
     {
       "path": "lib/server.js",
-      "hash": "325b436734690b792e0f63da4b6d9ac95440c19d9a0f68a450c4a27ca2d07cf2",
-      "size": 24086,
-      "modified": "2025-12-17T21:51:24.334Z"
+      "hash": "efa2ccf8eb3c615657ab700b85a8eb01788df27ab3d18ad75011c80832b2b7a9",
+      "size": 24556,
+      "modified": "2025-12-18T11:17:00.586Z"
     },
     {
       "path": "lib/smtp.js",
@@ -113,9 +113,9 @@
     },
     {
       "path": "package.json",
-      "hash": "ba2c1e3003f7d4c1b0a23535611038eaddedab84715f70e2d249f42fc09c968d",
+      "hash": "167f5a640a0e7e5c7e0f6073fc2d09641c86c57f9285ab8aae98e2f3bd5378eb",
       "size": 1532,
-      "modified": "2025-12-17T21:51:37.568Z"
+      "modified": "2025-12-18T11:17:31.202Z"
     },
     {
       "path": "README.md",
