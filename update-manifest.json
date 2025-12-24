@@ -1,13 +1,13 @@
 {
-  "version": "5.3.7",
-  "buildNumber": "1228",
-  "timestamp": "2025-12-18T11:17:33.054Z",
+  "version": "5.3.8",
+  "buildNumber": "1229",
+  "timestamp": "2025-12-24T02:28:35.229Z",
   "files": [
     {
       "path": "admin-ui/app.js",
-      "hash": "cf12f9aada96aa8685d37aaaf9f306e10ad1c6baa7cdf44cb0a0b7496cc1b7d9",
-      "size": 155180,
-      "modified": "2025-12-18T11:17:09.812Z"
+      "hash": "fd92d4c49ee1a858a952a2b4ccf7d723076bdfcc7696eeea1ae2b8f1c92078a2",
+      "size": 155892,
+      "modified": "2025-12-24T02:28:09.158Z"
     },
     {
       "path": "admin-ui/favicon.png",
@@ -17,9 +17,9 @@
     },
     {
       "path": "admin-ui/index.html",
-      "hash": "ece835ee2a91321657d47298a8f5bd8c8224cf57871f248645d1bb7def125231",
-      "size": 39274,
-      "modified": "2025-12-16T22:53:02.900Z"
+      "hash": "235bd84a19dd38c652ed1ef13ca2a241372ab614c406e2e449c284bd4e2160b9",
+      "size": 39367,
+      "modified": "2025-12-18T11:17:47.751Z"
     },
     {
       "path": "admin-ui/logo.png",
@@ -91,7 +91,7 @@
       "path": "lib/server.js",
       "hash": "efa2ccf8eb3c615657ab700b85a8eb01788df27ab3d18ad75011c80832b2b7a9",
       "size": 24556,
-      "modified": "2025-12-18T11:17:00.586Z"
+      "modified": "2025-12-18T11:17:47.748Z"
     },
     {
       "path": "lib/smtp.js",
@@ -113,9 +113,9 @@
     },
     {
       "path": "package.json",
-      "hash": "167f5a640a0e7e5c7e0f6073fc2d09641c86c57f9285ab8aae98e2f3bd5378eb",
+      "hash": "8bda45ff4f8f48c6639a4e8d7d168684c4b04ae34e99a0fe3e49d0ca231777a5",
       "size": 1532,
-      "modified": "2025-12-18T11:17:31.202Z"
+      "modified": "2025-12-24T02:28:28.786Z"
     },
     {
       "path": "README.md",

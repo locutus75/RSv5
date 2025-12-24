@@ -2358,15 +2358,36 @@
 
   async function populateSettingsForm(config){
     const svc = config.service || {};
-    $("#sfListenPort").value = svc.listenPort || 2525;
-    $("#sfRequireTLS").checked = svc.requireTLS || false;
-    $("#sfOptionalBasicAuth").checked = svc.optionalBasicAuth !== false;
-    $("#sfEnableDebug").checked = svc.enableDebug === true;
-    $("#sfCertFile").value = svc.tls?.certFile || "";
-    $("#sfKeyFile").value = svc.tls?.keyFile || "";
-    $("#sfTLSMode").value = svc.tls?.mode || "starttls";
+    
+    // Helper functie om veilig waarde te zetten (met null-check)
+    const setValue = (selector, value) => {
+      const el = $(selector);
+      if (el) {
+        el.value = value;
+      } else {
+        console.warn(`⚠️ Element niet gevonden: ${selector}`);
+      }
+    };
+    
+    const setChecked = (selector, checked) => {
+      const el = $(selector);
+      if (el) {
+        el.checked = checked;
+      } else {
+        console.warn(`⚠️ Element niet gevonden: ${selector}`);
+      }
+    };
+    
+    // Vul formuliervelden met null-checks
+    setValue("#sfListenPort", svc.listenPort || 2525);
+    setChecked("#sfRequireTLS", svc.requireTLS || false);
+    setChecked("#sfOptionalBasicAuth", svc.optionalBasicAuth !== false);
+    setChecked("#sfEnableDebug", svc.enableDebug === true);
+    setValue("#sfCertFile", svc.tls?.certFile || "");
+    setValue("#sfKeyFile", svc.tls?.keyFile || "");
+    setValue("#sfTLSMode", svc.tls?.mode || "starttls");
     const ips = svc.allowlistIPs || [];
-    $("#sfAllowlistIPs").value = ips.join("\n");
+    setValue("#sfAllowlistIPs", ips.join("\n"));
     
     // Laad beschikbare server IP adressen en vul dropdown
     try {
@@ -2375,26 +2396,30 @@
       const serverIPSelect = $("#sfServerIP");
       const currentServerIP = svc.serverIP || "0.0.0.0";
       
-      // Reset dropdown met standaard optie
-      serverIPSelect.innerHTML = '<option value="0.0.0.0">Alle interfaces (0.0.0.0)</option>';
-      
-      // Voeg beschikbare IPv4 adressen toe
-      serverIPs.forEach(ipInfo => {
-        const option = document.createElement("option");
-        option.value = ipInfo.address;
-        option.textContent = `${ipInfo.address} (${ipInfo.interface})`;
-        if (ipInfo.netmask && ipInfo.netmask !== "255.0.0.0") {
-          option.textContent += ` - ${ipInfo.netmask}`;
-        }
-        serverIPSelect.appendChild(option);
-      });
-      
-      // Stel geselecteerde IP in
-      serverIPSelect.value = currentServerIP;
+      if (serverIPSelect) {
+        // Reset dropdown met standaard optie
+        serverIPSelect.innerHTML = '<option value="0.0.0.0">Alle interfaces (0.0.0.0)</option>';
+        
+        // Voeg beschikbare IPv4 adressen toe
+        serverIPs.forEach(ipInfo => {
+          const option = document.createElement("option");
+          option.value = ipInfo.address;
+          option.textContent = `${ipInfo.address} (${ipInfo.interface})`;
+          if (ipInfo.netmask && ipInfo.netmask !== "255.0.0.0") {
+            option.textContent += ` - ${ipInfo.netmask}`;
+          }
+          serverIPSelect.appendChild(option);
+        });
+        
+        // Stel geselecteerde IP in
+        serverIPSelect.value = currentServerIP;
+      } else {
+        console.warn("⚠️ Server IP select element niet gevonden");
+      }
     } catch (error) {
       console.error("❌ Fout bij ophalen server IPs:", error);
       // Bij fout, gebruik standaard waarde
-      $("#sfServerIP").value = svc.serverIP || "0.0.0.0";
+      setValue("#sfServerIP", svc.serverIP || "0.0.0.0");
     }
     
     // Routing priority configuratie
@@ -2538,14 +2563,29 @@
 
   $("#settingsBtn").addEventListener("click",async()=>{
     try{
+      // Open modal eerst zodat alle elementen beschikbaar zijn
+      const settingsModal = document.getElementById("settingsModal");
+      if (settingsModal) {
+        settingsModal.classList.remove("hidden");
+      }
+      
       if(!settingsData){
         await loadSettings();
       }
+      
+      // Wacht even zodat DOM elementen beschikbaar zijn
+      await new Promise(resolve => setTimeout(resolve, 50));
+      
       await populateSettingsForm(settingsData);
       resetSmtpForm(); // Reset editing state bij openen modal
-      document.getElementById("settingsModal").classList.remove("hidden");
     }catch(e){
+      console.error("Fout bij laden settings:", e);
       toast("Fout bij laden settings: " + e.message);
+      // Sluit modal bij fout
+      const settingsModal = document.getElementById("settingsModal");
+      if (settingsModal) {
+        settingsModal.classList.add("hidden");
+      }
     }
   });
 
