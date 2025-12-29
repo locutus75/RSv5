@@ -165,8 +165,8 @@ Elke tenant kan een `allowedSenders` lijst hebben om te bepalen welke email adre
 
 ## 📊 Admin Interface
 
-Open `http://localhost:3000` in je browser voor de admin interface.
+Bv. open `http://localhost:8080` in je browser voor de admin interface.
 
 ## 📝 Licentie
 
-Private project - Alle rechten voorbehouden.
+GNU - General Public License.
