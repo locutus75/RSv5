@@ -12,6 +12,7 @@
     "start:debug-log": "node index.js --debug --log-file ./logs/mail-debug.log",
     "start:verbose-log": "node index.js --verbose --log-file ./logs/mail-verbose.log",
     "start:help": "node index.js --help",
+    "test": "node --test \"test/**/*.test.js\"",
     "version:bump": "node scripts/bump-version.js",
     "version:patch": "node scripts/bump-version.js --patch",
     "version:minor": "node scripts/bump-version.js --minor",
