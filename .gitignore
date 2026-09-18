@@ -9,6 +9,9 @@ logs/
 config.json
 config.json.backup.*
 
+# Admin token-hash (per installatie)
+admin-auth.json
+
 # Certificaten (bevatten gevoelige data)
 certs/
 
