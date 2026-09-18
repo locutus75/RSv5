@@ -10,6 +10,13 @@ import Ajv from "ajv";
 import addFormats from "ajv-formats";
 import { EventEmitter } from "events";
 import os from "os";
+import https from "https";
+import {
+  loadAdminAuth, isAuthRequired, verifyToken, configureSessions,
+  createSession, destroySession, checkLoginRateLimit, recordFailedLogin, resetLoginRateLimit,
+  adminAuthMiddleware, hasValidSession, parseSessionCookie, SESSION_COOKIE
+} from "./lib/admin-auth.js";
+import { getAdminTlsOptions } from "./lib/admin-tls.js";
 
 // Bepaal applicatie root op basis van waar index.js zich bevindt
 const __filename = fileURLToPath(import.meta.url);
@@ -208,8 +215,15 @@ global.serverEvents = new EventEmitter();
 
 // Admin server setup
 const app = express();
-const ADMIN_PORT = process.env.ADMIN_PORT || 8080;
-const ADMIN_TOKEN = process.env.ADMIN_TOKEN || null;
+const ADMIN_PORT = parseInt(process.env.ADMIN_PORT || "8080", 10);
+
+// Admin-authenticatie: alleen de scrypt-hash in admin-auth.json telt.
+// De oude plaintext ADMIN_TOKEN (environment/register) wordt bewust genegeerd.
+if (process.env.ADMIN_TOKEN) {
+  console.warn(`⚠️ ADMIN_TOKEN (environment) wordt niet meer gebruikt. Verwijder deze uit het register/.env`);
+  console.warn(`   en stel een token in met: npm run admin:set-token`);
+}
+loadAdminAuth();
 const ROOT = APP_ROOT;
 const TENANTS_DIR = path.join(ROOT, "tenants.d");
 const CONFIG_FILE = path.join(ROOT, "config.json");
@@ -252,60 +266,50 @@ app.use((req, res, next) => {
 // 2) Public admin endpoints (altijd toegankelijk) - MOET VOOR static route staan
 app.get("/admin/health", (req, res) => res.json({ ok: true }));
 
-app.get("/admin/auth-status", (req, res) => {
-  const remoteIP = getRemoteIP(req);
-  
-  // Als er geen ADMIN_TOKEN is ingesteld, is authenticatie niet vereist
-  if (!ADMIN_TOKEN) {
-    console.log(`🔐 /admin/auth-status: Geen ADMIN_TOKEN ingesteld, authenticatie niet vereist - Remote IP: ${remoteIP}`);
-    return res.json({ 
-      requiresAuth: false,
-      hasToken: false 
-    });
-  }
-  
-  // Controleer of er een geldige token is meegestuurd
-  const h = req.headers["authorization"] || "";
-  const token = h.startsWith("Bearer ") ? h.substring(7) : (req.query.token || "");
-  
-  // Log nooit de token-waarden zelf; alleen of er een token is meegestuurd en of deze klopt
-  console.log(`🔐 /admin/auth-status: Token check - Meegestuurd: ${token ? "ja" : "nee"}, Match: ${token === ADMIN_TOKEN} - Remote IP: ${remoteIP}`);
+const SESSION_COOKIE_ATTRS = "HttpOnly; Secure; SameSite=Strict; Path=/";
 
-  if (token === ADMIN_TOKEN) {
-    console.log(`🔐 /admin/auth-status: Token geldig - Remote IP: ${remoteIP}`);
-    return res.json({ 
-      requiresAuth: true,
-      hasToken: true,
-      valid: true
-    });
-  }
-  
-  // Token is ongeldig of ontbreekt
-  console.log(`🔐 /admin/auth-status: Token ongeldig of ontbreekt - Remote IP: ${remoteIP}`);
-  return res.json({ 
-    requiresAuth: true,
-    hasToken: false,
-    valid: false
-  });
+app.get("/admin/auth-status", (req, res) => {
+  const requiresAuth = isAuthRequired();
+  const authenticated = !requiresAuth || hasValidSession(req);
+  res.json({ requiresAuth, authenticated });
 });
 
-// 3) Auth only for protected /admin routes (if ADMIN_TOKEN is set)
-app.use("/admin", (req, res, next) => {
-  if (!ADMIN_TOKEN) {
-    console.log("ℹ️ No ADMIN_TOKEN set, skipping authentication");
-    return next();
-  }
-  
-  const h = req.headers["authorization"] || "";
-  const token = h.startsWith("Bearer ") ? h.substring(7) : (req.query.token || "");
-  
-  if (token === ADMIN_TOKEN) {
-    return next();
-  }
-  
+app.post("/admin/login", (req, res) => {
   const remoteIP = getRemoteIP(req);
-  console.log(`❌ Unauthorized access attempt: ${req.method} ${req.path} - Remote IP: ${remoteIP}`);
-  return res.status(401).json({ error: "Unauthorized" });
+  if (!isAuthRequired()) {
+    return res.json({ ok: true, requiresAuth: false });
+  }
+  const limit = checkLoginRateLimit(remoteIP);
+  if (!limit.allowed) {
+    console.warn(`🔐 Login geblokkeerd (te veel pogingen) - Remote IP: ${remoteIP}`);
+    res.setHeader("Retry-After", String(limit.retryAfterSeconds));
+    return res.status(429).json({ error: "Te veel mislukte pogingen", retryAfterSeconds: limit.retryAfterSeconds });
+  }
+  const token = typeof req.body?.token === "string" ? req.body.token : "";
+  if (!verifyToken(token)) {
+    recordFailedLogin(remoteIP);
+    console.warn(`🔐 Login mislukt - Remote IP: ${remoteIP}`);
+    return res.status(401).json({ error: "Ongeldige token" });
+  }
+  resetLoginRateLimit(remoteIP);
+  const id = createSession();
+  res.setHeader("Set-Cookie", `${SESSION_COOKIE}=${id}; ${SESSION_COOKIE_ATTRS}`);
+  console.log(`🔐 Login geslaagd - Remote IP: ${remoteIP}`);
+  res.json({ ok: true, requiresAuth: true });
+});
+
+app.post("/admin/logout", (req, res) => {
+  destroySession(parseSessionCookie(req));
+  res.setHeader("Set-Cookie", `${SESSION_COOKIE}=; ${SESSION_COOKIE_ATTRS}; Max-Age=0`);
+  res.json({ ok: true });
+});
+
+// Alle overige /admin routes vereisen een geldige sessie (als admin-auth.json bestaat)
+app.use("/admin", (req, res, next) => {
+  if (isAuthRequired() && !hasValidSession(req)) {
+    console.log(`❌ Unauthorized access attempt: ${req.method} ${req.path} - Remote IP: ${getRemoteIP(req)}`);
+  }
+  adminAuthMiddleware(req, res, next);
 });
 
 // Test SMTP connection endpoint (protected, binnen /admin routes)
@@ -2212,9 +2216,27 @@ loadConfig().then(async (config) => {
   // Serve UI (na alle routes zodat specifieke routes eerst worden gematcht)
   app.use("/", express.static(path.join(ROOT, "admin-ui")));
   
-  // Start admin server
-  app.listen(ADMIN_PORT, () => {
-    console.log(`🌐 Admin server started on port ${ADMIN_PORT}`);
+  // Start admin server (altijd HTTPS)
+  const adminCfg = config.service?.admin || {};
+  configureSessions(adminCfg.session || {});
+  const authRequired = isAuthRequired();
+  // Zonder admin-auth.json is er geen authenticatie: dan uitsluitend op localhost luisteren
+  const adminHost = authRequired ? (adminCfg.host || "0.0.0.0") : "127.0.0.1";
+  const tlsOptions = await getAdminTlsOptions(adminCfg);
+  const adminServer = https.createServer({ key: tlsOptions.key, cert: tlsOptions.cert }, app);
+  adminServer.on("error", (err) => {
+    console.error(`❌ Admin server kan niet luisteren op ${adminHost}:${ADMIN_PORT}: ${err.message} (${err.code})`);
+    process.exit(1);
+  });
+  adminServer.listen(ADMIN_PORT, adminHost, () => {
+    console.log(`🌐 Admin server gestart op https://${adminHost}:${ADMIN_PORT} (certificaat: ${tlsOptions.source})`);
+    if (tlsOptions.source === "generated" || tlsOptions.source === "file") {
+      console.log(`   ℹ️ Self-signed certificaat: de browser toont een waarschuwing. Eigen certificaat: service.admin.tls.certFile/keyFile in config.json`);
+    }
+    if (!authRequired) {
+      console.warn(`⚠️ Geen admin-auth.json gevonden: admin-interface alleen bereikbaar op https://127.0.0.1:${ADMIN_PORT}`);
+      console.warn(`   Stel een token in met: npm run admin:set-token`);
+    }
   });
   
   // Start SMTP server
@@ -2258,12 +2280,8 @@ loadConfig().then(async (config) => {
   
   console.log("🚀 Both servers started successfully");
   console.log(`📧 SMTP server ready`);
-  console.log(`🌐 Admin interface available at http://localhost:${ADMIN_PORT}`);
-  if (ADMIN_TOKEN) {
-    console.log(`🔐 Admin authentication enabled (ADMIN_TOKEN set)`);
-  } else {
-    console.log(`⚠️ Admin authentication disabled (no ADMIN_TOKEN set)`);
-  }
+  console.log(`🌐 Admin interface available at https://localhost:${ADMIN_PORT}`);
+  console.log(authRequired ? `🔐 Admin authentication enabled (admin-auth.json)` : `⚠️ Admin authentication disabled (no admin-auth.json)`);
 }).catch(e => {
   console.error("❌ Failed to start servers:", e);
   process.exit(1);

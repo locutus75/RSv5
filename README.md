@@ -165,7 +165,42 @@ Elke tenant kan een `allowedSenders` lijst hebben om te bepalen welke email adre
 
 ## 📊 Admin Interface
 
-Bv. open `http://localhost:8080` in je browser voor de admin interface.
+De beheerinterface draait altijd over **HTTPS**, standaard op `https://<server>:8080`
+(poort via `ADMIN_PORT`).
+
+### Admin-token instellen
+
+```bash
+npm run admin:set-token
+```
+
+Dit genereert een random token, toont die **eenmalig** en slaat alleen een scrypt-hash op in
+`admin-auth.json`. Bewaar de token in een wachtwoordmanager; de server kan hem niet terughalen.
+Eigen token kiezen: `npm run admin:set-token -- --token <minimaal 16 tekens>`; bestaand bestand
+vervangen: `-- --force`. Herstart daarna de service.
+
+Zonder `admin-auth.json` is er geen authenticatie en luistert de admin-interface **uitsluitend
+op `127.0.0.1`**. De oude `ADMIN_TOKEN`-omgevingsvariabele wordt niet meer gebruikt.
+
+Inloggen gebeurt via het loginscherm; de sessie zit in een `HttpOnly`-cookie (12 uur inactief,
+maximaal 7 dagen). Na 5 mislukte pogingen wordt een IP 15 minuten geblokkeerd.
+
+### Certificaat
+
+Bij de eerste start wordt een self-signed certificaat aangemaakt in `certs/admin-cert.pem` en
+`certs/admin-key.pem`; browsers tonen daarvoor een waarschuwing. Eigen certificaat gebruiken:
+
+```json
+{
+  "service": {
+    "admin": {
+      "host": "0.0.0.0",
+      "tls": { "certFile": "certs/mijn.crt", "keyFile": "certs/mijn.key" },
+      "session": { "idleHours": 12, "maxDays": 7 }
+    }
+  }
+}
+```
 
 ## 🚢 Releases en auto-update
 

@@ -34,8 +34,7 @@ const svc = new Service({
   env: [
     { name: "NODE_ENV", value: "production" },
     { name: "PWD", value: __dirname }
-    // ADMIN_TOKEN moet worden ingesteld in .env bestand of via environment variable
-    // Voeg handmatig toe indien nodig: { name: "ADMIN_TOKEN", value: "your-token-here" }
+    // Admin-authenticatie: stel de token in met "npm run admin:set-token" (schrijft admin-auth.json)
   ]
 });
 
