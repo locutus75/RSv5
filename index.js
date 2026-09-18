@@ -268,8 +268,9 @@ app.get("/admin/auth-status", (req, res) => {
   const h = req.headers["authorization"] || "";
   const token = h.startsWith("Bearer ") ? h.substring(7) : (req.query.token || "");
   
-  console.log(`🔐 /admin/auth-status: Token check - Ontvangen: "${token}", Verwacht: "${ADMIN_TOKEN}", Match: ${token === ADMIN_TOKEN} - Remote IP: ${remoteIP}`);
-  
+  // Log nooit de token-waarden zelf; alleen of er een token is meegestuurd en of deze klopt
+  console.log(`🔐 /admin/auth-status: Token check - Meegestuurd: ${token ? "ja" : "nee"}, Match: ${token === ADMIN_TOKEN} - Remote IP: ${remoteIP}`);
+
   if (token === ADMIN_TOKEN) {
     console.log(`🔐 /admin/auth-status: Token geldig - Remote IP: ${remoteIP}`);
     return res.json({ 
@@ -360,10 +361,23 @@ function listTenantFiles() {
   return fs.readdirSync(TENANTS_DIR).filter(f => f.toLowerCase().endsWith(".json"));
 }
 
+// Bepaal het volledige pad van een tenant bestand op een veilige manier.
+// Retourneert null als de naam pad-componenten bevat (bv. "..%2Fconfig") of
+// als het resulterende pad buiten TENANTS_DIR valt.
+function resolveTenantFile(nameOrFile) {
+  const provided = String(nameOrFile || "").trim();
+  if (!provided || provided.includes("/") || provided.includes("\\") || provided.includes("\0")) return null;
+  if (provided === "." || provided === ".." || path.basename(provided) !== provided) return null;
+  const file = provided.toLowerCase().endsWith(".json") ? provided : `${provided}.json`;
+  const full = path.resolve(TENANTS_DIR, file);
+  const rel = path.relative(TENANTS_DIR, full);
+  if (!rel || rel.startsWith("..") || path.isAbsolute(rel)) return null;
+  return full;
+}
+
 function readTenant(nameOrFile) {
-  const file = nameOrFile.endsWith(".json") ? nameOrFile : `${nameOrFile}.json`;
-  const full = path.join(TENANTS_DIR, file);
-  if (!fs.existsSync(full)) return null;
+  const full = resolveTenantFile(nameOrFile);
+  if (!full || !fs.existsSync(full)) return null;
   return JSON.parse(fs.readFileSync(full, "utf-8"));
 }
 
@@ -868,8 +882,8 @@ app.put("/admin/tenants/:name", (req, res) => {
 });
 
 app.delete("/admin/tenants/:name", (req, res) => {
-  const file = req.params.name.endsWith(".json") ? req.params.name : `${req.params.name}.json`;
-  const full = path.join(TENANTS_DIR, file);
+  const full = resolveTenantFile(req.params.name);
+  if (!full) return res.status(400).json({ error: "Invalid tenant name" });
   if (!fs.existsSync(full)) return res.status(404).json({ error: "Not found" });
   fs.unlinkSync(full);
   
@@ -1939,43 +1953,93 @@ app.post("/admin/update/install", async (req, res) => {
         message: "Manifest moet versie en files array bevatten"
       });
     }
-    
+
+    if (!Array.isArray(files)) {
+      return res.status(400).json({ ok: false, error: "files moet een array zijn" });
+    }
+
     console.log(`🔧 Installatie update gestart voor versie ${manifestData.version} build ${manifestData.buildNumber}`);
-    
-    const { validateFileHash, shouldExcludeFile, backupFile } = await import("./lib/update-manifest.js");
+
+    const { validateFileHash, shouldExcludeFile, backupFile, fetchRemoteManifest } = await import("./lib/update-manifest.js");
+
+    // BEVEILIGING: vertrouw nooit de hashes uit de request body. De client kan zowel de
+    // bestandsinhoud als de "verwachte" hash meesturen, waardoor hash-validatie zinloos is.
+    // Haal daarom het manifest server-side op uit de geconfigureerde repository en valideer
+    // de meegestuurde bestanden daartegen.
+    let repoUrl = null;
+    try {
+      if (fs.existsSync(UPDATE_CONFIG_FILE)) {
+        const updateConfig = JSON.parse(fs.readFileSync(UPDATE_CONFIG_FILE, "utf8"));
+        repoUrl = updateConfig.repositoryUrl || process.env.UPDATE_REPOSITORY_URL || null;
+      } else {
+        repoUrl = process.env.UPDATE_REPOSITORY_URL || null;
+      }
+    } catch (error) {
+      return res.status(500).json({ ok: false, error: "Fout bij laden configuratie", message: error.message });
+    }
+    if (!repoUrl) {
+      return res.status(400).json({
+        ok: false,
+        error: "Geen repository URL geconfigureerd",
+        message: "Installatie vereist een geconfigureerde 'repositoryUrl' in update-config.json of UPDATE_REPOSITORY_URL zodat het manifest server-side geverifieerd kan worden."
+      });
+    }
+    const trustedManifest = await fetchRemoteManifest(repoUrl);
+    if (!trustedManifest || !Array.isArray(trustedManifest.files)) {
+      return res.status(502).json({ ok: false, error: "Remote manifest niet gevonden", message: "Kon het manifest niet ophalen uit de repository; installatie geweigerd." });
+    }
+    if (trustedManifest.version !== manifestData.version || String(trustedManifest.buildNumber) !== String(manifestData.buildNumber)) {
+      return res.status(409).json({
+        ok: false,
+        error: "Manifest komt niet overeen met repository",
+        message: `Gedownload manifest is ${manifestData.version} build ${manifestData.buildNumber}, repository bevat ${trustedManifest.version} build ${trustedManifest.buildNumber}. Download de update opnieuw.`
+      });
+    }
+
     const installedFiles = [];
     const backedUpFiles = [];
     const errors = [];
     const skipped = [];
-    
+
     // Valideer en installeer bestanden
     console.log(`📝 Installeren van ${files.length} bestanden...`);
-    
+
     for (const fileData of files) {
       try {
-        const filePath = fileData.path;
+        const filePath = String(fileData?.path || "");
+        if (!filePath || typeof fileData.content !== "string") {
+          throw new Error("Ongeldige file entry (path/content ontbreekt)");
+        }
         const fileContent = Buffer.from(fileData.content, 'base64');
-        
+
         // Skip bestanden die uitgesloten moeten worden
         if (shouldExcludeFile(filePath)) {
           skipped.push(filePath);
           console.log(`⏭️  Overgeslagen (uitgesloten): ${filePath}`);
           continue;
         }
-        
-        // Vind bijbehorende manifest entry
-        const manifestEntry = manifestData.files.find(f => f.path === filePath);
+
+        // Vind bijbehorende entry in het VERTROUWDE (remote) manifest
+        const manifestEntry = trustedManifest.files.find(f => f.path === filePath);
         if (!manifestEntry) {
           throw new Error(`Geen manifest entry gevonden voor ${filePath}`);
         }
-        
-        // Valideer hash
+
+        // Valideer hash tegen het remote manifest
         if (!validateFileHash(fileContent, manifestEntry.hash)) {
           throw new Error(`Hash validatie gefaald voor ${filePath}`);
         }
-        
-        // Maak volledig pad
-        const fullPath = path.join(ROOT, filePath);
+
+        // BEVEILIGING: het pad moet binnen de applicatie-root blijven.
+        // Weiger absolute paden en paden die via ".." buiten ROOT komen.
+        if (path.isAbsolute(filePath) || /^[a-zA-Z]:/.test(filePath)) {
+          throw new Error(`Absoluut pad niet toegestaan: ${filePath}`);
+        }
+        const fullPath = path.resolve(ROOT, filePath);
+        const relToRoot = path.relative(ROOT, fullPath);
+        if (!relToRoot || relToRoot.startsWith("..") || path.isAbsolute(relToRoot)) {
+          throw new Error(`Pad buiten applicatie-root niet toegestaan: ${filePath}`);
+        }
         const dirPath = path.dirname(fullPath);
         
         // Maak directory aan als deze niet bestaat
@@ -2051,7 +2115,7 @@ app.post("/admin/update/install", async (req, res) => {
       installedFiles: installedFiles,
       skippedFiles: skipped,
       backedUpFiles: backedUpFiles,
-      errors: errors.length > 0 ? errors : undefined,
+      installErrors: errors.length > 0 ? errors : undefined,
       restartRequired: true,
       restartMessage: "Server moet worden herstart om de update te activeren. Gebruik 'npm run service:restart' of herstart de service handmatig."
     });

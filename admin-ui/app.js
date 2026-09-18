@@ -441,8 +441,8 @@
         }, 3000);
       } else {
         toast(`❌ Fout bij installeren: ${result.error || result.message}`);
-        if (result.errors && result.errors.length > 0) {
-          console.error("Installatie fouten:", result.errors);
+        if (result.installErrors && result.installErrors.length > 0) {
+          console.error("Installatie fouten:", result.installErrors);
         }
       }
       
