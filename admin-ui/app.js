@@ -1027,9 +1027,9 @@
       }
       
       const authData = await testResponse.json();
-      
-      
-      if (!authData.valid) {
+
+      // Zonder ADMIN_TOKEN op de server is elke token "geldig" (auth staat uit)
+      if (authData.requiresAuth !== false && !authData.valid) {
         toast("❌ Ongeldige token");
         return;
       }
@@ -1158,8 +1158,8 @@
         
         const authData = await testResponse.json();
 
-        
-        if (!authData.valid) {
+        // Zonder ADMIN_TOKEN op de server is elke token "geldig" (auth staat uit)
+        if (authData.requiresAuth !== false && !authData.valid) {
           showLoginFeedback("error");
           toast("❌ Ongeldige token");
           return;
@@ -1238,16 +1238,20 @@
   }
 
   // Hoofd initialisatie functie
-  function initializeApp() {
+  async function initializeApp() {
 
-    
+
     // Setup event handlers voor de overlay
     setupOverlayEventHandlers();
-    
+
     // Initialiseer token (sync header en overlay inputs)
     initToken();
-    
-    if(!hasToken()){
+
+    // Vraag de server of authenticatie überhaupt vereist is. Zonder ADMIN_TOKEN op de
+    // server is er geen token om in te voeren; het login-scherm zou dan onbruikbaar zijn.
+    if(!hasToken() && !(await serverRequiresAuth())){
+      toggleLoginOverlay(false);
+    } else if(!hasToken()){
 
       // Geen token, toon overlay en blur content
       toggleLoginOverlay(true);
@@ -1298,8 +1302,21 @@
     }
   }
 
+  // Vraag aan de server of er een ADMIN_TOKEN is ingesteld. Bij een netwerkfout gaan we
+  // uit van "vereist" zodat het login-scherm getoond wordt (veilige default).
+  async function serverRequiresAuth(){
+    try {
+      const r = await fetch("/admin/auth-status", { cache: "no-cache" });
+      if (!r.ok) return true;
+      const data = await r.json();
+      return data.requiresAuth !== false;
+    } catch {
+      return true;
+    }
+  }
+
   // Helper functie om te controleren of er een token is
-  function hasToken(){ 
+  function hasToken(){
     return !!(localStorage.getItem("adminToken") || (new URLSearchParams(location.search)).get("token")); 
   }
 

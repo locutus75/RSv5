@@ -2142,7 +2142,10 @@ app.post("/admin/update/install", async (req, res) => {
 app.get("/admin/config", (req, res) => {
   try {
     if (!fs.existsSync(CONFIG_FILE)) {
-      return res.status(404).json({ error: "Config file not found" });
+      // Nog geen config.json (verse installatie): geef een lege standaardconfig terug
+      // zodat de instellingen-pagina werkt en de config via de UI aangemaakt kan worden.
+      console.log(`ℹ️ Geen config.json gevonden, lege standaardconfiguratie teruggegeven`);
+      return res.json({ service: {} });
     }
     const config = JSON.parse(fs.readFileSync(CONFIG_FILE, "utf8"));
     res.json(config);
