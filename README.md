@@ -167,6 +167,25 @@ Elke tenant kan een `allowedSenders` lijst hebben om te bepalen welke email adre
 
 Bv. open `http://localhost:8080` in je browser voor de admin interface.
 
+## 🚢 Releases en auto-update
+
+Draaiende installaties controleren op updates door hun `version.json` te vergelijken met
+`update-manifest.json` op de `main`-branch van de repository. Een nieuwe versie publiceren
+gaat via de **Release**-workflow op GitHub, niet handmatig:
+
+1. Merge de gewenste PR's naar `main`.
+2. Ga naar **Actions → Release → Run workflow** en kies `patch`, `minor` of `major`.
+3. De workflow verhoogt `version.json`, genereert `update-manifest.json`, controleert dat elke
+   hash overeenkomt met de inhoud in git, en pusht beide naar `main` met een tag `vX.Y.Z` en
+   een GitHub Release.
+
+Commit `version.json` en `update-manifest.json` dus **niet** meer mee in gewone PR's.
+
+Genereer het manifest ook niet lokaal op Windows: de repository slaat bestanden op met LF,
+terwijl een Windows-checkout (`core.autocrlf=true`) CRLF gebruikt. Een lokaal gegenereerd
+manifest bevat dan hashes die niet overeenkomen met wat `raw.githubusercontent.com` serveert,
+en de update-installatie faalt met "Hash validatie gefaald".
+
 ## 📝 Licentie
 
 GNU - General Public License.
