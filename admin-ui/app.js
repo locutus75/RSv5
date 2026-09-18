@@ -73,19 +73,15 @@
     });
   }
 
+  // Authenticatie loopt via een HttpOnly sessie-cookie; er wordt geen Authorization-header meer gestuurd
   function headers(){
-    const t = localStorage.getItem("adminToken") || "";
-    if (t) {
-      return {"Authorization":"Bearer "+t,"Content-Type":"application/json"};
-    } else {
-      return {"Content-Type":"application/json"};
-    }
+    return {"Content-Type":"application/json"};
   }
 
   async function api(p,o={}){
     // Voeg cache-busting toe voor versie endpoint om altijd de nieuwste versie op te halen
     const url = p.includes("/admin/version") ? `${p}?_t=${Date.now()}` : p;
-    const r = await fetch(url,{...o,headers:{...(o.headers||{}),...headers()},cache:"no-cache"});
+    const r = await fetch(url,{...o,headers:{...(o.headers||{}),...headers()},cache:"no-cache",credentials:"same-origin"});
     if(!r.ok){
       let m = r.status + " " + r.statusText;
       let errorData = null;
@@ -99,8 +95,10 @@
         }
       } catch {}
       
-      if (r.status === 401) {
-        m = "Authentication required. Please set ADMIN_TOKEN environment variable or provide valid token.";
+      if (r.status === 401 && !p.startsWith("/admin/login")) {
+        // Sessie verlopen of nooit ingelogd: toon het loginscherm opnieuw
+        m = "Sessie verlopen — log opnieuw in.";
+        toggleLoginOverlay(true);
       }
       
       const error = new Error(m);
@@ -117,27 +115,9 @@
 
   async function health(){
     try {
-      const authStatus = await api("/admin/auth-status");
-      
-      if (authStatus.requiresAuth) {
-        try {
-          await api("/admin/health");
-          dot.style.background = "#22c55e";
-          ht.textContent = "online";
-        } catch (error) {
-          if (error.message.includes("401")) {
-            dot.style.background = "#eab308";
-            ht.textContent = "auth required";
-          } else {
-            dot.style.background = "#ef4444";
-            ht.textContent = "offline";
-          }
-        }
-      } else {
-        await api("/admin/health");
-        dot.style.background = "#22c55e";
-        ht.textContent = "online";
-      }
+      await api("/admin/health");
+      dot.style.background = "#22c55e";
+      ht.textContent = "online";
     } catch (error) {
       dot.style.background = "#ef4444";
       ht.textContent = "offline";
@@ -879,18 +859,6 @@
   async function load(){
     tbody.innerHTML="<tr><td colspan='3'>Laden…</td></tr>";
     try {
-      const authStatus = await api("/admin/auth-status");
-      
-      if (authStatus.requiresAuth) {
-        const frontendToken = localStorage.getItem("adminToken");
-        
-        if (!frontendToken) {
-          tbody.innerHTML = `<tr><td colspan='3' class='muted'>🔐 Authenticatie vereist. Voer een token in via de browser console.</td></tr>`;
-          return;
-        }
-        
-
-      }
       
       data = await api("/admin/tenants");
       render();
@@ -1004,78 +972,6 @@
     }
   });
 
-  // Token management
-  $("#saveToken").addEventListener("click",async()=>{
-    const t=$("#token").value.trim();
-    if (!t) {
-      toast("Voer een token in");
-      return;
-    }
-    
-    try {
-      // Test de token eerst met de backend
-      const testResponse = await fetch("/admin/auth-status", {
-        headers: {
-          "Authorization": "Bearer " + t,
-          "Content-Type": "application/json"
-        }
-      });
-      
-      if (!testResponse.ok) {
-        toast("❌ Fout bij verbinding met server");
-        return;
-      }
-      
-      const authData = await testResponse.json();
-
-      // Zonder ADMIN_TOKEN op de server is elke token "geldig" (auth staat uit)
-      if (authData.requiresAuth !== false && !authData.valid) {
-        toast("❌ Ongeldige token");
-        return;
-      }
-      
-      // Token is geldig, sla op en ga door
-      localStorage.setItem("adminToken",t);
-      toast("✅ Token geaccepteerd");
-      
-      // Sync met overlay input
-      $("#overlayToken").value = t;
-      
-      // Verberg overlay als deze zichtbaar was
-      toggleLoginOverlay(false);
-      
-      // Initialize alles na login
-      try{ 
-        load(); // Dit laadt tenants
-        health(); 
-        loadStats(); 
-        loadEvents(); 
-        populateTenantFilters && populateTenantFilters(); 
-        
-        // Bind filters nadat ze zijn gepopuleerd
-        setTimeout(() => {
-          bindGlobalFilters();
-        }, 100);
-        
-        // Start auto-refresh als deze is ingeschakeld
-        const eventsAuto = document.getElementById("eventsAuto");
-        if (eventsAuto && eventsAuto.checked) {
-          toggleAutoRefresh(true);
-        }
-      }catch{}
-    } catch (error) {
-      toast("❌ Fout bij authenticatie: " + error.message);
-    }
-  });
-
-  // Event handler voor header input wijzigingen (reset feedback)
-  $("#token").addEventListener("input", () => {
-    // Reset visuele feedback bij nieuwe invoer in header
-    const overlayCard = $("#loginOverlay .overlay-card");
-    if (overlayCard) {
-      overlayCard.classList.remove("error", "success");
-    }
-  });
 
   // Functie om de login overlay te tonen/verbergen
   function toggleLoginOverlay(show) {
@@ -1140,70 +1036,38 @@
         toast("Voer een token in");
         return;
       }
-      
       try {
-        // Test de token eerst met de backend
-        const testResponse = await fetch("/admin/auth-status", {
-          headers: {
-            "Authorization": "Bearer " + token,
-            "Content-Type": "application/json"
-          }
+        const r = await fetch("/admin/login", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          credentials: "same-origin",
+          body: JSON.stringify({ token })
         });
-        
-        if (!testResponse.ok) {
+        if (r.status === 429) {
+          const data = await r.json().catch(() => ({}));
+          const minutes = Math.max(1, Math.ceil((data.retryAfterSeconds || 900) / 60));
           showLoginFeedback("error");
-          toast("❌ Fout bij verbinding met server");
+          toast(`❌ Te veel pogingen, probeer over ${minutes} minuten opnieuw`);
           return;
         }
-        
-        const authData = await testResponse.json();
-
-        // Zonder ADMIN_TOKEN op de server is elke token "geldig" (auth staat uit)
-        if (authData.requiresAuth !== false && !authData.valid) {
+        if (!r.ok) {
           showLoginFeedback("error");
           toast("❌ Ongeldige token");
           return;
         }
-        
-        // Token is geldig, toon success feedback
         showLoginFeedback("success");
-        toast("✅ Token geaccepteerd");
-        
-        // Wacht 1 seconde voordat doorverwijzing
+        toast("✅ Ingelogd");
+        $("#overlayToken").value = "";
         setTimeout(() => {
-          // Token opslaan en doorverwijzen
-          localStorage.setItem("adminToken", token);
-          $("#token").value = token; // Sync met header input
           toggleLoginOverlay(false);
-          
-          // Initialize alles na login
-          try{ 
-            load(); // Dit laadt tenants
-            health(); 
-            loadStats(); 
-            loadEvents(); 
-            populateTenantFilters && populateTenantFilters(); 
-            
-            // Bind filters nadat ze zijn gepopuleerd
-            setTimeout(() => {
-              bindGlobalFilters();
-            }, 100);
-            
-            // Start auto-refresh als deze is ingeschakeld
-            const eventsAuto = document.getElementById("eventsAuto");
-            if (eventsAuto && eventsAuto.checked) {
-              toggleAutoRefresh(true);
-            }
-          }catch{}
-        }, 1000);
-        
+          $("#logoutBtn").classList.remove("hidden");
+          startApp();
+        }, 600);
       } catch (error) {
         showLoginFeedback("error");
         toast("❌ Fout bij authenticatie: " + error.message);
       }
     });
-
-    // Event handler voor Enter toets in overlay input
     $("#overlayToken").addEventListener("keypress", (e) => {
       if (e.key === "Enter") {
         $("#overlaySave").click();
@@ -1218,106 +1082,56 @@
     });
   }
 
-  // Token initialisatie
-  function initToken(){
-    const p=new URLSearchParams(location.search);
-    const t=p.get("token");
-    if(t){
-      localStorage.setItem("adminToken",t);
-      const tokenInput = document.getElementById("token");
-      const overlayTokenInput = document.getElementById("overlayToken");
-      if (tokenInput) tokenInput.value = t;
-      if (overlayTokenInput) overlayTokenInput.value = t;
-    }else{
-      const storedToken = localStorage.getItem("adminToken") || "";
-      const tokenInput = document.getElementById("token");
-      const overlayTokenInput = document.getElementById("overlayToken");
-      if (tokenInput) tokenInput.value = storedToken;
-      if (overlayTokenInput) overlayTokenInput.value = storedToken;
+
+  // Opruimen: oude installaties bewaarden de bearer-token in localStorage
+  try { localStorage.removeItem("adminToken"); } catch {}
+
+  async function getAuthStatus(){
+    try {
+      const r = await fetch("/admin/auth-status", { cache: "no-cache", credentials: "same-origin" });
+      if (!r.ok) return { requiresAuth: true, authenticated: false };
+      return await r.json();
+    } catch {
+      return { requiresAuth: true, authenticated: false };
     }
   }
 
-  // Hoofd initialisatie functie
-  async function initializeApp() {
-
-
-    // Setup event handlers voor de overlay
-    setupOverlayEventHandlers();
-
-    // Initialiseer token (sync header en overlay inputs)
-    initToken();
-
-    // Vraag de server of authenticatie überhaupt vereist is. Zonder ADMIN_TOKEN op de
-    // server is er geen token om in te voeren; het login-scherm zou dan onbruikbaar zijn.
-    if(!hasToken() && !(await serverRequiresAuth())){
-      toggleLoginOverlay(false);
-    } else if(!hasToken()){
-
-      // Geen token, toon overlay en blur content
-      toggleLoginOverlay(true);
-      return; // wacht op gebruiker login
-    }
-    
-    
-    // Token aanwezig, verberg overlay en laad alles
-    toggleLoginOverlay(false);
-    
-    // If token via URL, persist and continue
-    const urlTok = (new URLSearchParams(location.search)).get("token");
-    if(urlTok){ localStorage.setItem("adminToken", urlTok); }
-    
-    // Kick off initial loads
-    try{ 
-      loadVersion(); // Laad versie
-      setupVersionMenu(); // Setup versie menu functionaliteit
-      setupUpdateInfoModal(); // Setup update info modal
-      load(); // Dit laadt tenants
-      health(); 
-      loadStats(); 
-      
-      // Initialiseer level filter eerst zodat selectie kan worden hersteld
-      if (typeof initLevelFilter === 'function') {
-        initLevelFilter();
-      }
-      
-      // Laad events na een korte delay zodat level filter selectie is hersteld
-      setTimeout(() => {
-        loadEvents();
-      }, 150);
-      
-      populateTenantFilters && populateTenantFilters(); 
-      
-      // Bind filters nadat ze zijn gepopuleerd
-      setTimeout(() => {
-        bindGlobalFilters();
-      }, 100);
-      
-      // Start auto-refresh als deze is ingeschakeld
+  // Laad alle onderdelen van de app (na login, of direct als auth niet vereist is)
+  function startApp(){
+    try{
+      loadVersion();
+      setupVersionMenu();
+      setupUpdateInfoModal();
+      load();
+      health();
+      loadStats();
+      if (typeof initLevelFilter === 'function') initLevelFilter();
+      setTimeout(() => { loadEvents(); }, 150);
+      populateTenantFilters && populateTenantFilters();
+      setTimeout(() => { bindGlobalFilters(); }, 100);
       const eventsAuto = document.getElementById("eventsAuto");
-      if (eventsAuto && eventsAuto.checked) {
-        toggleAutoRefresh(true);
-      }
+      if (eventsAuto && eventsAuto.checked) toggleAutoRefresh(true);
     }catch(e){
       console.error("❌ Fout bij initialiseren:", e);
     }
   }
 
-  // Vraag aan de server of er een ADMIN_TOKEN is ingesteld. Bij een netwerkfout gaan we
-  // uit van "vereist" zodat het login-scherm getoond wordt (veilige default).
-  async function serverRequiresAuth(){
-    try {
-      const r = await fetch("/admin/auth-status", { cache: "no-cache" });
-      if (!r.ok) return true;
-      const data = await r.json();
-      return data.requiresAuth !== false;
-    } catch {
-      return true;
-    }
-  }
+  // Hoofd initialisatie functie
+  async function initializeApp() {
+    setupOverlayEventHandlers();
+    $("#logoutBtn").addEventListener("click", async () => {
+      try { await fetch("/admin/logout", { method: "POST", credentials: "same-origin" }); } catch {}
+      location.reload();
+    });
 
-  // Helper functie om te controleren of er een token is
-  function hasToken(){
-    return !!(localStorage.getItem("adminToken") || (new URLSearchParams(location.search)).get("token")); 
+    const status = await getAuthStatus();
+    $("#logoutBtn").classList.toggle("hidden", !status.requiresAuth);
+    if (status.requiresAuth && !status.authenticated) {
+      toggleLoginOverlay(true);
+      return; // wacht op login
+    }
+    toggleLoginOverlay(false);
+    startApp();
   }
 
   // Start de app wanneer DOM klaar is
@@ -1437,7 +1251,6 @@
   });
 
   // Exposeer functies voor globale gebruik
-  window.hasToken = hasToken;
   window.toggleLoginOverlay = toggleLoginOverlay;
 
   // Tenant modal handlers
@@ -3367,27 +3180,9 @@
     toggleAutoRefresh(e.target.checked);
   });
 
-  // Initialiseer token input
-  initToken();
-
   // --- Stats & Events ---
   async function loadStats(){
     try{
-      const authStatus = await api("/admin/auth-status");
-      
-      if (authStatus.requiresAuth) {
-        const frontendToken = localStorage.getItem("adminToken");
-        
-        if (!frontendToken) {
-          const tbody = document.querySelector("#statsTable tbody");
-          if (tbody) {
-            tbody.innerHTML = "<tr><td colspan='5' class='muted'>🔐 Authenticatie vereist</td></tr>";
-          }
-          return;
-        }
-        
-
-      }
       
       const win = document.querySelector("#statsWindow")?.value || "60m";
       const statsFilter = document.querySelector("#tenantFilterStats")?.value?.trim() || "";
@@ -3568,19 +3363,6 @@
       // Update log reset tijd weergave
       await updateLogResetTime();
       
-      const authStatus = await api("/admin/auth-status");
-      
-      if (authStatus.requiresAuth) {
-        const frontendToken = localStorage.getItem("adminToken");
-        
-        if (!frontendToken) {
-          const tbody = document.querySelector("#eventsTable tbody");
-          if (tbody) {
-            tbody.innerHTML = "<tr><td colspan='9' class='muted'>🔐 Authenticatie vereist</td></tr>";
-          }
-          return;
-        }
-      }
       
       const t = document.querySelector("#tenantFilterEvents")?.value?.trim() || "";
       // Bij eerste keer laden: laad alle events (10000), anders gebruik de geselecteerde limiet
@@ -3752,18 +3534,6 @@
     try{
 
       
-      const authStatus = await api("/admin/auth-status");
-      
-      if (authStatus.requiresAuth) {
-        const frontendToken = localStorage.getItem("adminToken");
-        
-        if (!frontendToken) {
-  
-          return;
-        }
-        
-
-      }
       
       const list = await api("/admin/tenants");
       
