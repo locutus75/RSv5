@@ -13,6 +13,7 @@
     "start:verbose-log": "node index.js --verbose --log-file ./logs/mail-verbose.log",
     "start:help": "node index.js --help",
     "test": "node --test \"test/**/*.test.js\"",
+    "test:e2e": "node test/e2e-admin-auth.mjs",
     "admin:set-token": "node scripts/set-admin-token.js",
     "version:bump": "node scripts/bump-version.js",
     "version:patch": "node scripts/bump-version.js --patch",
