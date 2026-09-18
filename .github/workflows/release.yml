@@ -1,0 +1,119 @@
+# Release-workflow: verhoogt de versie, genereert update-manifest.json en publiceert
+# beide op main, zodat draaiende installaties de update zien via de auto-update check.
+#
+# Handmatig starten: GitHub → Actions → "Release" → "Run workflow" → kies patch/minor/major.
+#
+# Waarom in CI en niet lokaal:
+# - Het manifest bevat SHA256-hashes van elk bestand. De update-installer haalt de bestanden
+#   op via raw.githubusercontent.com (inhoud zoals in git: LF). Een lokaal op Windows
+#   gegenereerd manifest hasht de CRLF-werkkopie en levert een hash-mismatch op.
+# - Niemand hoeft version.json/update-manifest.json nog mee te committen in PR's.
+name: Release
+
+on:
+  workflow_dispatch:
+    inputs:
+      bump:
+        description: "Versie verhogen met"
+        type: choice
+        required: true
+        default: patch
+        options:
+          - patch
+          - minor
+          - major
+
+# Nooit twee releases tegelijk
+concurrency:
+  group: release
+  cancel-in-progress: false
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout main
+        uses: actions/checkout@v4
+        with:
+          ref: main
+          fetch-depth: 0
+
+      - name: Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      # De versie-/manifestscripts gebruiken alleen Node-builtins; npm install is niet nodig.
+      - name: Versie verhogen
+        run: node scripts/bump-version.js --${{ inputs.bump }}
+
+      - name: Manifest genereren
+        run: node scripts/generate-update-manifest.js
+
+      - name: Manifest verifiëren tegen git-inhoud
+        # Elke hash in het manifest moet overeenkomen met de blob zoals git die opslaat
+        # (dat is wat raw.githubusercontent.com straks serveert).
+        run: |
+          node --input-type=module -e '
+            import fs from "fs";
+            import crypto from "crypto";
+            import { execFileSync } from "child_process";
+            const m = JSON.parse(fs.readFileSync("update-manifest.json", "utf8"));
+            let bad = 0;
+            for (const f of m.files) {
+              // version.json en het manifest zelf zijn zojuist gewijzigd en nog niet gecommit; die overslaan
+              if (f.path === "version.json" || f.path === "update-manifest.json") continue;
+              let blob;
+              try { blob = execFileSync("git", ["show", `HEAD:${f.path}`]); }
+              catch { console.log(`⚠️ niet in git (overgeslagen): ${f.path}`); continue; }
+              const h = crypto.createHash("sha256").update(blob).digest("hex");
+              if (h !== f.hash) { console.log(`❌ hash-mismatch: ${f.path}`); bad++; }
+            }
+            console.log(`${m.files.length} bestanden gecontroleerd, ${bad} mismatches`);
+            if (bad) process.exit(1);
+          '
+
+      - name: Versie uitlezen
+        id: version
+        run: |
+          echo "version=$(node -p 'require("./version.json").version')" >> "$GITHUB_OUTPUT"
+          echo "build=$(node -p 'require("./version.json").buildNumber')" >> "$GITHUB_OUTPUT"
+
+      - name: Committen, taggen en pushen
+        env:
+          VERSION: ${{ steps.version.outputs.version }}
+          BUILD: ${{ steps.version.outputs.build }}
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add version.json update-manifest.json
+          git commit -m "Release v${VERSION} (build ${BUILD}) [skip ci]"
+          git tag -a "v${VERSION}" -m "Release v${VERSION} (build ${BUILD})"
+          git push origin main --follow-tags
+
+      - name: GitHub Release aanmaken
+        env:
+          GH_TOKEN: ${{ github.token }}
+          VERSION: ${{ steps.version.outputs.version }}
+          BUILD: ${{ steps.version.outputs.build }}
+        run: |
+          gh release create "v${VERSION}" \
+            --title "v${VERSION} (build ${BUILD})" \
+            --generate-notes \
+            update-manifest.json
+
+      - name: Samenvatting
+        env:
+          VERSION: ${{ steps.version.outputs.version }}
+          BUILD: ${{ steps.version.outputs.build }}
+        run: |
+          {
+            echo "## Release v${VERSION} (build ${BUILD})"
+            echo ""
+            echo "- \`version.json\` en \`update-manifest.json\` zijn gepusht naar \`main\`"
+            echo "- Tag \`v${VERSION}\` en GitHub Release aangemaakt"
+            echo "- Draaiende installaties zien deze versie bij de volgende update-check"
+          } >> "$GITHUB_STEP_SUMMARY"
